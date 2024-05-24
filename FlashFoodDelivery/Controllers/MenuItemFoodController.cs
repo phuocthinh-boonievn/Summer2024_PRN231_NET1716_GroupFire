@@ -18,6 +18,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = UserRole.Admin)]
         public async Task<APIResponseModel> GetAllMenuFoodItem()
         {
             try
