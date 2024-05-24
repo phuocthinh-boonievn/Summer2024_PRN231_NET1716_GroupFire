@@ -43,6 +43,7 @@ namespace API
             });
             // Add services repository pattern
             services.AddTransient<IMenuFoodItemRepository, MenuItemFoodRepository>();
+            services.AddTransient<ICategoryRepository, CategoryRepository>();
         }
 
         public void Configure(WebApplication app, IWebHostEnvironment env)
