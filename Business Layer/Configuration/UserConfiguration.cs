@@ -14,6 +14,7 @@ namespace Business_Layer.Configuration
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.ToTable("AspNetUsers");
+            builder.Property(x => x.Id).ValueGeneratedOnAdd();
             builder.Property(x => x.FullName).HasMaxLength(100);
             builder.Property(x => x.Address).HasMaxLength(100);
         }

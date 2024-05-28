@@ -15,6 +15,7 @@ namespace Business_Layer.Configuration
         {
             builder.ToTable("Category");
             builder.HasKey(x => x.CategoryId);
+            builder.Property(x => x.CategoryId).ValueGeneratedOnAdd();
             builder.Property(x => x.CategoriesName).IsRequired().HasMaxLength(100);
         }
     }

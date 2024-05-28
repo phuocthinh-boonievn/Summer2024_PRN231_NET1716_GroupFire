@@ -15,6 +15,7 @@ namespace Business_Layer.Configuration
         {
             builder.ToTable("Order");
             builder.HasKey(x => x.OrderId);
+            builder.Property(x => x.OrderId).ValueGeneratedOnAdd();
             builder.Property(x => x.OrderDate).HasDefaultValue(DateTime.Now);
             builder.Property(x => x.RequiredDate).HasDefaultValue(DateTime.Now.AddDays(3));
             builder.Property(x => x.ShippedDate).HasDefaultValue(DateTime.Now.AddDays(5));

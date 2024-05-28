@@ -15,6 +15,7 @@ namespace Business_Layer.Configuration
         {
             builder.ToTable("Shipper");
             builder.HasKey(x => x.ShipperId);
+            builder.Property(x => x.ShipperId).ValueGeneratedOnAdd();
             builder.Property(x => x.ShipperStatus).HasMaxLength(128);
 
             builder.HasOne(x => x.User).WithMany(x => x.Shippers).HasForeignKey(x => x.userId);
