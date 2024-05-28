@@ -15,6 +15,7 @@ namespace Business_Layer.Configuration
         {
             builder.ToTable("OrderDetail");
             builder.HasKey(x => new { x.OrderId, x.FoodId });
+            builder.Property(x => x.OrderDetailId).ValueGeneratedOnAdd();
             builder.HasOne(x => x.Order).WithMany(x => x.OrderDetails).HasForeignKey(x => x.OrderId);
             builder.HasOne(x => x.MenuFoodItem).WithMany(x => x.OrderDetails).HasForeignKey(x => x.FoodId);
         }

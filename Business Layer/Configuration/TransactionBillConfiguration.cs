@@ -15,6 +15,7 @@ namespace Business_Layer.Configuration
         {
             builder.ToTable("Transactions");
             builder.HasKey(x => x.TractionId);
+            builder.Property(x => x.TractionId).ValueGeneratedOnAdd();
             builder.HasOne(x => x.Order).WithMany(x => x.TransactionBills).HasForeignKey(x => x.OrderId);
         }
     }
