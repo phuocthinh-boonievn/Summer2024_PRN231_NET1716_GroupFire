@@ -50,5 +50,20 @@ namespace Business_Layer.Services
             }
             return model;
         }
+        public async Task<bool> DeleteUser (Guid id)
+        {
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user == null)
+            {
+                throw new Exception("User is not existed !");
+            }
+            _userRepository.Remove(user);
+            bool isSuccessed = await _userRepository.SaveAsync() > 0;
+            if(!isSuccessed)
+            {
+                throw new Exception("Delete Failed !");
+            }
+            return isSuccessed;
+        }
     }
 }

@@ -11,6 +11,6 @@ namespace Data_Layer.ResourceModel.Common
         public int code { get; set; }
         public string message { get; set; }
         public bool IsSuccess { get; set; }
-        public object Data { get; set; }
+        public object? Data { get; set; }
     }
 }
