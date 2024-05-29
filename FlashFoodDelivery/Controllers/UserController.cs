@@ -1,5 +1,6 @@
 ﻿using Business_Layer.Repositories;
 using Business_Layer.Services;
+using Data_Layer.Models;
 using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel.User;
 using Microsoft.AspNetCore.Http;
@@ -140,6 +141,26 @@ namespace API.Controllers
                     IsSuccess = false
                 };
             }
+        }
+        [HttpDelete]
+        public async Task<APIResponseModel> DeleteUser(Guid id)
+        {
+            bool deleteSuccess = await _userSerivce.DeleteUser(id);
+            if(!deleteSuccess)
+            {
+                return new APIResponseModel()
+                {
+                    code = StatusCodes.Status400BadRequest,
+                    message = "Delete User Failed !",
+                    IsSuccess = false
+                };
+            }
+            return new APIResponseModel
+            {
+                code = 200,
+                IsSuccess = true,
+                message = "Delete User success !",
+            };
         }
     }
 }

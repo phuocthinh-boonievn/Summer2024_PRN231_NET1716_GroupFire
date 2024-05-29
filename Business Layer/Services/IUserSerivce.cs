@@ -13,5 +13,6 @@ namespace Business_Layer.Services
     {
         Task<UserViewModel> GetUserById(Guid id);
         Task<UserViewModel> UpdateUser(Guid id, UserViewModel model);
+        Task<bool> DeleteUser (Guid id);
     }
 }
