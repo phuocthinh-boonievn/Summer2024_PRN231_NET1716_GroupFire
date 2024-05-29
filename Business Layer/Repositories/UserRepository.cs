@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Business_Layer.DataAccess;
+using Business_Layer.Services;
 using Data_Layer.Models;
 using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel.User;
@@ -16,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace Business_Layer.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : GenericRepository<User>, IUserRepository
     {
         private UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -32,7 +33,7 @@ namespace Business_Layer.Repositories
             IOptionsMonitor<AdminAccount> adminAccount,
             IOptionsMonitor<JWTSetting> jWTSetting,
             FastFoodDeliveryDBContext context,
-            IMapper mapper)
+            IMapper mapper) : base(context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -177,5 +178,6 @@ namespace Business_Layer.Repositories
             }
             return result;
         }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using Data_Layer.ResourceModel.Common;
+﻿using Data_Layer.Models;
+using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel.User;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Business_Layer.Repositories
 {
-    public interface IUserRepository
+    public interface IUserRepository : IGenericRepository<User>
     {
         Task<APIResponseModel> Login(LoginVM model);
         Task<APIResponseModel> Register(RegisterVM model);

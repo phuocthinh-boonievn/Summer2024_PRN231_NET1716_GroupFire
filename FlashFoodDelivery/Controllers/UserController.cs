@@ -1,4 +1,5 @@
 ﻿using Business_Layer.Repositories;
+using Business_Layer.Services;
 using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel.User;
 using Microsoft.AspNetCore.Http;
@@ -11,10 +12,12 @@ namespace API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
+        private readonly IUserSerivce _userSerivce;
 
-        public UserController(IUserRepository userRepository)
+        public UserController(IUserRepository userRepository, IUserSerivce userSerivce)
         {
             _userRepository = userRepository;
+            _userSerivce = userSerivce;
         }
 
         [HttpPost("login")]
@@ -76,6 +79,56 @@ namespace API.Controllers
                 var result = await _userRepository.Register(model);
                 return result;
 
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel()
+                {
+                    code = StatusCodes.Status400BadRequest,
+                    message = ex.Message,
+                    Data = ex,
+                    IsSuccess = false
+                };
+            }
+        }
+        [HttpGet]
+        public async Task<APIResponseModel> GetUserById(Guid id)
+        {
+            try
+            {
+                var user = await _userSerivce.GetUserById(id);
+                return new APIResponseModel
+                {
+                    code = 200,
+                    IsSuccess = true,
+                    Data = user,
+                    message = "User Founded !",
+                };
+            }
+            catch(Exception ex) 
+            {
+                return new APIResponseModel()
+                {
+                    code = StatusCodes.Status400BadRequest,
+                    message = ex.Message,
+                    Data = ex,
+                    IsSuccess = false
+                };
+            }
+        }
+        [HttpPost]
+        public async Task <APIResponseModel> UpdateUser(Guid id, [FromBody] UserViewModel model)
+        {
+            try
+            {
+                var user = await _userSerivce.UpdateUser(id, model);
+                return new APIResponseModel
+                {
+                    code = 200,
+                    IsSuccess = true,
+                    Data = user,
+                    message = "Update User success !",
+                };
             }
             catch (Exception ex)
             {

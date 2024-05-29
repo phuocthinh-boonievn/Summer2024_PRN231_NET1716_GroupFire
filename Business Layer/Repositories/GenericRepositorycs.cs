@@ -11,6 +11,7 @@ namespace Business_Layer.Repositories
     {
         private readonly FastFoodDeliveryDBContext _context;
 
+        
         public GenericRepository(FastFoodDeliveryDBContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
