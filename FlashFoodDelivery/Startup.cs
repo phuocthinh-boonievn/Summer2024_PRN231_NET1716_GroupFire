@@ -1,6 +1,7 @@
 ﻿using Business_Layer.AutoMapper;
 using Business_Layer.DataAccess;
 using Business_Layer.Repositories;
+using Business_Layer.Services;
 using Data_Layer.Models;
 using Data_Layer.ResourceModel.ViewModel.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -53,6 +54,14 @@ namespace API
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<IDataService, RoleDataRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
+
+            //Order
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+
+            //OrderDetail
+            services.AddScoped<IOrderDetailService, OrderDetailService>();
+            services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
         }
 
         public void Configure(WebApplication app, IWebHostEnvironment env)

@@ -27,6 +27,13 @@ namespace Business_Layer.Repositories
         {
             _context.Set<TEntity>().Remove(entity);
         }
+        public void SoftRemoveRange(List<TEntity> entities)
+        {
+            foreach (var entity in entities)
+            {
+                _context.Set<TEntity>().Remove(entity);
+            }
+        }
 
         public void Update(TEntity entity)
         {

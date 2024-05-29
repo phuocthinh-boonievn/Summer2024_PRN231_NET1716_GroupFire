@@ -33,8 +33,6 @@ namespace API.Controllers
                         IsSuccess = false,
                         message = string.Join(";", errors)
                     };
-
-
                 }
 
                 var result = await _userRepository.Login(model);

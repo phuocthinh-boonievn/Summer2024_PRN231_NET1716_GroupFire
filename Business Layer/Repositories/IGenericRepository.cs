@@ -9,6 +9,7 @@ namespace Business_Layer.Repositories
 {
     public interface IGenericRepository<TEntity> 
     {
+        void SoftRemoveRange(List<TEntity> entities);
         Task<List<TEntity>> GetAllAsync();
         Task<TEntity?> GetByIdAsync(Guid id);
         Task AddAsync(TEntity entity);
