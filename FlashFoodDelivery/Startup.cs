@@ -54,8 +54,12 @@ namespace API
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<IDataService, RoleDataRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
-            services.AddScoped<IUserSerivce, UserService>();
-            services.AddScoped<IClaimsService, ClaimsService>();
+
+
+            services.AddTransient<IUserSerivce, UserService>();
+            services.AddTransient<IClaimsService, ClaimsService>();
+
+
             //Order
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IOrderRepository, OrderRepository>();

@@ -1,5 +1,4 @@
-﻿using Business_Layer.ServiceReponses;
-using Data_Layer.ResourceModel.Common;
+﻿using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel.OrderVMs;
 
 namespace Business_Layer.Services
