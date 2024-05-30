@@ -1,4 +1,5 @@
-﻿using Business_Layer.Repositories;
+﻿using Business_Layer.Commons;
+using Business_Layer.Repositories;
 using Business_Layer.Utils;
 using Data_Layer.Models;
 using Data_Layer.ResourceModel.ViewModel.User;
@@ -27,7 +28,7 @@ namespace Business_Layer.Services
             {
                 throw new Exception("User is not existed !");
             }
-            var userViewModel = user.ToUser();
+            var userViewModel = user.ToUserViewModel();
             return userViewModel;
         }
 
@@ -64,6 +65,12 @@ namespace Business_Layer.Services
                 throw new Exception("Delete Failed !");
             }
             return isSuccessed;
+        }
+        public async Task<Pagination<UserViewModel>> GetUserPagingsionsAsync(int pageIndex = 0, int pageSize = 10)
+        {
+            var users = await _userRepository.ToPagination(pageIndex, pageSize);
+            var result = users.ToUserViewModel();
+            return result;
         }
     }
 }
