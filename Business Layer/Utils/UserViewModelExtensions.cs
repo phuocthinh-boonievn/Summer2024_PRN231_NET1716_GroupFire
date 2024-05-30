@@ -1,4 +1,5 @@
-﻿using Data_Layer.Models;
+﻿using Business_Layer.Commons;
+using Data_Layer.Models;
 using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel.User;
 using System;
@@ -12,7 +13,7 @@ namespace Business_Layer.Utils
 {
     public static class UserViewModelExtensions
     {
-        public static UserViewModel ToUser(this User user)
+        public static UserViewModel ToUserViewModel(this User user)
         {
             return new UserViewModel
             {
@@ -22,7 +23,7 @@ namespace Business_Layer.Utils
                 Email = user.Email                
             };
         }
-        public static User ToUserViewModel(this UserViewModel model)
+        public static User ToUser(this UserViewModel model)
         {
             return new User
             {
@@ -30,6 +31,16 @@ namespace Business_Layer.Utils
                 Address = model.Address,
                 PhoneNumber = model.PhoneNumber,
                 Email = model.Email
+            };
+        }
+        public static Pagination<UserViewModel> ToUserViewModel(this Pagination<User> pagination)
+        {
+            return new Pagination<UserViewModel>
+            {
+                TotalItemsCount = pagination.TotalItemsCount,
+                PageSize = pagination.PageSize,
+                PageIndex = pagination.PageIndex,
+                Items = pagination.Items.Select(t => t.ToUserViewModel()).ToList()
             };
         }
     }

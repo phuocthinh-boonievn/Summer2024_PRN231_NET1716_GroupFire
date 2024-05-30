@@ -178,6 +178,5 @@ namespace Business_Layer.Repositories
             }
             return result;
         }
-
     }
 }

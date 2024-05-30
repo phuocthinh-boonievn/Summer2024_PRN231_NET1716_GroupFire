@@ -1,4 +1,5 @@
-﻿using Data_Layer.Models;
+﻿using Business_Layer.Commons;
+using Data_Layer.Models;
 using Data_Layer.ResourceModel.ViewModel.User;
 using System;
 using System.Collections.Generic;
@@ -14,5 +15,6 @@ namespace Business_Layer.Services
         Task<UserViewModel> GetUserById(Guid id);
         Task<UserViewModel> UpdateUser(Guid id, UserViewModel model);
         Task<bool> DeleteUser (Guid id);
+        Task<Pagination<UserViewModel>> GetUserPagingsionsAsync(int pageIndex = 0, int pageSize = 10);
     }
 }

@@ -20,7 +20,43 @@ namespace API.Controllers
             _userRepository = userRepository;
             _userSerivce = userSerivce;
         }
-
+        [HttpGet]
+        public async Task<APIResponseModel> GetUserPagination(int pageIndex = 0, int pageSize = 10)
+        {
+            var users = await _userSerivce.GetUserPagingsionsAsync(pageIndex, pageSize);
+            return new APIResponseModel()
+            {
+                code = 200,
+                message = "List 10 User",
+                IsSuccess = true,
+                Data = users
+            };
+        }
+        [HttpGet("{id}")]
+        public async Task<APIResponseModel> GetUserById(Guid id)
+        {
+            try
+            {
+                var user = await _userSerivce.GetUserById(id);
+                return new APIResponseModel
+                {
+                    code = 200,
+                    IsSuccess = true,
+                    Data = user,
+                    message = "User Founded !",
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel()
+                {
+                    code = StatusCodes.Status400BadRequest,
+                    message = ex.Message,
+                    Data = ex,
+                    IsSuccess = false
+                };
+            }
+        }
         [HttpPost("login")]
         public async Task<APIResponseModel> Login([FromBody] LoginVM model)
         {
@@ -90,31 +126,7 @@ namespace API.Controllers
                 };
             }
         }
-        [HttpGet]
-        public async Task<APIResponseModel> GetUserById(Guid id)
-        {
-            try
-            {
-                var user = await _userSerivce.GetUserById(id);
-                return new APIResponseModel
-                {
-                    code = 200,
-                    IsSuccess = true,
-                    Data = user,
-                    message = "User Founded !",
-                };
-            }
-            catch(Exception ex) 
-            {
-                return new APIResponseModel()
-                {
-                    code = StatusCodes.Status400BadRequest,
-                    message = ex.Message,
-                    Data = ex,
-                    IsSuccess = false
-                };
-            }
-        }
+        
         [HttpPost]
         public async Task <APIResponseModel> UpdateUser(Guid id, [FromBody] UserViewModel model)
         {
@@ -159,6 +171,6 @@ namespace API.Controllers
                 IsSuccess = true,
                 message = "Delete User success !",
             };
-        }
+        }        
     }
 }
