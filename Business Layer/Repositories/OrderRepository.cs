@@ -21,7 +21,7 @@ namespace Business_Layer.Repositories
             var Orders = await _dbContext.Orders.Where(o => o.StatusOrder.ToLower() == status.ToLower()).ToListAsync();
             if (Orders.Any() == false)
             {
-                throw new Exception("UserID haven't Order");
+                throw new Exception("User haven't Order");
             }
             return Orders;
         }
@@ -31,7 +31,7 @@ namespace Business_Layer.Repositories
             var Orders = await _dbContext.Orders.Where(o => o.MemberId == memberID).ToListAsync();
             if (Orders.Any() == false)
             {
-                throw new Exception("UserID haven't Order");
+                throw new Exception("User haven't Order");
             }
             return Orders;
         }

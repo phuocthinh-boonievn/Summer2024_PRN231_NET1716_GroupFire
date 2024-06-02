@@ -67,6 +67,10 @@ namespace API
             //OrderDetail
             services.AddScoped<IOrderDetailService, OrderDetailService>();
             services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
+
+            //MenuFoodItem
+            services.AddScoped<IMenuFoodItem1Repository, MenuFoodItem1Repository>();
+            services.AddScoped<IMenuFoodItem1Service, MenuFoodItem1Service>();
         }
 
         public void Configure(WebApplication app, IWebHostEnvironment env)
