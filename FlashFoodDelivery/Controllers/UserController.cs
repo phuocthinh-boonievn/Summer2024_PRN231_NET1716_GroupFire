@@ -20,7 +20,7 @@ namespace API.Controllers
             _userRepository = userRepository;
             _userSerivce = userSerivce;
         }
-        [HttpGet]
+        [HttpGet("GetUserPagination")]
         public async Task<APIResponseModel> GetUserPagination(int pageIndex = 0, int pageSize = 10)
         {
             var users = await _userSerivce.GetUserPagingsionsAsync(pageIndex, pageSize);
@@ -32,7 +32,7 @@ namespace API.Controllers
                 Data = users
             };
         }
-        [HttpGet("{id}")]
+        [HttpGet("GetUserById/{id}")]
         public async Task<APIResponseModel> GetUserById(Guid id)
         {
             try
@@ -127,7 +127,7 @@ namespace API.Controllers
             }
         }
         
-        [HttpPost]
+        [HttpPut("UpdateUser")]
         public async Task <APIResponseModel> UpdateUser(Guid id, [FromBody] UserViewModel model)
         {
             try
@@ -152,7 +152,7 @@ namespace API.Controllers
                 };
             }
         }
-        [HttpDelete]
+        [HttpDelete("DeleteUser")]
         public async Task<APIResponseModel> DeleteUser(Guid id)
         {
             bool deleteSuccess = await _userSerivce.DeleteUser(id);

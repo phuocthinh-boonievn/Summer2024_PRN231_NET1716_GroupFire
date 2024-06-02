@@ -31,6 +31,7 @@ namespace Business_Layer.Utils
                 Address = model.Address,
                 PhoneNumber = model.PhoneNumber,
                 Email = model.Email
+                
             };
         }
         public static Pagination<UserViewModel> ToUserViewModel(this Pagination<User> pagination)

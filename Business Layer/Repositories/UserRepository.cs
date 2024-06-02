@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Business_Layer.DataAccess;
 using Business_Layer.Services;
+using Business_Layer.Utils;
 using Data_Layer.Models;
 using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel.User;
@@ -178,5 +179,11 @@ namespace Business_Layer.Repositories
             }
             return result;
         }
+        /*public async Task<UserViewModel> GetUserByID(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            UserViewModel userView = user.ToUserViewModel();
+            userView.Role = await _userManager.GetRolesAsync(user);
+        }*/
     }
 }
