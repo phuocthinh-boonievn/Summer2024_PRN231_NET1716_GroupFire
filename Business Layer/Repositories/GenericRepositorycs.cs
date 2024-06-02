@@ -11,6 +11,7 @@ namespace Business_Layer.Repositories
     {
         private readonly FastFoodDeliveryDBContext _context;
 
+        
         public GenericRepository(FastFoodDeliveryDBContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -58,7 +59,11 @@ namespace Business_Layer.Repositories
             return result;
         }
 
-        public async Task<TEntity?> GetByIdAsync(Guid id) => await _context.Set<TEntity>().FindAsync(id);
+        public async Task<TEntity?> GetByIdAsync(Guid id)
+        {
+            var stringId = id.ToString();
+            return await _context.Set<TEntity>().FindAsync(stringId);
+        }
 
         public void Delete(TEntity entity)
         {
