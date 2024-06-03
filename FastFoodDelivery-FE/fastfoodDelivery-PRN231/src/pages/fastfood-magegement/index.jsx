@@ -4,6 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
+import uploadFile from "../../utils/upload";
 
 function FoodItemManagement() {
   const [formVariable] = useForm();
@@ -15,6 +16,12 @@ function FoodItemManagement() {
       title: "Food Item",
       dataIndex: "name",
       key: "name",
+    },
+    {
+      title: "Image",
+      dataIndex: "image",
+      key: "image",
+      render: (image) => <Image src={image} width={300} />,
     },
   ];
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -64,8 +71,26 @@ function FoodItemManagement() {
     setIsOpen(false);
   }
 
-  function handleSubmit(values) {
+  async function handleSubmit(values) {
     console.log(values);
+    console.log(values.image.file.originFileObj);
+
+    const url = await uploadFile(values.image.file.originFileObj);
+    values.image = url;
+    console.log(values);
+
+    const response = await axios.post(
+      "https://66472a9251e227f23ab155ec.mockapi.io/FastFood",
+      values
+    );
+
+    setDataSource([...dataSource, values]);
+
+    // clear form
+    formVariable.resetFields();
+
+    //hide form
+    handleHideModal();
   }
 
   function handleOk() {
