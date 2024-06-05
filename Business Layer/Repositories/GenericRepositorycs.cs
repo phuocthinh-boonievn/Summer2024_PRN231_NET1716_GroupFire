@@ -61,8 +61,8 @@ namespace Business_Layer.Repositories
 
         public async Task<TEntity?> GetByIdAsync(Guid id)
         {
-            var stringId = id.ToString();
-            return await _context.Set<TEntity>().FindAsync(stringId);
+            //var stringId = id.ToString();
+            return await _context.Set<TEntity>().FindAsync(id);
         }
 
         public void Delete(TEntity entity)
