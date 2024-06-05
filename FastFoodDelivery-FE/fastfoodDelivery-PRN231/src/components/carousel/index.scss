@@ -5,4 +5,11 @@
         object-fit: cover;
         object-position: top;
     }
+
+    // Selector div nào vừa có class là carousel vừa có class là multi -item
+    &.multi-item{
+        img{
+            height: 200px;
+        }
+    }
 }

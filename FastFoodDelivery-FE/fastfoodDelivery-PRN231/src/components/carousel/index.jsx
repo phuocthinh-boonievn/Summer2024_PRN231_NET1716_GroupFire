@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -10,37 +10,50 @@ import "./index.scss";
 
 // import required modules
 import { Autoplay, Pagination } from "swiper/modules";
+import axios from "axios";
 
-export default function Carousel() {
+//
+
+export default function Carousel({
+  numberOfSlides = 1,
+  Category = "Trending",
+  autoplay = false,
+}) {
+  console.log(numberOfSlides);
+
+  const [fastfoods, setFastFood] = useState([]);
+
+  const fetchFastFood = async () => {
+    const response = await axios.get(
+      "https://66472a9251e227f23ab155ec.mockapi.io/FastFood"
+    );
+
+    setFastFood(response.data);
+  };
+
+  useEffect(() => {
+    fetchFastFood();
+  }, []);
+
   return (
     <>
       <Swiper
+        slidesPerView={numberOfSlides}
         pagination={true}
-        modules={[Pagination, Autoplay]}
-        className="carousel"
+        modules={autoplay ? [Pagination, Autoplay] : [Pagination]}
+        className={`carousel ${numberOfSlides > 1 ? "multi-item" : ""}`}
         autoplay={{
           delay: 2500,
           disableOnInteraction: false,
         }}
       >
-        <SwiperSlide>
-          <img
-            src="https://nhahangso.com/wp-content/uploads/2022/11/Fast-food.webp"
-            alt=""
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img
-            src="https://images.pexels.com/photos/1059905/pexels-photo-1059905.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-            alt=""
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img
-            src="https://images.pexels.com/photos/11299734/pexels-photo-11299734.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-            alt=""
-          />
-        </SwiperSlide>
+        {fastfoods
+          .filter((fastfood) => fastfood.Category === Category)
+          .map((fastfood) => (
+            <SwiperSlide>
+              <img src={fastfood.image} alt="" />
+            </SwiperSlide>
+          ))}
       </Swiper>
     </>
   );

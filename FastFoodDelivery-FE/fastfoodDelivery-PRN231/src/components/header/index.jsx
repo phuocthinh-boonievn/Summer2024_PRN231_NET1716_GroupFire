@@ -1,16 +1,16 @@
 import "./index.scss";
 import React from "react";
 import { Link } from "react-router-dom";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, UserOutlined } from "@ant-design/icons";
 
 function Header() {
   return (
     <header className="header">
       <div className="header__logo">
         <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiRmpxBnb1N-F6bMLDGVAQXPbiK_66QIe5VA&s"
+          src="https://www.fastfoodcart.com/sites/default/files/logo_header_3/fastfoodcart2.png"
           alt=""
-          width={80}
+          width={200}
         />
       </div>
 
@@ -27,6 +27,11 @@ function Header() {
           </li>
           <li>
             <SearchOutlined />
+          </li>
+          <li>
+            <Link to="/login">
+            <UserOutlined />
+            </Link>           
           </li>
         </ul>
       </nav>
