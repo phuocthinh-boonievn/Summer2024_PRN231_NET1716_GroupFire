@@ -9,11 +9,13 @@ function Header() {
   return (
     <header className="header">
       <div className="header__logo">
-        <img
-          src="https://www.fastfoodcart.com/sites/default/files/logo_header_3/fastfoodcart2.png"
-          alt=""
-          width={200}
-        />
+        <Link to={"/"}>
+          <img
+            src="https://www.fastfoodcart.com/sites/default/files/logo_header_3/fastfoodcart2.png"
+            alt=""
+            width={200}
+          />
+        </Link>
       </div>
 
       <nav className="header__nav">

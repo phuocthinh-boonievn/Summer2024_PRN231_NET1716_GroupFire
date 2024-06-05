@@ -15,7 +15,7 @@ function Login() {
       />
       <div className="wrapper">
         <div className="login__logo">
-          <Link to="">
+          <Link to="/">
             <img
               src="https://www.fastfoodcart.com/sites/default/files/logo_header_3/fastfoodcart2.png"
               alt=""
