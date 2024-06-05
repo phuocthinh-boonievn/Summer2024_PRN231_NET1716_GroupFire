@@ -1,4 +1,14 @@
-import { Button, Form, Image, Input, Modal, Table, Upload } from "antd";
+import {
+  Button,
+  Form,
+  Image,
+  Input,
+  Modal,
+  Popconfirm,
+  Select,
+  Table,
+  Upload,
+} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -11,6 +21,17 @@ function FoodItemManagement() {
 
   const [dataSource, setDataSource] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleDeleteMovie = async (id) => {
+    console.log("Delete Fast Food", id);
+
+    await axios.delete(
+      `https://66472a9251e227f23ab155ec.mockapi.io/FastFood/${id}`
+    );
+
+    const listAfterDelete = dataSource.filter((fastfoot) => fastfoot.id != id);
+    setDataSource(listAfterDelete);
+  };
   const columns = [
     {
       title: "Food Item",
@@ -22,6 +43,24 @@ function FoodItemManagement() {
       dataIndex: "image",
       key: "image",
       render: (image) => <Image src={image} width={300} />,
+    },
+    {
+      title: "Action",
+      dataIndex: "id",
+      key: "id",
+      render: (id) => (
+        <>
+          <Popconfirm
+            title="Delete the task"
+            description="Are you sure to delete this task?"
+            onConfirm={() => handleDeleteMovie(id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button danger>Delete</Button>
+          </Popconfirm>
+        </>
+      ),
     },
   ];
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -138,8 +177,17 @@ function FoodItemManagement() {
           <Form.Item label="UnitPrice" name={"UnitPrice"}>
             <Input />
           </Form.Item>
-          <Form.Item label="Category" name={"Category"}>
-            <Input />
+          <Form.Item label="Category" name="Category">
+            <Select
+              options={[
+                { value: "Trending", label: <span>Trending</span> },
+                { value: "Burger", label: <span>Burger</span> },
+                { value: "Chicken", label: <span>Chicken</span> },
+                { value: "Snack", label: <span>Snack</span> },
+                { value: "Pizza", label: <span>Pizza</span> },
+                { value: "Sandwich", label: <span>Sandwich</span> },
+              ]}
+            />
           </Form.Item>
           <Form.Item label="Status" name={"Status"}>
             <Input />

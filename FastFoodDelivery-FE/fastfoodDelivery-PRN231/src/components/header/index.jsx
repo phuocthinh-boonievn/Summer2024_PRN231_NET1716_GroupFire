@@ -1,9 +1,11 @@
 import "./index.scss";
-import React from "react";
 import { Link } from "react-router-dom";
-import { SearchOutlined, UserOutlined } from "@ant-design/icons";
+import { SearchOutlined, UserOutlined, CloseOutlined } from "@ant-design/icons";
+import { useState } from "react";
+import { Input } from "antd";
 
 function Header() {
+  const [isShowSearch, setIsShowSearch] = useState(false);
   return (
     <header className="header">
       <div className="header__logo">
@@ -25,16 +27,20 @@ function Header() {
           <li>
             <Link to="/">Contact</Link>
           </li>
-          <li>
+          <li onClick={() => setIsShowSearch(true)}>
             <SearchOutlined />
           </li>
           <li>
             <Link to="/login">
-            <UserOutlined />
-            </Link>           
+              <UserOutlined />
+            </Link>
           </li>
         </ul>
       </nav>
+      <div className={`header__search ${isShowSearch ? "active" : ""}`}>
+        <Input type={Text} placeholder="Search a fast food..." />
+        <CloseOutlined onClick={() => setIsShowSearch(false)} />
+      </div>
     </header>
   );
 }

@@ -29,4 +29,26 @@
             }
         }
      }
+
+     &__search{
+        position: absolute;
+        top: -100%;
+        left: 0;
+        right: 0;
+        background-color: #fff;
+        padding: 10px 200px;
+        transition: all 1s;
+        display: flex;
+
+        input{
+            flex-grow: 1;
+            border: none;
+            outline: none;
+            font-size: 20px;
+        }
+        &.active{
+            top: 100%
+        }
+
+     }
 }
