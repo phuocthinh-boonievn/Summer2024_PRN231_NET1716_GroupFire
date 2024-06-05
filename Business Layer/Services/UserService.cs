@@ -23,7 +23,7 @@ namespace Business_Layer.Services
         }
         public async Task<UserViewModel> GetUserById(Guid id)
         {
-            var user = await _userRepository.GetByIdAsync(id);
+            var user = await _userRepository.GetUserByID(id);
             if (user == null)
             {
                 throw new Exception("User is not existed !");
