@@ -125,9 +125,42 @@ namespace Business_Layer.Services
             return _response;
         }
 
-        public Task<APIResponseModel> UpdateCategoryAsync(Guid id, CategoryVM category)
+        public async Task<APIResponseModel> UpdateCategoryAsync(Guid id, CategoryVM category)
         {
-            throw new NotImplementedException();
+            var reponse = new APIResponseModel();
+            try
+            {
+                var categoryChecked = await _categoryRepository.GetByIdAsync(id);
+                if(categoryChecked == null || categoryChecked.CategoriesStatus == "IsDeleted")
+                {
+                    reponse.IsSuccess = false;
+                    reponse.message = "Not fond food, you are sure input";
+                }
+                else
+                {
+                    var categoryofUpdate = _mapper.Map(category, categoryChecked);
+                    var categoryDTOAfterUpdate = _mapper.Map<CategoryVM>(categoryofUpdate);
+                    if(await _categoryRepository.SaveAsync() > 0)
+                    {
+                        reponse.Data = categoryDTOAfterUpdate;
+                        reponse.code = 200;
+                        reponse.IsSuccess = true;
+                        reponse.message = "Update Category successfully";
+                    }
+                    else
+                    {
+                        reponse.Data = categoryDTOAfterUpdate;
+                        reponse.IsSuccess = false;
+                        reponse.message = "Update food fail!";
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                reponse.IsSuccess=false;
+                reponse.message = $"Update category fail!, exception {ex.Message}";
+            }
+            return reponse;
         }
     }
 }

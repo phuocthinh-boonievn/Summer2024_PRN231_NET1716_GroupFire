@@ -2,6 +2,7 @@
 using Business_Layer.Services;
 using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel;
+using Data_Layer.ResourceModel.ViewModel.MenuFoodItemVMs;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -80,6 +81,19 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteCategory(Guid id)
         {
             var c = await _categoryService.DeleteCategory(id);
+            if (!c.IsSuccess)
+            {
+                return BadRequest(c);
+            }
+            return Ok(c);
+        }
+
+        [HttpPut("{id:Guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] CategoryVM category)
+        {
+            var c = await _categoryService.UpdateCategoryAsync(id, category);
             if (!c.IsSuccess)
             {
                 return BadRequest(c);
