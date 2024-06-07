@@ -22,21 +22,33 @@ function FoodItemManagement() {
   const [dataSource, setDataSource] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleDeleteMovie = async (id) => {
-    console.log("Delete Fast Food", id);
+  const handleDeleteMovie = async (foodId) => {
+    console.log("Delete Fast Food", foodId);
 
     await axios.delete(
-      `https://66472a9251e227f23ab155ec.mockapi.io/FastFood/${id}`
+      `https://localhost:7173/api/MenuItemFood/DeleteFood/${foodId}`
     );
 
-    const listAfterDelete = dataSource.filter((fastfoot) => fastfoot.id != id);
+    const listAfterDelete = dataSource.filter(
+      (fastfoot) => fastfoot.foodId != foodId
+    );
     setDataSource(listAfterDelete);
   };
   const columns = [
     {
-      title: "Food Item",
-      dataIndex: "name",
-      key: "name",
+      title: "foodName",
+      dataIndex: "foodName",
+      key: "foodName",
+    },
+    {
+      title: "foodDescription",
+      dataIndex: "foodDescription",
+      key: "foodDescription",
+    },
+    {
+      title: "foodStatus",
+      dataIndex: "foodStatus",
+      key: "foodStatus",
     },
     {
       title: "Image",
@@ -46,14 +58,14 @@ function FoodItemManagement() {
     },
     {
       title: "Action",
-      dataIndex: "id",
-      key: "id",
-      render: (id) => (
+      dataIndex: "foodId",
+      key: "foodId",
+      render: (foodId) => (
         <>
           <Popconfirm
             title="Delete the task"
             description="Are you sure to delete this task?"
-            onConfirm={() => handleDeleteMovie(id)}
+            onConfirm={() => handleDeleteMovie(foodId)}
             okText="Yes"
             cancelText="No"
           >
@@ -119,7 +131,7 @@ function FoodItemManagement() {
     console.log(values);
 
     const response = await axios.post(
-      "https://66472a9251e227f23ab155ec.mockapi.io/FastFood",
+      "https://localhost:7173/api/MenuItemFood/CreateFood",
       values
     );
 
@@ -138,10 +150,11 @@ function FoodItemManagement() {
 
   async function fetchFastFood() {
     const response = await axios.get(
-      "https://66472a9251e227f23ab155ec.mockapi.io/FastFood"
+      "https://localhost:7173/api/MenuItemFood/ViewAllFoods"
     );
-
-    setDataSource(response.data);
+    console.log("===============================>>>>>");
+    console.log(response.data);
+    setDataSource(response.data.data);
   }
 
   useEffect(() => {
@@ -168,29 +181,28 @@ function FoodItemManagement() {
           form={formVariable}
           onFinish={handleSubmit}
         >
-          <Form.Item label="Food name" name={"name"}>
+          <Form.Item label="Food name" name={"foodName"}>
             <Input />
           </Form.Item>
-          <Form.Item label="Description" name={"Description"}>
+          <Form.Item label="Description" name={"foodDescription"}>
             <TextArea rows={4} />
           </Form.Item>
-          <Form.Item label="UnitPrice" name={"UnitPrice"}>
+          <Form.Item label="UnitPrice" name={"unitPrice"}>
             <Input />
           </Form.Item>
-          <Form.Item label="Category" name="Category">
+          <Form.Item label="Category" name="categoryId">
             <Select
               options={[
-                { value: "Trending", label: <span>Trending</span> },
-                { value: "Burger", label: <span>Burger</span> },
-                { value: "Chicken", label: <span>Chicken</span> },
-                { value: "Snack", label: <span>Snack</span> },
-                { value: "Pizza", label: <span>Pizza</span> },
-                { value: "Sandwich", label: <span>Sandwich</span> },
+                {
+                  value: "b7a13674-b134-4073-81bb-1fdf05e304d2",
+                  label: <span>Trending</span>,
+                },
+                {
+                  value: "347d1897-f698-47b8-9543-cce8c04de407",
+                  label: <span>Burger</span>,
+                },
               ]}
             />
-          </Form.Item>
-          <Form.Item label="Status" name={"Status"}>
-            <Input />
           </Form.Item>
           <Form.Item label="Image" name={"image"}>
             <Upload

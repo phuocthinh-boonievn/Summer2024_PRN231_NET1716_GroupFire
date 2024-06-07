@@ -17,6 +17,7 @@ namespace Business_Layer.Configuration
             builder.HasKey(x => x.CategoryId);
             builder.Property(x => x.CategoryId).ValueGeneratedOnAdd();
             builder.Property(x => x.CategoriesName).IsRequired().HasMaxLength(100);
+            builder.Property(x => x.CategoriesStatus).HasMaxLength(100);
         }
     }
 }

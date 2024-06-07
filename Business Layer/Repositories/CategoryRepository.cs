@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Business_Layer.Commons;
 using Business_Layer.DataAccess;
+using Data_Layer.Models;
 using Data_Layer.ResourceModel.ViewModel;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,21 +12,12 @@ using System.Threading.Tasks;
 
 namespace Business_Layer.Repositories
 {
-    public class CategoryRepository : ICategoryRepository
+    public class CategoryRepository : GenericRepository<Category>, ICategoryRepository
     {
-        private readonly FastFoodDeliveryDBContext _context;
-        private readonly IMapper _mapper;
-
-        public CategoryRepository(FastFoodDeliveryDBContext context, IMapper mapper)
+        private readonly FastFoodDeliveryDBContext _dbContext;
+        public CategoryRepository(FastFoodDeliveryDBContext context, FastFoodDeliveryDBContext dbContext) : base(context)
         {
-            _context = context;
-            _mapper = mapper;
-        }
-
-        public async Task<List<CategoryVM>> GetAllCategory()
-        {
-            var categories = await _context.Categories.ToListAsync();
-            return _mapper.Map<List<CategoryVM>>(categories);
+            _dbContext = dbContext;
         }
     }
 }

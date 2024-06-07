@@ -8,7 +8,6 @@ namespace Data_Layer.ResourceModel.ViewModel
 {
     public class CategoryVM
     {
-        public Guid CategoryId { get; set; }
         public string CategoriesName { get; set; }
     }
 }

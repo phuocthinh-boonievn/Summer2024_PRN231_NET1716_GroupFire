@@ -1,4 +1,5 @@
-﻿using Data_Layer.ResourceModel.ViewModel;
+﻿using Data_Layer.Models;
+using Data_Layer.ResourceModel.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +8,7 @@ using System.Threading.Tasks;
 
 namespace Business_Layer.Repositories
 {
-    public interface ICategoryRepository
+    public interface ICategoryRepository: IGenericRepository<Category>
     {
-        Task<List<CategoryVM>> GetAllCategory();
     }
 }
