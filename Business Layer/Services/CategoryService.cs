@@ -94,9 +94,39 @@ namespace Business_Layer.Services
             return reponse;
         }
 
-        public Task<APIResponseModel> GetCategoryAsync()
+        public async Task<APIResponseModel> GetCategoryAsync()
         {
-            throw new NotImplementedException();
+            var reponse = new APIResponseModel();
+            List<CategoryVM> CategoryDTO = new List<CategoryVM>();
+            try
+            {
+                var categorys = await _categoryRepository.GetCategoryAll();
+                   
+                foreach(var category in categorys)
+                {
+                    CategoryDTO.Add(_mapper.Map<CategoryVM>(category));
+                }
+                if(CategoryDTO.Count > 0)
+                {
+                    reponse.Data = CategoryDTO;
+                    reponse.code = 200;
+                    reponse.IsSuccess = true;
+                    reponse.message = $"Have {CategoryDTO.Count} food.";
+                    return reponse;
+                }
+                else
+                {
+                    reponse.IsSuccess = false;
+                    reponse.message = $"Have {CategoryDTO.Count} food.";
+                    return reponse;
+                }
+            }catch(Exception ex)
+            {
+
+                reponse.IsSuccess = false;
+                reponse.message = ex.Message;
+                return reponse;
+            }
         }
 
         public async Task<APIResponseModel> GetCategoryByIdsAsync(Guid categoryId)

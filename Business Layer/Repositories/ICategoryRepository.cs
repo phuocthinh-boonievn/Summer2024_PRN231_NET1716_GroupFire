@@ -10,5 +10,6 @@ namespace Business_Layer.Repositories
 {
     public interface ICategoryRepository: IGenericRepository<Category>
     {
+        Task<IEnumerable<Category>> GetCategoryAll();
     }
 }

@@ -54,6 +54,16 @@ namespace API.Controllers
         //    }
         //}
 
+        [HttpGet]
+        [EnableCors("CorsPolicy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ViewAllCategorys()
+        {
+            var result = await _categoryService.GetCategoryAsync();
+            return Ok(result);
+        }
+
         [HttpPost]
         [EnableCors("CorsPolicy")]
         [ProducesResponseType(StatusCodes.Status200OK)]

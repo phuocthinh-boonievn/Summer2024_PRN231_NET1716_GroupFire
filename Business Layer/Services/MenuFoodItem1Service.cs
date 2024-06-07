@@ -120,7 +120,7 @@ namespace Business_Layer.Services
             List<MenuFoodItemViewVM> FoodDTOs = new List<MenuFoodItemViewVM>();
             try
             {
-                var foods = await _menuFoodItem1Repository.GetAllAsync();
+                var foods = await _menuFoodItem1Repository.GetMenuFoodItemAll();
                 foreach (var food in foods)
                 {
                     FoodDTOs.Add(_mapper.Map<MenuFoodItemViewVM>(food));
@@ -145,6 +145,7 @@ namespace Business_Layer.Services
                 reponse.message = ex.Message;
                 return reponse;
             }
+
         }
 
         public async Task<APIResponseModel> GetFoodsByCategoryIdAsync(Guid categoryId)
