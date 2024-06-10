@@ -4,6 +4,7 @@ using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel.MenuFoodItemVMs;
 using Data_Layer.ResourceModel.ViewModel.OrderVMs;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -44,6 +45,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [EnableCors("CorsPolicy")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ViewAllFoods()
@@ -71,6 +73,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [EnableCors("CorsPolicy")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -102,6 +105,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id:Guid}")]
+        [EnableCors("CorsPolicy")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteFood(Guid id)

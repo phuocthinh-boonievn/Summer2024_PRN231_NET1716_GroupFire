@@ -1,30 +1,33 @@
 ﻿using AutoMapper;
+using Business_Layer.Commons;
 using Business_Layer.DataAccess;
+using Business_Layer.Migrations;
+using Data_Layer.Models;
+using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel;
+using Data_Layer.ResourceModel.ViewModel.Enum;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Business_Layer.Repositories
 {
-    public class CategoryRepository : ICategoryRepository
+    public class CategoryRepository : GenericRepository<Category>, ICategoryRepository
     {
-        private readonly FastFoodDeliveryDBContext _context;
-        private readonly IMapper _mapper;
-
-        public CategoryRepository(FastFoodDeliveryDBContext context, IMapper mapper)
+        private readonly FastFoodDeliveryDBContext _dbContext;
+        public CategoryRepository(FastFoodDeliveryDBContext context, FastFoodDeliveryDBContext dbContext) : base(context)
         {
-            _context = context;
-            _mapper = mapper;
+            _dbContext = dbContext;
         }
 
-        public async Task<List<CategoryVM>> GetAllCategory()
+        public async Task<IEnumerable<Category>> GetCategoryAll()
         {
-            var categories = await _context.Categories.ToListAsync();
-            return _mapper.Map<List<CategoryVM>>(categories);
+            var categorylists = await _dbContext.Categories.Where(x => x.CategoriesStatus == CategoryStatusEnum.Active.ToString()).ToListAsync();
+            return categorylists;
         }
     }
 }

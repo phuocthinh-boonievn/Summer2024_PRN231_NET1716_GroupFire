@@ -24,6 +24,19 @@ function App() {
         },
       ],
     },
+
+    // {
+    //   path: "/",
+    //   element: <HomePage />,
+    // },
+    // {
+    //   path: "/fastfood-magegement",
+    //   element: <FoodItemManagement />,
+    // },
+    // {
+    //   path: "/login",
+    //   element: <Login />,
+    // },
   ]);
 
   return <RouterProvider router={router} />;
