@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data_Layer.ResourceModel.ViewModel
+namespace Business_Layer.Services
 {
-    public class CategoryVM
+    internal interface IPaymentService
     {
-        public string CategoriesName { get; set; }
     }
 }

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Data_Layer.ResourceModel.ViewModel
 {
-    public class CategoryVM
-    {
-        public string CategoriesName { get; set; }
-    }
+	public class ShipperVM
+	{
+		public string? userId { get; set; }
+		public string? ShipperStatus { get; set; }
+	}
 }

@@ -16,6 +16,7 @@ namespace Business_Layer.AutoMapper
             CreateMap<Category, CategoryVM>().ReverseMap();
             CreateMap<Order, OrderVM>().ReverseMap();
 
+            CreateMap<Shipper, ShipperVM>().ReverseMap();
             CreateMap<Order, OrderViewVM>().ReverseMap();
             CreateMap<Order, OrderCreateVM>().ReverseMap();
             CreateMap<Order, OrderUpdateVM>().ReverseMap();

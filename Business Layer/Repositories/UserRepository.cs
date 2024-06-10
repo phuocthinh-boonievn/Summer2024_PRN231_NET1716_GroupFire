@@ -179,11 +179,11 @@ namespace Business_Layer.Repositories
             }
             return result;
         }
-        /*public async Task<UserViewModel> GetUserByID(string id)
+        public async Task<User> GetUserByID(Guid id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            UserViewModel userView = user.ToUserViewModel();
-            userView.Role = await _userManager.GetRolesAsync(user);
-        }*/
+            var stringId = id.ToString();
+            var user = await _userManager.FindByIdAsync(stringId);
+            return user;
+        }
     }
 }

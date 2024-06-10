@@ -19,9 +19,14 @@ namespace Business_Layer.Repositories
             _dbContext = dbContext;
         }
 
-        public Task<IEnumerable<Order>> GetAllByStatusAsync(string status)
+        public async Task<IEnumerable<Shipper>> GetAllByStatusAsync(string status)
         {
-            throw new NotImplementedException();
+            var Shippers = await _dbContext.Shippers.Where(o => o.ShipperStatus.ToLower() == status.ToLower()).ToListAsync();
+            if (Shippers.Any() == false)
+            {
+                throw new Exception("User haven't Order");
+            }
+            return Shippers;
         }
     }
 }

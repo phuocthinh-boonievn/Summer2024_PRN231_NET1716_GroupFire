@@ -51,7 +51,6 @@ namespace API
             });
             // Add services repository pattern
             services.AddTransient<IMenuFoodItemRepository, MenuItemFoodRepository>();
-            services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<IDataService, RoleDataRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
 
@@ -71,6 +70,20 @@ namespace API
             //MenuFoodItem
             services.AddScoped<IMenuFoodItem1Repository, MenuFoodItem1Repository>();
             services.AddScoped<IMenuFoodItem1Service, MenuFoodItem1Service>();
+
+            //Category
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<ICategoryService, CategoryService>();
+
+            //Map API
+            services.AddCors(options =>
+            {
+                ////options.AddPolicy("AllowSpecificOrigin",
+                //    builder => builder
+                //        .WithOrigins("http://localhost:5177") // Change to your client app URL
+                //        .AllowAnyHeader()
+                //        .AllowAnyMethod());
+            });
         }
 
         public void Configure(WebApplication app, IWebHostEnvironment env)
@@ -83,10 +96,11 @@ namespace API
             app.UseRouting();
             app.UseSwagger();
             app.UseSwaggerUI();
-            app.UseCors(builder =>
-            {
-                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-            });
+            //app.UseCors(builder =>
+            //{
+            //    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            //});
+            app.UseCors("AllowAll");
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseAuthentication();

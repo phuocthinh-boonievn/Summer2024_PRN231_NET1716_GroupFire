@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data_Layer.ResourceModel.ViewModel
+namespace Data_Layer.ResourceModel.ViewModel.Enum
 {
-    public class CategoryVM
+    public enum MenuFoodItemStatusEnum
     {
-        public string CategoriesName { get; set; }
+        Active,
+        IsDeleted
     }
 }
