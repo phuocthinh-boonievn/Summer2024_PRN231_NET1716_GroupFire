@@ -92,7 +92,7 @@ namespace Business_Layer.Services
             var _response = new APIResponseModel();
             try
             {
-                var c = await _menuFoodItem1Repository.GetByIdAsync(foodId);
+                var c = await _menuFoodItem1Repository.GetByIdAsync(foodId, x => x.Category);
                 if (c == null)
                 {
                     _response.IsSuccess = false;
@@ -100,7 +100,9 @@ namespace Business_Layer.Services
                 }
                 else
                 {
-                    _response.Data = _mapper.Map<MenuFoodItemViewVM>(c);
+                    var EnityDTO = _mapper.Map<MenuFoodItemViewVM>(c);
+                    EnityDTO.CategoryName = c.Category.CategoriesName;
+                    _response.Data = EnityDTO;
                     _response.IsSuccess = true;
                     _response.message = "Food Retrieved Successfully";
                 }
@@ -120,10 +122,12 @@ namespace Business_Layer.Services
             List<MenuFoodItemViewVM> FoodDTOs = new List<MenuFoodItemViewVM>();
             try
             {
-                var foods = await _menuFoodItem1Repository.GetMenuFoodItemAll();
+                var foods = await _menuFoodItem1Repository.GetAllAsync(x => x.Category);
                 foreach (var food in foods)
                 {
-                    FoodDTOs.Add(_mapper.Map<MenuFoodItemViewVM>(food));
+                    var EnityDTO = _mapper.Map<MenuFoodItemViewVM>(food);
+                    EnityDTO.CategoryName = food.Category.CategoriesName;
+                    FoodDTOs.Add(EnityDTO);
                 }
                 if (FoodDTOs.Count > 0)
                 {
@@ -154,7 +158,7 @@ namespace Business_Layer.Services
             List<MenuFoodItemViewVM> FoodDTOs = new List<MenuFoodItemViewVM>();
             try
             {
-                List<MenuFoodItem> foodAll = await _menuFoodItem1Repository.GetAllAsync();
+                List<MenuFoodItem> foodAll = await _menuFoodItem1Repository.GetAllAsync( x => x.Category);
                 if(foodAll != null)
                 {
                     var fillterFoods = foodAll.Where(x => x.CategoryId == categoryId).ToList();
@@ -162,7 +166,9 @@ namespace Business_Layer.Services
                     {
                         foreach (var food in fillterFoods)
                         {
-                            FoodDTOs.Add(_mapper.Map<MenuFoodItemViewVM>(food));
+                            var EnityDTO = _mapper.Map<MenuFoodItemViewVM>(food);
+                            EnityDTO.CategoryName = food.Category.CategoriesName;
+                            FoodDTOs.Add(EnityDTO);
                         }
                         if (FoodDTOs.Count > 0)
                         {

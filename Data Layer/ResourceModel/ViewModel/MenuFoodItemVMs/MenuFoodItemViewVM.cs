@@ -10,6 +10,7 @@ namespace Data_Layer.ResourceModel.ViewModel.MenuFoodItemVMs
     {
         public Guid FoodId { get; set; }
         public Guid? CategoryId { get; set; }
+        public string? CategoryName { get; set; }
         public string FoodName { get; set; }
         public string? FoodDescription { get; set; }
         public string? Image { get; set; }
