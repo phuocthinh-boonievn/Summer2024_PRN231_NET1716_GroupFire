@@ -3,6 +3,7 @@ using Business_Layer.DataAccess;
 using Business_Layer.Services;
 using Data_Layer.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 
 namespace Business_Layer.Repositories
@@ -10,13 +11,24 @@ namespace Business_Layer.Repositories
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
         private readonly FastFoodDeliveryDBContext _context;
+        private readonly DbSet<TEntity> _dbSet;
 
-        
         public GenericRepository(FastFoodDeliveryDBContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            _dbSet = _context.Set<TEntity>();
         }
-        public async Task<List<TEntity>> GetAllAsync() => await _context.Set<TEntity>().ToListAsync();
+        public async Task<List<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes) 
+        {
+            IQueryable<TEntity> query = _dbSet;
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.ToListAsync();
+        }
         
 
         public async Task AddAsync(TEntity entity)
@@ -59,11 +71,47 @@ namespace Business_Layer.Repositories
             return result;
         }
 
-        public async Task<TEntity?> GetByIdAsync(Guid id)
+        //public async Task<TEntity?> GetByIdAsync(Guid id, params Expression<Func<TEntity, object>>[] includes)
+        //{
+        //    IQueryable<TEntity> query = _dbSet;
+
+        //    foreach (var include in includes)
+        //    {
+        //        query = query.Include(include);
+        //    }
+
+        //    return await query.SingleOrDefaultAsync(e => EF.Property<Guid>(e, "Id") == id);
+        //}
+
+        public async Task<TEntity?> GetByIdAsync(Guid id, params Expression<Func<TEntity, object>>[] includes)
         {
-            var stringId = id.ToString();
-            return await _context.Set<TEntity>().FindAsync(stringId);
+            IQueryable<TEntity> query = _context.Set<TEntity>();
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            var entityType = _context.Model.FindEntityType(typeof(TEntity));
+            var primaryKey = entityType.FindPrimaryKey();
+            var keyProperty = primaryKey.Properties.FirstOrDefault();
+
+            if (keyProperty == null)
+            {
+                throw new InvalidOperationException("Không tìm thấy khóa chính cho thực thể.");
+            }
+
+            var keyPropertyName = keyProperty.Name;
+
+            var parameter = Expression.Parameter(typeof(TEntity), "e");
+            var property = Expression.Property(parameter, keyPropertyName);
+            var constant = Expression.Constant(id);
+            var equal = Expression.Equal(property, constant);
+            var lambda = Expression.Lambda<Func<TEntity, bool>>(equal, parameter);
+
+            return await query.SingleOrDefaultAsync(lambda);
         }
+
 
         public void Delete(TEntity entity)
         {
