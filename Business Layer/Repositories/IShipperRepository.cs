@@ -9,6 +9,6 @@ namespace Business_Layer.Repositories
 {
     public interface IShipperRepository : IGenericRepository<Shipper>
     {
-        public Task<IEnumerable<Order>> GetAllByStatusAsync(string status);
+        public Task<IEnumerable<Shipper>> GetAllByStatusAsync(string status);
     }
 }
