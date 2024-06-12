@@ -11,5 +11,6 @@ namespace Business_Layer.Repositories
     {
         public Task<IEnumerable<Order>> GetAllOrderByUserIdAsync(string userID);
         public Task<IEnumerable<Order>> GetAllByStatusAsync(string status);
+        Task<IEnumerable<Order>> GetConfirmedOrders();
     }
 }
