@@ -1,5 +1,6 @@
 ﻿using Business_Layer.Repositories;
 using Data_Layer.Models;
+using Data_Layer.ResourceModel.ViewModel.DashboardViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +13,13 @@ namespace Business_Layer.Services
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
+        private readonly IUserRepository _userRepository;
 
-        public DashBoardService(IOrderRepository order, IOrderDetailRepository orderDetail) 
+        public DashBoardService(IOrderRepository order, IOrderDetailRepository orderDetail, IUserRepository userRepository) 
         {
             _orderRepository = order;
             _orderDetailRepository = orderDetail;
+            _userRepository = userRepository;
         }
 
         public async Task<decimal> GetTotalSalesByMonth(int month, int year)
@@ -62,6 +65,11 @@ namespace Business_Layer.Services
             var weeklyTotalSales = orders.Where(o => o.OrderDate >= weekStart
             &&  o.OrderDate <= weekEnd).Sum(o => o.TotalPrice);
             return weeklyTotalSales.GetValueOrDefault();
+        }
+        public async Task<List<LoyalCustomer>> GetTopLoyalCustomer()
+        {
+            var loyalCustomeList = await _userRepository.GetTopFiveCustomerAsync();
+            return loyalCustomeList;
         }
     }
 }
