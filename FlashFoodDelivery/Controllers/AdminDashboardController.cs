@@ -1,4 +1,6 @@
 ﻿using Business_Layer.Services;
+using Data_Layer.ResourceModel.Common;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,28 +18,49 @@ namespace API.Controllers
         }
 
         [HttpGet("GetTotalRevenue")]
-        public async Task<decimal> GetTotalRevenue()
+        [EnableCors("CorsPolicy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetTotalRevenue()
         {
             decimal totalRevenue = await _dashboardService.GetTotalRevenue();
-            return totalRevenue;
+            return Ok(totalRevenue);
         }
         [HttpGet("GetMonthlyRevenue")]
-        public async Task<decimal> GetMonthlyRevenue(int month, int year)
+        [EnableCors("CorsPolicy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetMonthlyRevenue(int month, int year)
         {
             decimal monthlyRevenue = await _dashboardService.GetTotalSalesByMonth(month, year);
-            return monthlyRevenue;
+            return Ok(monthlyRevenue);
         }
         [HttpGet("GetWeeklyRevenue")]
-        public async Task<decimal> GetWeeklyRevenue(int year, int weekNumber)
+        [EnableCors("CorsPolicy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetWeeklyRevenue(int year, int weekNumber)
         {
             decimal weeklyRevenue = await _dashboardService.GetTotalSalesByWeek(year, weekNumber);
-            return weeklyRevenue;
+            return Ok(weeklyRevenue);
         }
         [HttpGet("GetRevenueByYear")]
-        public async Task<decimal> GetRevenueByYear(int year)
+        [EnableCors("CorsPolicy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetRevenueByYear(int year)
         {
             decimal annualYearRevenue = await _dashboardService.GetTotalSalesByYear(year);
-            return annualYearRevenue;
+            return Ok(annualYearRevenue);
+        }
+        [HttpGet("GetTopFiveCustomer")]
+        [EnableCors("CorsPolicy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetTopLoyalCustomer()
+        {
+            var loyalCustomers = await _dashboardService.GetTopLoyalCustomer();
+            return Ok(loyalCustomers);
         }
     }
 }

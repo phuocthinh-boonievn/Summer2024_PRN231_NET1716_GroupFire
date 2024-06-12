@@ -4,8 +4,10 @@ using Business_Layer.Services;
 using Business_Layer.Utils;
 using Data_Layer.Models;
 using Data_Layer.ResourceModel.Common;
+using Data_Layer.ResourceModel.ViewModel.DashboardViewModel;
 using Data_Layer.ResourceModel.ViewModel.User;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -184,6 +186,21 @@ namespace Business_Layer.Repositories
             var stringId = id.ToString();
             var user = await _userManager.FindByIdAsync(stringId);
             return user;
+        }
+        public async Task<List<LoyalCustomer>> GetTopFiveCustomerAsync()
+        {
+            var loyalCustomer = await _context.Users
+            .Select(user => new LoyalCustomer
+            {
+                CustomerName = user.UserName,
+                TotalOrders = user.Orders.Where(o => o.StatusOrder == "Confirmed").Count(),
+                TotalCost = user.Orders.SelectMany(o => o.OrderDetails).Sum(od => od.UnitPrice).GetValueOrDefault(),
+            })
+            .OrderByDescending(order => order.TotalOrders)
+            .ThenByDescending(cost => cost.TotalCost)
+            .Take(5)
+            .ToListAsync();
+            return loyalCustomer;
         }
     }
 }

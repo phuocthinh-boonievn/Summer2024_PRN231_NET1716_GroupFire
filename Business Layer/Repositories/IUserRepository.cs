@@ -1,5 +1,6 @@
 ﻿using Data_Layer.Models;
 using Data_Layer.ResourceModel.Common;
+using Data_Layer.ResourceModel.ViewModel.DashboardViewModel;
 using Data_Layer.ResourceModel.ViewModel.User;
 using System;
 using System.Collections.Generic;
@@ -14,5 +15,6 @@ namespace Business_Layer.Repositories
         Task<APIResponseModel> Login(LoginVM model);
         Task<APIResponseModel> Register(RegisterVM model);
         Task<User> GetUserByID(Guid id);
+        Task<List<LoyalCustomer>> GetTopFiveCustomerAsync();
     }
 }
