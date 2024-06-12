@@ -75,6 +75,8 @@ namespace API
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ICategoryService, CategoryService>();
 
+            //AdminDashboard
+            services.AddScoped<IDashboardService, DashBoardService>();
             //Map API
             services.AddCors(options =>
             {
