@@ -35,5 +35,12 @@ namespace Business_Layer.Repositories
             }
             return Orders;
         }
+
+        public async Task<IEnumerable<Order>> GetConfirmedOrders()
+        {
+            var orders = await _dbContext.Orders.ToListAsync();
+            var confirmedOrders = orders.Where(o => o.StatusOrder == "Confirmed");
+            return confirmedOrders.ToList();
+        }
     }
 }
