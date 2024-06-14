@@ -1,5 +1,6 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Layout from "./components/layout";
+import AdminAccountManagement from "./pages/accountuser-management";
 import FoodItemManagement from "./pages/fastfood-magegement";
 import HomePage from "./pages/home";
 import Login from "./pages/login";
@@ -17,6 +18,10 @@ function App() {
         {
           path: "/fastfood-magegement",
           element: <FoodItemManagement />,
+        },
+        {
+          path: "/accountuser-management",
+          element: <AdminAccountManagement />,
         },
         {
           path: "/login",
