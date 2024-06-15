@@ -3,6 +3,7 @@ using Business_Layer.Services;
 using Data_Layer.Models;
 using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel.User;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -58,6 +59,7 @@ namespace API.Controllers
             }
         }
         [HttpPost("login")]
+        [EnableCors("CorsPolicy")]
         public async Task<APIResponseModel> Login([FromBody] LoginVM model)
         {
             try
@@ -92,6 +94,7 @@ namespace API.Controllers
         }
 
         [HttpPost("register")]
+        [EnableCors("CorsPolicy")]
         public async Task<APIResponseModel> Register([FromBody] RegisterVM model)
         {
             try

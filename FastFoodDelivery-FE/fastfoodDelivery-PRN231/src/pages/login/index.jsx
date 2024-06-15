@@ -1,7 +1,40 @@
-import { Link } from "react-router-dom";
+import { async } from "@firebase/util";
+import { Button, Form, Input } from "antd";
+import { useForm } from "antd/es/form/Form";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { login } from "../../redux/features/userAccount";
 import "./index.scss";
 
 function Login() {
+  const [formVariable] = useForm();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  async function handleSubmit(values) {
+    console.log(values);
+    try {
+      const response = await axios.post(
+        "https://localhost:7173/api/User/login",
+        values
+      );
+
+      const decoded = jwtDecode(response.data.data);
+      dispatch(login(decoded));
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+      alert("Invalid Username or Passwprd");
+    }
+  }
+
+  function handleOk() {
+    formVariable.submit();
+  }
+
   return (
     <div className="login">
       <img
@@ -13,6 +46,7 @@ function Login() {
         allow="autoplay; fullscreen; picture-in-picture"
         allowfullscreen
       />
+
       <div className="wrapper">
         <div className="login__logo">
           <Link to="/">
@@ -24,11 +58,40 @@ function Login() {
           </Link>
         </div>
         <div className="line"></div>
+
         <div className="login__form">
           <h3>Login into your account</h3>
-          <input type="text" placeholder="Username" />
-          <input type="password" placeholder="Password" />
-          <button>Login</button>
+
+          <Form form={formVariable} onFinish={handleSubmit}>
+            <Form.Item
+              name="userName"
+              rules={[
+                {
+                  required: true,
+                  message: "Please Input username",
+                },
+              ]}
+            >
+              <Input type="text" placeholder="Username" />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[
+                {
+                  required: true,
+                  message: "Please Input password",
+                },
+              ]}
+            >
+              <Input type="password" placeholder="Password" />
+            </Form.Item>
+            <Form.Item>
+              <Button onClick={handleOk}>Login</Button>
+            </Form.Item>
+          </Form>
+          <div className="link">
+            <Link to="/register">Register your Account</Link>
+          </div>
         </div>
       </div>
     </div>

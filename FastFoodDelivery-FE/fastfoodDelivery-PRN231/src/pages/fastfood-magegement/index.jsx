@@ -162,7 +162,7 @@ function FoodItemManagement() {
   }, []);
 
   return (
-    <div>
+    <div className="accountpage">
       <Button type="primary" onClick={handleShowModal}>
         Add New Fast Food
       </Button>
@@ -194,7 +194,7 @@ function FoodItemManagement() {
             <Select
               options={[
                 {
-                  value: "b7a13674-b134-4073-81bb-1fdf05e304d2",
+                  value: "5779d960-0287-44d0-f775-08dc86c8ab56",
                   label: <span>Trending</span>,
                 },
                 {

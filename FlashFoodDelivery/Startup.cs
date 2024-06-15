@@ -102,7 +102,7 @@ namespace API
             //{
             //    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
             //});
-            app.UseCors("AllowAll");
+            app.UseCors("CorsPolicy");
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseAuthentication();

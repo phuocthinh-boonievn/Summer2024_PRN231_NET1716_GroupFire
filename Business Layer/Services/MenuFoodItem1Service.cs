@@ -3,6 +3,7 @@ using Business_Layer.Repositories;
 using Data_Layer.Models;
 using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel;
+using Data_Layer.ResourceModel.ViewModel.Enum;
 using Data_Layer.ResourceModel.ViewModel.MenuFoodItemVMs;
 using Data_Layer.ResourceModel.ViewModel.OrderDetailVMs;
 using Data_Layer.ResourceModel.ViewModel.OrderVMs;
@@ -125,9 +126,13 @@ namespace Business_Layer.Services
                 var foods = await _menuFoodItem1Repository.GetAllAsync(x => x.Category);
                 foreach (var food in foods)
                 {
-                    var EnityDTO = _mapper.Map<MenuFoodItemViewVM>(food);
-                    EnityDTO.CategoryName = food.Category.CategoriesName;
-                    FoodDTOs.Add(EnityDTO);
+                    if(food.FoodStatus.ToString() == MenuFoodItemStatusEnum.Active.ToString())
+                    {
+                        var EnityDTO = _mapper.Map<MenuFoodItemViewVM>(food);
+                        EnityDTO.CategoryName = food.Category.CategoriesName;
+                        FoodDTOs.Add(EnityDTO);
+                    }
+                    
                 }
                 if (FoodDTOs.Count > 0)
                 {

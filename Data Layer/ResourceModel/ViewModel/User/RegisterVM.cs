@@ -19,6 +19,10 @@ namespace Data_Layer.ResourceModel.ViewModel.User
         public string FullName { get; set; }
         [Required(ErrorMessage = "Address is required")]
         public string Address { get; set; }
+
+        [Required(ErrorMessage = "phoneNumber is required")]
+        [MinLength(10)]
+        public string phoneNumber { get; set; }
         [Required(ErrorMessage = "Password is required")]
         [MinLength(6)]
         [DataType(DataType.Password)]

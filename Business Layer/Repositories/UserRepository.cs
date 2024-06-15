@@ -143,8 +143,10 @@ namespace Business_Layer.Repositories
                 code = 200,
                 IsSuccess = true,
                 message = "User created success",
+                
+                
             };
-            //Check có trùng Email, Username của hệ thống không.
+            
             var userExistMail = await _userManager.FindByEmailAsync(model.Email);
             var userExistName = await _userManager.FindByNameAsync(model.Username);
             if (userExistMail != null || userExistName != null)
@@ -156,7 +158,7 @@ namespace Business_Layer.Repositories
                     IsSuccess = false,
                 };
             }
-            // Nếu chưa tồn tại thid tạo ra cho 1 cái account mới
+            
 
             var user = new User()
             {
@@ -177,9 +179,15 @@ namespace Business_Layer.Repositories
                     code = 200,
                     message = "Error when create user",
                     IsSuccess = false,
+                    
                 };
             }
-            return result;
+            return new APIResponseModel (){
+                    code = 200,
+                    message= "Register successfully",
+                    IsSuccess = true,
+                    Data = user,
+            };
         }
         public async Task<User> GetUserByID(Guid id)
         {

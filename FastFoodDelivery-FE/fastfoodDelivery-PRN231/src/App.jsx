@@ -4,6 +4,7 @@ import AdminAccountManagement from "./pages/accountuser-management";
 import FoodItemManagement from "./pages/fastfood-magegement";
 import HomePage from "./pages/home";
 import Login from "./pages/login";
+import Register from "./pages/register";
 
 function App() {
   const router = createBrowserRouter([
@@ -26,6 +27,10 @@ function App() {
         {
           path: "/login",
           element: <Login />,
+        },
+        {
+          path: "/register",
+          element: <Register />,
         },
       ],
     },

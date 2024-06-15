@@ -25,10 +25,10 @@ export default function Carousel({
 
   const fetchFastFood = async () => {
     const response = await axios.get(
-      "https://66472a9251e227f23ab155ec.mockapi.io/FastFood"
+      "https://localhost:7173/api/MenuItemFood/ViewAllFoods"
     );
 
-    setFastFood(response.data);
+    setFastFood(response.data.data);
   };
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function Carousel({
         }}
       >
         {fastfoods
-          .filter((fastfood) => fastfood.Category === Category)
+          .filter((fastfood) => fastfood.categoryName === Category)
           .map((fastfood) => (
             <SwiperSlide>
               <img src={fastfood.image} alt="" />
