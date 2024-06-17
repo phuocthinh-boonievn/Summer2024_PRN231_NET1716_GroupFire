@@ -1,6 +1,11 @@
 import "./index.scss";
 import { Link, useNavigate } from "react-router-dom";
-import { SearchOutlined, UserOutlined, CloseOutlined } from "@ant-design/icons";
+import {
+  SearchOutlined,
+  UserOutlined,
+  CloseOutlined,
+  ShoppingCartOutlined,
+} from "@ant-design/icons";
 import { useState } from "react";
 import { Dropdown, Input } from "antd";
 import { useDispatch, useSelector } from "react-redux";
@@ -64,6 +69,11 @@ function Header() {
           </li>
           <li onClick={() => setIsShowSearch(true)}>
             <SearchOutlined />
+          </li>
+          <li>
+            <Link to="/shoppingcart">
+              <ShoppingCartOutlined />
+            </Link>
           </li>
           <li>
             {account ? (

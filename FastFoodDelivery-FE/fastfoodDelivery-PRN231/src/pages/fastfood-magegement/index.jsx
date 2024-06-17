@@ -22,6 +22,9 @@ function FoodItemManagement() {
   const [dataSource, setDataSource] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 
+  const [visibleEditModal, setVisibleEditModal] = useState(false);
+  const [FoodItemEdit, setFoodItemdit] = useState(false);
+
   const handleDeleteMovie = async (foodId) => {
     console.log("Delete Fast Food", foodId);
 
@@ -71,6 +74,15 @@ function FoodItemManagement() {
           >
             <Button danger>Delete</Button>
           </Popconfirm>
+          <Button
+            onClick={() => {
+              handleOpenEditModal;
+            }}
+            type="primary"
+            style={{ background: "orange" }}
+          >
+            Update
+          </Button>
         </>
       ),
     },
@@ -161,13 +173,38 @@ function FoodItemManagement() {
     fetchFastFood();
   }, []);
 
+  // //------------------update---------------------------
+  function handleOpenEditModal() {
+    setVisibleEditModal(true);
+  }
+
+  function handleCloseEditModal() {
+    setVisibleEditModal(false);
+  }
+
+  function handleOnEdit(record) {
+    setCourseEdit({ ...record });
+    handleOpenEditModal();
+  }
+
+  function handleResetEditing() {
+    setCourseEdit(null);
+    handleCloseEditModal;
+  }
+
+  // function handleEditCource() {
+  //   const response = axios.put(
+  //     `https://localhost:7173/api/MenuItemFood/UpdateFood/${courseE}`
+  //   );
+  // }
+
+  //----------------------------------------------------
   return (
     <div className="accountpage">
       <Button type="primary" onClick={handleShowModal}>
         Add New Fast Food
       </Button>
       <Table columns={columns} dataSource={dataSource}></Table>
-
       <Modal
         open={isOpen}
         title="Add New Fast Food"
@@ -230,6 +267,50 @@ function FoodItemManagement() {
           src={previewImage}
         />
       )}
+      {/* //------------------UpDate---------------------------- */}
+      <Modal
+        title="Edit Foot Item"
+        open={visibleEditModal}
+        onCancel={handleCloseEditModal}
+        // onOk={handleEditCource}
+      >
+        <Form>
+          <Form.Item label="Food name" name={"foodName"}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="Description" name={"foodDescription"}>
+            <TextArea rows={4} />
+          </Form.Item>
+          <Form.Item label="UnitPrice" name={"unitPrice"}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="Category" name="categoryId">
+            <Select
+              options={[
+                {
+                  value: "5779d960-0287-44d0-f775-08dc86c8ab56",
+                  label: <span>Trending</span>,
+                },
+                {
+                  value: "347d1897-f698-47b8-9543-cce8c04de407",
+                  label: <span>Burger</span>,
+                },
+              ]}
+            />
+          </Form.Item>
+          <Form.Item label="Image" name={"image"}>
+            <Upload
+              action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+              listType="picture-card"
+              fileList={fileList}
+              onPreview={handlePreview}
+              onChange={handleChange}
+            >
+              {fileList.length >= 8 ? null : uploadButton}
+            </Upload>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 }

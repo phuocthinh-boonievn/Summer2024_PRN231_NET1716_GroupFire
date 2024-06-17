@@ -5,6 +5,7 @@ import FoodItemManagement from "./pages/fastfood-magegement";
 import HomePage from "./pages/home";
 import Login from "./pages/login";
 import Register from "./pages/register";
+import ShoppingCart from "./pages/shoppingcart/ShoppingCart";
 
 function App() {
   const router = createBrowserRouter([
@@ -31,6 +32,10 @@ function App() {
         {
           path: "/register",
           element: <Register />,
+        },
+        {
+          path: "/shoppingcart",
+          element: <ShoppingCart />,
         },
       ],
     },
