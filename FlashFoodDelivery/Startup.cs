@@ -2,6 +2,7 @@
 using Business_Layer.DataAccess;
 using Business_Layer.Repositories;
 using Business_Layer.Services;
+using Business_Layer.Utils;
 using Data_Layer.Models;
 using Data_Layer.ResourceModel.ViewModel.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -77,6 +78,11 @@ namespace API
 
             //AdminDashboard
             services.AddScoped<IDashboardService, DashBoardService>();
+
+            //ZaloPay
+            services.Configure<ZaloPaySettings>(Configuration.GetSection("ZaloPay"));
+            services.AddScoped<IPaymentZaloService, PaymentZaloSerivce>();
+            services.AddControllers();
             //Map API
             services.AddCors(options =>
             {
