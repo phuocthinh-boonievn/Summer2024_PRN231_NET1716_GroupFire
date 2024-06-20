@@ -92,6 +92,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{id:Guid}")]
+       
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateFood(Guid id, [FromBody] MenuFoodItemUpdateVM updateDto)

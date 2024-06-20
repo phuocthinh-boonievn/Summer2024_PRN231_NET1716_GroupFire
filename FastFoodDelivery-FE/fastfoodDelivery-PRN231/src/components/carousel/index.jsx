@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
+import { ShoppingCartOutlined } from "@ant-design/icons";
 
 // Import Swiper styles
 import "swiper/css";
@@ -11,6 +12,10 @@ import "./index.scss";
 // import required modules
 import { Autoplay, Pagination } from "swiper/modules";
 import axios from "axios";
+import { Button, Card } from "antd";
+import Meta from "antd/es/card/Meta";
+import { useDispatch } from "react-redux";
+import { addFood } from "../../redux/features/fastfoodCart";
 
 //
 
@@ -20,8 +25,12 @@ export default function Carousel({
   autoplay = false,
 }) {
   console.log(numberOfSlides);
-
+  const dispatch = useDispatch();
   const [fastfoods, setFastFood] = useState([]);
+
+  const handleGetByFastFoodId = async (foodId) => {
+    console.log("Get Fast Food by Id", foodId);
+  };
 
   const fetchFastFood = async () => {
     const response = await axios.get(
@@ -35,8 +44,23 @@ export default function Carousel({
     fetchFastFood();
   }, []);
 
+  function handlegetValue(e) {
+    console.log(e);
+    dispatch(
+      addFood({
+        id: e.foodId,
+        name: e.foodName,
+        description: e.description,
+        price: e.unitPrice,
+        quantity: 1,
+        image: e.image,
+      })
+    );
+  }
+
   return (
     <>
+      <h3>{Category}</h3>
       <Swiper
         slidesPerView={numberOfSlides}
         pagination={true}
@@ -51,7 +75,22 @@ export default function Carousel({
           .filter((fastfood) => fastfood.categoryName === Category)
           .map((fastfood) => (
             <SwiperSlide>
-              <img src={fastfood.image} alt="" />
+              {/* <img src={fastfood.image} alt="" /> */}
+              <Card
+                className="Card"
+                hoverable
+                style={{ width: 240 }}
+                cover={<img src={fastfood.image} alt="" />}
+                onClick={() => {
+                  handlegetValue(fastfood);
+                }}
+              >
+                <Meta
+                  title={fastfood.foodName}
+                  description={fastfood.unitPrice}
+                />
+                <ShoppingCartOutlined className="carousel__cart" />
+              </Card>
             </SwiperSlide>
           ))}
       </Swiper>

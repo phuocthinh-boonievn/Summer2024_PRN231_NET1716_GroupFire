@@ -6,6 +6,7 @@ import {
   Modal,
   Popconfirm,
   Select,
+  Space,
   Table,
   Upload,
 } from "antd";
@@ -15,17 +16,36 @@ import { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import uploadFile from "../../utils/upload";
+import "./index.scss";
 
 function FoodItemManagement() {
+  const [category, setCategory] = useState([]);
+  const fetchCategories = async () => {
+    const resonse = await axios.get(
+      `https://localhost:7173/api/Category/ViewAllCategorys`
+    );
+    const data = resonse.data.data;
+    console.log({ data });
+    const list = data.map((category, index) => ({
+      value: category.categoryId,
+      label: <span>{category.categoriesName}</span>,
+    }));
+    setCategory(list);
+  };
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+  console.log(category);
   const [formVariable] = useForm();
 
   const [dataSource, setDataSource] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 
   const [visibleEditModal, setVisibleEditModal] = useState(false);
-  const [FoodItemEdit, setFoodItemdit] = useState(false);
+  const [fastfoodEdit, setFastFoodEdit] = useState(null);
+  const [oldFood, setOldFood] = useState({});
 
-  const handleDeleteMovie = async (foodId) => {
+  const handleDeleteFastFood = async (foodId) => {
     console.log("Delete Fast Food", foodId);
 
     await axios.delete(
@@ -49,6 +69,11 @@ function FoodItemManagement() {
       key: "foodDescription",
     },
     {
+      title: "unitPrice",
+      dataIndex: "unitPrice",
+      key: "unitPrice",
+    },
+    {
       title: "foodStatus",
       dataIndex: "foodStatus",
       key: "foodStatus",
@@ -63,27 +88,31 @@ function FoodItemManagement() {
       title: "Action",
       dataIndex: "foodId",
       key: "foodId",
-      render: (foodId) => (
-        <>
+      render: (foodId, data) => (
+        <Space>
           <Popconfirm
             title="Delete the task"
             description="Are you sure to delete this task?"
-            onConfirm={() => handleDeleteMovie(foodId)}
+            onConfirm={() => handleDeleteFastFood(foodId)}
             okText="Yes"
             cancelText="No"
           >
-            <Button danger>Delete</Button>
+            <Button type="primary" danger>
+              Delete
+            </Button>
           </Popconfirm>
           <Button
             onClick={() => {
-              handleOpenEditModal;
+              setVisibleEditModal(true);
+              handleOnEdit(data);
+              setOldFood(data);
             }}
             type="primary"
             style={{ background: "orange" }}
           >
             Update
           </Button>
-        </>
+        </Space>
       ),
     },
   ];
@@ -182,25 +211,52 @@ function FoodItemManagement() {
     setVisibleEditModal(false);
   }
 
-  function handleOnEdit(record) {
-    setCourseEdit({ ...record });
+  function handleOnEdit(food) {
+    console.log(food);
+    setOldFood(food);
     handleOpenEditModal();
   }
 
   function handleResetEditing() {
-    setCourseEdit(null);
-    handleCloseEditModal;
+    setOldFood(null);
+    handleCloseEditModal();
   }
 
-  // function handleEditCource() {
-  //   const response = axios.put(
-  //     `https://localhost:7173/api/MenuItemFood/UpdateFood/${courseE}`
-  //   );
-  // }
+  function handleEditCource() {
+    console.log(oldFood);
+    const response = axios.put(
+      `https://localhost:7173/api/MenuItemFood/UpdateFood/${oldFood.foodId}`,
+      {
+        foodName: oldFood.foodName,
+        foodDescription: oldFood.foodDescription,
+        unitPrice: oldFood.unitPrice,
+        categoryId: oldFood.categoryId,
+        image: oldFood.image,
+      }
+    );
 
+    fetchFastFood();
+    handleResetEditing();
+  }
+  const [formUpdate] = Form.useForm();
+
+  useEffect(() => {
+    if (!oldFood) return;
+    formUpdate.setFieldsValue(oldFood);
+    setFileList([
+      {
+        uid: "-1",
+        name: "image.png",
+        status: "done",
+        url: oldFood?.image,
+      },
+    ]);
+  }, [oldFood]);
   //----------------------------------------------------
+
+  console.log(oldFood);
   return (
-    <div className="accountpage">
+    <div className="fastfoodpage">
       <Button type="primary" onClick={handleShowModal}>
         Add New Fast Food
       </Button>
@@ -227,20 +283,11 @@ function FoodItemManagement() {
           <Form.Item label="UnitPrice" name={"unitPrice"}>
             <Input />
           </Form.Item>
+
           <Form.Item label="Category" name="categoryId">
-            <Select
-              options={[
-                {
-                  value: "5779d960-0287-44d0-f775-08dc86c8ab56",
-                  label: <span>Trending</span>,
-                },
-                {
-                  value: "347d1897-f698-47b8-9543-cce8c04de407",
-                  label: <span>Burger</span>,
-                },
-              ]}
-            />
+            <Select options={category} />
           </Form.Item>
+
           <Form.Item label="Image" name={"image"}>
             <Upload
               action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
@@ -271,31 +318,77 @@ function FoodItemManagement() {
       <Modal
         title="Edit Foot Item"
         open={visibleEditModal}
-        onCancel={handleCloseEditModal}
-        // onOk={handleEditCource}
+        onOk={handleEditCource}
+        onCancel={() => {
+          setVisibleEditModal(false);
+          formUpdate.resetFields();
+        }}
+        okText={"Save"}
       >
-        <Form>
+        <Form form={formUpdate}>
           <Form.Item label="Food name" name={"foodName"}>
-            <Input />
+            <Input
+              value={oldFood?.foodName}
+              onChange={(e) => {
+                const value = e;
+                setFastFoodEdit((oldFood) => ({ ...oldFood, foodName: value }));
+              }}
+            />
           </Form.Item>
           <Form.Item label="Description" name={"foodDescription"}>
-            <TextArea rows={4} />
+            <TextArea
+              rows={4}
+              value={oldFood?.description}
+              onChange={(e) => {
+                const value = e;
+                setFastFoodEdit((oldFood) => ({
+                  ...oldFood,
+                  description: value,
+                }));
+              }}
+              // onChange={(e) => {
+              //   console.log(oldFood);
+              //   setFastFoodEdit((oldFood) => {
+              //     return { ...oldFood, description: e };
+              //   });
+              // }}
+            />
           </Form.Item>
           <Form.Item label="UnitPrice" name={"unitPrice"}>
-            <Input />
+            <Input
+              value={oldFood?.unitPrice}
+              onChange={(e) => {
+                const value = e;
+                setFastFoodEdit((oldFood) => ({
+                  ...oldFood,
+                  unitPrice: value,
+                }));
+              }}
+              // onChange={(e) => {
+              //   console.log(oldFood);
+              //   setFastFoodEdit((oldFood) => {
+              //     return { ...oldFood, unitPrice: e };
+              //   });
+              // }}
+            />
           </Form.Item>
           <Form.Item label="Category" name="categoryId">
             <Select
-              options={[
-                {
-                  value: "5779d960-0287-44d0-f775-08dc86c8ab56",
-                  label: <span>Trending</span>,
-                },
-                {
-                  value: "347d1897-f698-47b8-9543-cce8c04de407",
-                  label: <span>Burger</span>,
-                },
-              ]}
+              value={oldFood?.categoryId}
+              onChange={(e) => {
+                const value = e;
+                setFastFoodEdit((oldFood) => ({
+                  ...oldFood,
+                  categoryId: value,
+                }));
+              }}
+              // onChange={(e) => {
+              //   console.log(oldFood);
+              //   setFastFoodEdit((oldFood) => {
+              //     return { ...oldFood, categoryId: e };
+              //   });
+              // }}
+              options={category}
             />
           </Form.Item>
           <Form.Item label="Image" name={"image"}>
@@ -307,6 +400,30 @@ function FoodItemManagement() {
               onChange={handleChange}
             >
               {fileList.length >= 8 ? null : uploadButton}
+              <Image
+                wrapperStyle={{
+                  display: "none",
+                }}
+                preview={{
+                  visible: previewOpen,
+                  onVisibleChange: (visible) => setPreviewOpen(visible),
+                  afterOpenChange: (visible) => !visible && setPreviewImage(""),
+                }}
+                src={oldFood?.image}
+                onChange={(e) => {
+                  const value = e;
+                  setFastFoodEdit((oldFood) => ({
+                    ...oldFood,
+                    image: value,
+                  }));
+                }}
+                // onChange={(e) => {
+                //   console.log(oldFood);
+                //   setFastFoodEdit((oldFood) => {
+                //     return { ...oldFood, image: e };
+                //   });
+                // }}
+              />
             </Upload>
           </Form.Item>
         </Form>

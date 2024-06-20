@@ -12,4 +12,12 @@
             height: 200px;
         }
     }
+.ant-card-body{
+    display: flex;
+    flex-direction: column;
+}
+   &__cart{
+    align-self: center;
+    font-size: 2em;
+   }
 }

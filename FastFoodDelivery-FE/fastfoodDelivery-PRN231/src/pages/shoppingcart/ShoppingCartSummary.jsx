@@ -7,7 +7,7 @@ const ShoppingCartSummary = ({ items, totalPrice, shipping, onCheckout }) => {
     <div className="shopping-cart-summary">
       <h3>Summary</h3>
       <div>
-        <p>ITEMS {items.length}</p>
+        <p>ITEMS {items?.length}</p>
         <p>$ {totalPrice}</p>
       </div>
       <div>
