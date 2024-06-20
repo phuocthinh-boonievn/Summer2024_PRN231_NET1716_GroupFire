@@ -1,6 +1,7 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Layout from "./components/layout";
 import AdminAccountManagement from "./pages/accountuser-management";
+import Category from "./pages/category-management";
 import FoodItemManagement from "./pages/fastfood-magegement";
 import HomePage from "./pages/home";
 import Login from "./pages/login";
@@ -20,6 +21,10 @@ function App() {
         {
           path: "/fastfood-magegement",
           element: <FoodItemManagement />,
+        },
+        {
+          path: "/category-management",
+          element: <Category />,
         },
         {
           path: "/accountuser-management",

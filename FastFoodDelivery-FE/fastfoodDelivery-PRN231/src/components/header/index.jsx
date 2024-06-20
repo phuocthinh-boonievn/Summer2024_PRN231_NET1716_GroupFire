@@ -7,13 +7,13 @@ import {
   ShoppingCartOutlined,
 } from "@ant-design/icons";
 import { useState } from "react";
-import { Dropdown, Input } from "antd";
+import { Badge, Dropdown, Input } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/features/userAccount";
 
 function Header() {
   const [isShowSearch, setIsShowSearch] = useState(false);
-
+  const value = useSelector((state) => state.fastfoodcard);
   const account = useSelector((store) => store.accountmanage);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -58,21 +58,30 @@ function Header() {
           <li>
             <Link to="/">Home</Link>
           </li>
-          <li>
-            <Link to="/fastfood-magegement">FastFoodManagement</Link>
+
+          <li className="foodManagement">
+            FoodManagement
+            <ul className="foodManagement__wrap">
+              <li>
+                <Link to="/fastfood-magegement">Fast Food</Link>
+              </li>
+              <li>
+                <Link to="/category-management">Category</Link>
+              </li>
+            </ul>
           </li>
           <li>
             <Link to="/accountuser-management">AccountManagement</Link>
           </li>
-          <li>
-            <Link to="/">Contact</Link>
-          </li>
+
           <li onClick={() => setIsShowSearch(true)}>
             <SearchOutlined />
           </li>
           <li>
             <Link to="/shoppingcart">
-              <ShoppingCartOutlined />
+              <Badge count={value.length} showZero>
+                <ShoppingCartOutlined />
+              </Badge>
             </Link>
           </li>
           <li>

@@ -4,65 +4,37 @@ import React, { useState } from "react";
 import ShoppingCartItem from "./ShoppingCartItem";
 import ShoppingCartSummary from "./ShoppingCartSummary";
 import "./ShoppingCart.scss";
-
-const initialItems = [
-  {
-    id: 1,
-    name: "Chicken Cheese",
-    description: "Deliciously Cheesy Chicken Delight!",
-    price: 18,
-    quantity: 1,
-    image: "cheese.jpg",
-  },
-  {
-    id: 2,
-    name: "Chicken Mix",
-    description: "Mix It Up with Flavorful Chicken Bliss!",
-    price: 23,
-    quantity: 1,
-    image: "chickenmix.jpg",
-  },
-  {
-    id: 3,
-    name: "Burger Chicken",
-    description: "Clucking Good Chicken Burgers!",
-    price: 15,
-    quantity: 1,
-    image: "ga.jpg",
-  },
-];
+import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  decreaseQuantity,
+  increaseQuantity,
+  removeFood,
+} from "../../redux/features/fastfoodCart";
 
 const ShoppingCart = () => {
-  const [items, setItems] = useState(initialItems);
+  const initialItems = useSelector((state) => state.fastfoodcard);
+  const [items, setItems] = useState([]);
   const [shipping, setShipping] = useState(5);
-
+  const dispatch = useDispatch();
   const handleAdd = (id) => {
-    setItems(
-      items.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      )
-    );
+    dispatch(increaseQuantity(id));
   };
 
-  const handleRemove = (id) => {
-    setItems(
-      items.map((item) =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      )
-    );
+  const handleDecrease = (id) => {
+    dispatch(decreaseQuantity(id));
   };
 
   const handleDelete = (id) => {
-    setItems(items.filter((item) => item.id !== id));
+    // setItems(items.filter((item) => item.id !== id));
+    dispatch(removeFood(id));
   };
 
   const handleCheckout = () => {
     alert("Checkout successful!");
   };
 
-  const totalPrice = items.reduce(
+  const totalPrice = initialItems?.reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );
@@ -71,16 +43,18 @@ const ShoppingCart = () => {
     <div className="shopping-cart">
       <div className="cart-items">
         <h2>Shopping Cart</h2>
-        {items.map((item) => (
+        {initialItems?.map((item) => (
           <ShoppingCartItem
             key={item.id}
             item={item}
             onAdd={handleAdd}
-            onRemove={handleRemove}
+            onRemove={handleDecrease}
             onDelete={handleDelete}
           />
         ))}
-        <button className="back-to-shop">Back to shop</button>
+        <Link to="/">
+          <button className="back-to-shop">Back to MenuFood</button>
+        </Link>
       </div>
       <ShoppingCartSummary
         items={items}
