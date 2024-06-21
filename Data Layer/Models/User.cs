@@ -16,6 +16,7 @@ namespace Data_Layer.Models
         public virtual ICollection<FeedBack> FeedBacks { get; set; } = new List<FeedBack>();
         public virtual ICollection<Shipper> Shippers { get; set; } = new List<Shipper>();
 
+        public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
 
     }
 }

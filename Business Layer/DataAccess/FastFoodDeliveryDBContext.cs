@@ -26,6 +26,7 @@ namespace Business_Layer.DataAccess
         public DbSet<TransactionBill> Transactions { get; set; }
         public DbSet<Shipper> Shippers { get; set; }
         public DbSet<FeedBack> FeedBacks { get; set; }
+        public DbSet<Cart> Carts { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
