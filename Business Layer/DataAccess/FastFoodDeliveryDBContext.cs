@@ -24,8 +24,9 @@ namespace Business_Layer.DataAccess
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<TransactionBill> Transactions { get; set; }
-        public DbSet<Shipper> Shippers { get; set; }
+        public  DbSet<OrderStatus> OrderStatuses { get; set; }
         public DbSet<FeedBack> FeedBacks { get; set; }
+        public DbSet<Cart> Carts { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -45,11 +46,12 @@ namespace Business_Layer.DataAccess
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new MenuFoodItemConfiguration());
+            modelBuilder.ApplyConfiguration(new CartConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new OrderConfiguration());
             modelBuilder.ApplyConfiguration(new OrderDetailConfiguration());
             modelBuilder.ApplyConfiguration(new TransactionBillConfiguration());
-            modelBuilder.ApplyConfiguration(new ShipperConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderStatusConfiguration());
             modelBuilder.ApplyConfiguration(new FeedBackConfiguration());
             modelBuilder.ApplyConfiguration(new CategoryConfiguration());
             base.OnModelCreating(modelBuilder);

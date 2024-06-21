@@ -23,7 +23,7 @@ namespace Business_Layer.Configuration
             builder.Property(x => x.TotalPrice).HasColumnType("money");
             builder.Property(x => x.StatusOrder).HasMaxLength(50);
             builder.HasOne(x => x.User).WithMany(x => x.Orders).HasForeignKey(x => x.MemberId);
-            builder.HasOne(x => x.Shipper).WithMany(x => x.Orders).HasForeignKey(x => x.ShipperId);
+           
         }
     }
 }

@@ -22,6 +22,31 @@ namespace Business_Layer.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("Data_Layer.Models.Cart", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid>("foodId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserID");
+
+                    b.HasIndex("foodId");
+
+                    b.ToTable("Cart", (string)null);
+                });
+
             modelBuilder.Entity("Data_Layer.Models.Category", b =>
                 {
                     b.Property<Guid>("CategoryId")
@@ -115,23 +140,22 @@ namespace Business_Layer.Migrations
                     b.Property<string>("MemberId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime?>("OrderDate")
+                    b.Property<DateTime>("OrderDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 6, 7, 13, 41, 21, 85, DateTimeKind.Local).AddTicks(4197));
+                        .HasDefaultValue(new DateTime(2024, 6, 21, 20, 18, 55, 637, DateTimeKind.Local).AddTicks(1358));
 
                     b.Property<DateTime?>("RequiredDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 6, 10, 13, 41, 21, 85, DateTimeKind.Local).AddTicks(4438));
+                        .HasDefaultValue(new DateTime(2024, 6, 24, 20, 18, 55, 637, DateTimeKind.Local).AddTicks(1602));
 
                     b.Property<DateTime?>("ShippedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 6, 12, 13, 41, 21, 85, DateTimeKind.Local).AddTicks(4603));
+                        .HasDefaultValue(new DateTime(2024, 6, 26, 20, 18, 55, 637, DateTimeKind.Local).AddTicks(1771));
 
                     b.Property<Guid?>("ShipperId")
-                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("StatusOrder")
@@ -144,8 +168,6 @@ namespace Business_Layer.Migrations
                     b.HasKey("OrderId");
 
                     b.HasIndex("MemberId");
-
-                    b.HasIndex("ShipperId");
 
                     b.ToTable("Order", (string)null);
                 });
@@ -177,25 +199,30 @@ namespace Business_Layer.Migrations
                     b.ToTable("OrderDetail", (string)null);
                 });
 
-            modelBuilder.Entity("Data_Layer.Models.Shipper", b =>
+            modelBuilder.Entity("Data_Layer.Models.OrderStatus", b =>
                 {
-                    b.Property<Guid>("ShipperId")
+                    b.Property<Guid>("OrderStatusId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ShipperStatus")
+                    b.Property<Guid?>("OrderId")
+                        .IsRequired()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("OrderStatusName")
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("userId")
-                        .IsRequired()
+                    b.Property<string>("ShipperId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("ShipperId");
+                    b.HasKey("OrderStatusId");
 
-                    b.HasIndex("userId");
+                    b.HasIndex("OrderId");
 
-                    b.ToTable("Shipper", (string)null);
+                    b.HasIndex("ShipperId");
+
+                    b.ToTable("OrderStatus", (string)null);
                 });
 
             modelBuilder.Entity("Data_Layer.Models.TransactionBill", b =>
@@ -269,6 +296,10 @@ namespace Business_Layer.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -423,6 +454,25 @@ namespace Business_Layer.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Data_Layer.Models.Cart", b =>
+                {
+                    b.HasOne("Data_Layer.Models.User", "User")
+                        .WithMany("Carts")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data_Layer.Models.MenuFoodItem", "Food")
+                        .WithMany("Carts")
+                        .HasForeignKey("foodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Food");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Data_Layer.Models.FeedBack", b =>
                 {
                     b.HasOne("Data_Layer.Models.Order", "Order")
@@ -455,14 +505,6 @@ namespace Business_Layer.Migrations
                         .WithMany("Orders")
                         .HasForeignKey("MemberId");
 
-                    b.HasOne("Data_Layer.Models.Shipper", "Shipper")
-                        .WithMany("Orders")
-                        .HasForeignKey("ShipperId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Shipper");
-
                     b.Navigation("User");
                 });
 
@@ -485,13 +527,19 @@ namespace Business_Layer.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("Data_Layer.Models.Shipper", b =>
+            modelBuilder.Entity("Data_Layer.Models.OrderStatus", b =>
                 {
-                    b.HasOne("Data_Layer.Models.User", "User")
-                        .WithMany("Shippers")
-                        .HasForeignKey("userId")
+                    b.HasOne("Data_Layer.Models.Order", "Order")
+                        .WithMany("OrderStatuses")
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Data_Layer.Models.User", "User")
+                        .WithMany("OrderStatuses")
+                        .HasForeignKey("ShipperId");
+
+                    b.Navigation("Order");
 
                     b.Navigation("User");
                 });
@@ -565,6 +613,8 @@ namespace Business_Layer.Migrations
 
             modelBuilder.Entity("Data_Layer.Models.MenuFoodItem", b =>
                 {
+                    b.Navigation("Carts");
+
                     b.Navigation("OrderDetails");
                 });
 
@@ -574,21 +624,20 @@ namespace Business_Layer.Migrations
 
                     b.Navigation("OrderDetails");
 
-                    b.Navigation("TransactionBills");
-                });
+                    b.Navigation("OrderStatuses");
 
-            modelBuilder.Entity("Data_Layer.Models.Shipper", b =>
-                {
-                    b.Navigation("Orders");
+                    b.Navigation("TransactionBills");
                 });
 
             modelBuilder.Entity("Data_Layer.Models.User", b =>
                 {
+                    b.Navigation("Carts");
+
                     b.Navigation("FeedBacks");
 
-                    b.Navigation("Orders");
+                    b.Navigation("OrderStatuses");
 
-                    b.Navigation("Shippers");
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

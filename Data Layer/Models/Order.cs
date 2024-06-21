@@ -20,11 +20,10 @@ namespace Data_Layer.Models
         public string? StatusOrder { get; set; }
 
         public virtual User User { get; set; }
-        public virtual Shipper Shipper { get; set; }
 
         public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
         public virtual ICollection<TransactionBill> TransactionBills { get; set; } = new List<TransactionBill>();
-
+        public virtual ICollection<OrderStatus> OrderStatuses { get; set; } = new List<OrderStatus>();
         public virtual ICollection<FeedBack> FeedBacks { get; set; } = new List<FeedBack>();
     }
 }
