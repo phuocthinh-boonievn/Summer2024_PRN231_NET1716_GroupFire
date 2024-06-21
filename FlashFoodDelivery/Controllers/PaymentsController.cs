@@ -1,5 +1,7 @@
 ﻿using Business_Layer.Services;
 using Data_Layer.Models;
+using Data_Layer.ResourceModel.ViewModel.OrderVMs;
+using Data_Layer.ResourceModel.ViewModel;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,10 +23,10 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> CreateZaloPayment([FromBody] Order order)
+        public async Task<IActionResult> CreateZaloPayment([FromBody] OrderPaymentVM orderCreateVM)
         {
-            var payUrl = await _paymentZaloService.CreatePaymentRequestAsync(order);
-            return Ok(new { payUrl });
+            var paymentUrl = await _paymentZaloService.CreatePaymentRequestAsync(orderCreateVM);
+            return Ok(new { url = paymentUrl });
         }
     }
 }

@@ -1,14 +1,10 @@
 ﻿using Business_Layer.Utils;
-using Data_Layer.Models;
+using Data_Layer.ResourceModel.ViewModel;
+using Data_Layer.ResourceModel.ViewModel.OrderVMs;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Stripe;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Business_Layer.Services
 {
@@ -21,7 +17,7 @@ namespace Business_Layer.Services
             _settings = settings.Value;
         }
 
-        public async Task<string> CreatePaymentRequestAsync(Order order)
+        public async Task<string> CreatePaymentRequestAsync(OrderPaymentVM order)
         {
             var appTransId = DateTime.Now.ToString("yyyyMMddHHmmss");
             var amount = order.TotalPrice ?? 0;
@@ -35,7 +31,7 @@ namespace Business_Layer.Services
                 amount = (long)(amount * 100),
                 app_trans_id = appTransId,
                 embed_data = "{}",
-                item = JsonConvert.SerializeObject(order.OrderDetails.Select(od => new { od.MenuFoodItem.FoodName, od.Quantity, od.UnitPrice })),
+                item = JsonConvert.SerializeObject(order.OrderDetails.Select(od => new { od.FoodName, od.Quantity, od.UnitPrice })),
                 description = orderInfo,
                 bank_code = "zalopayapp",
                 mac = GenerateMac(appTransId, amount)
@@ -45,13 +41,27 @@ namespace Business_Layer.Services
             var response = await httpClient.PostAsync(_settings.Endpoint, new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json"));
             var responseData = await response.Content.ReadAsStringAsync();
 
-            dynamic result = JsonConvert.DeserializeObject(responseData);
-            return result.order_url;
+            Console.WriteLine(responseData); 
+
+            if (response.Content.Headers.ContentType.MediaType != "application/json")
+            {
+                throw new Exception("Unexpected response content type: " + response.Content.Headers.ContentType.MediaType);
+            }
+
+            try
+            {
+                dynamic result = JsonConvert.DeserializeObject(responseData);
+                return result.order_url;
+            }
+            catch (JsonReaderException ex)
+            {
+                throw new Exception("Failed to parse response: " + responseData, ex);
+            }
         }
 
-        private string GenerateOrderInfo(Order order)
+        private string GenerateOrderInfo(OrderPaymentVM order)
         {
-            var orderDetails = order.OrderDetails.Select(od => $"{od.MenuFoodItem.FoodName} (x{od.Quantity})").ToList();
+            var orderDetails = order.OrderDetails.Select(od => $"{od.FoodName} (x{od.Quantity})").ToList();
             var orderInfo = $"Order {order.OrderId}: {string.Join(", ", orderDetails)}";
             return orderInfo;
         }

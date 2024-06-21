@@ -1,4 +1,5 @@
 ﻿using Data_Layer.Models;
+using Data_Layer.ResourceModel.ViewModel.OrderVMs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace Business_Layer.Services
 {
     public interface IPaymentZaloService
     {
-        public Task<string> CreatePaymentRequestAsync(Order order);
+        public Task<string> CreatePaymentRequestAsync(OrderPaymentVM order);
     }
 }
