@@ -17,7 +17,7 @@ namespace Business_Layer.Configuration
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
             builder.HasOne(x => x.User).WithMany(x => x.Carts).HasForeignKey(x => x.UserID);
-            builder.HasOne(x => x.Food).WithMany(x => x.Carts).HasForeignKey(x => x.ProductID);
+            builder.HasOne(x => x.Food).WithMany(x => x.Carts).HasForeignKey(x => x.foodId);
         }
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Business_Layer.Migrations
 {
-    public partial class initDb : Migration
+    public partial class initdb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -177,9 +177,9 @@ namespace Business_Layer.Migrations
                     OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     MemberId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     ShipperId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2024, 6, 21, 20, 3, 45, 332, DateTimeKind.Local).AddTicks(2269)),
-                    ShippedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 6, 26, 20, 3, 45, 332, DateTimeKind.Local).AddTicks(2829)),
-                    RequiredDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 6, 24, 20, 3, 45, 332, DateTimeKind.Local).AddTicks(2620)),
+                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2024, 6, 21, 20, 18, 55, 637, DateTimeKind.Local).AddTicks(1358)),
+                    ShippedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 6, 26, 20, 18, 55, 637, DateTimeKind.Local).AddTicks(1771)),
+                    RequiredDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 6, 24, 20, 18, 55, 637, DateTimeKind.Local).AddTicks(1602)),
                     Address = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     TotalPrice = table.Column<decimal>(type: "money", nullable: true),
                     StatusOrder = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
@@ -284,26 +284,26 @@ namespace Business_Layer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Carts",
+                name: "Cart",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ProductID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Quannity = table.Column<int>(type: "int", nullable: false),
-                    FoodId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    foodId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Carts", x => x.Id);
+                    table.PrimaryKey("PK_Cart", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Carts_AspNetUsers_UserID",
+                        name: "FK_Cart_AspNetUsers_UserID",
                         column: x => x.UserID,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Carts_MenuFoodItem_FoodId",
-                        column: x => x.FoodId,
+                        name: "FK_Cart_MenuFoodItem_foodId",
+                        column: x => x.foodId,
                         principalTable: "MenuFoodItem",
                         principalColumn: "FoodId",
                         onDelete: ReferentialAction.Cascade);
@@ -377,13 +377,13 @@ namespace Business_Layer.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Carts_FoodId",
-                table: "Carts",
-                column: "FoodId");
+                name: "IX_Cart_foodId",
+                table: "Cart",
+                column: "foodId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Carts_UserID",
-                table: "Carts",
+                name: "IX_Cart_UserID",
+                table: "Cart",
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
@@ -445,7 +445,7 @@ namespace Business_Layer.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Carts");
+                name: "Cart");
 
             migrationBuilder.DropTable(
                 name: "FeedBack");

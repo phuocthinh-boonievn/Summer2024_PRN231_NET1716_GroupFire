@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Business_Layer.Migrations
 {
     [DbContext(typeof(FastFoodDeliveryDBContext))]
-    [Migration("20240621130345_initDb")]
-    partial class initDb
+    [Migration("20240621131855_initdb")]
+    partial class initdb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,25 +30,23 @@ namespace Business_Layer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("FoodId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Quannity")
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<string>("UserID")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid>("foodId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FoodId");
-
                     b.HasIndex("UserID");
 
-                    b.ToTable("Carts");
+                    b.HasIndex("foodId");
+
+                    b.ToTable("Cart", (string)null);
                 });
 
             modelBuilder.Entity("Data_Layer.Models.Category", b =>
@@ -147,17 +145,17 @@ namespace Business_Layer.Migrations
                     b.Property<DateTime>("OrderDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 6, 21, 20, 3, 45, 332, DateTimeKind.Local).AddTicks(2269));
+                        .HasDefaultValue(new DateTime(2024, 6, 21, 20, 18, 55, 637, DateTimeKind.Local).AddTicks(1358));
 
                     b.Property<DateTime?>("RequiredDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 6, 24, 20, 3, 45, 332, DateTimeKind.Local).AddTicks(2620));
+                        .HasDefaultValue(new DateTime(2024, 6, 24, 20, 18, 55, 637, DateTimeKind.Local).AddTicks(1602));
 
                     b.Property<DateTime?>("ShippedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 6, 26, 20, 3, 45, 332, DateTimeKind.Local).AddTicks(2829));
+                        .HasDefaultValue(new DateTime(2024, 6, 26, 20, 18, 55, 637, DateTimeKind.Local).AddTicks(1771));
 
                     b.Property<Guid?>("ShipperId")
                         .HasColumnType("uniqueidentifier");
@@ -460,15 +458,17 @@ namespace Business_Layer.Migrations
 
             modelBuilder.Entity("Data_Layer.Models.Cart", b =>
                 {
-                    b.HasOne("Data_Layer.Models.MenuFoodItem", "Food")
+                    b.HasOne("Data_Layer.Models.User", "User")
                         .WithMany("Carts")
-                        .HasForeignKey("FoodId")
+                        .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Data_Layer.Models.User", "User")
+                    b.HasOne("Data_Layer.Models.MenuFoodItem", "Food")
                         .WithMany("Carts")
-                        .HasForeignKey("UserID");
+                        .HasForeignKey("foodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Food");
 

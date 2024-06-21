@@ -11,8 +11,8 @@ namespace Data_Layer.Models
         public Guid Id { get; set; }
 
         public string? UserID { get; set; }
-        public Guid ProductID { get; set; }
-        public int Quannity { get; set; }
+        public Guid foodId { get; set; }
+        public int Quantity { get; set; }
         
         public virtual User User { get; set; }
         public virtual MenuFoodItem Food { get; set; }
