@@ -1,4 +1,6 @@
 ﻿using Data_Layer.Models;
+using Data_Layer.ResourceModel.Common;
+using Data_Layer.ResourceModel.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +9,9 @@ using System.Threading.Tasks;
 
 namespace Business_Layer.Repositories
 {
-    public interface IShipperRepository : IGenericRepository<Shipper>
+    public interface IShipperRepository 
     {
-        public Task<IEnumerable<Shipper>> GetAllByStatusAsync(string status);
+        Task<List<ShipperVM>> GetAllShipper();
+        Task<APIResponseModel> GetOrderStatusByShipperId(string userId);
     }
 }

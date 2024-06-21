@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Business_Layer.Migrations
 {
-    public partial class InitDB : Migration
+    public partial class initDb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -30,6 +30,7 @@ namespace Business_Layer.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -55,7 +56,8 @@ namespace Business_Layer.Migrations
                 columns: table => new
                 {
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CategoriesName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    CategoriesName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    CategoriesStatus = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -169,22 +171,27 @@ namespace Business_Layer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Shipper",
+                name: "Order",
                 columns: table => new
                 {
-                    ShipperId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    userId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ShipperStatus = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true)
+                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MemberId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ShipperId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2024, 6, 21, 20, 3, 45, 332, DateTimeKind.Local).AddTicks(2269)),
+                    ShippedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 6, 26, 20, 3, 45, 332, DateTimeKind.Local).AddTicks(2829)),
+                    RequiredDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 6, 24, 20, 3, 45, 332, DateTimeKind.Local).AddTicks(2620)),
+                    Address = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    TotalPrice = table.Column<decimal>(type: "money", nullable: true),
+                    StatusOrder = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Shipper", x => x.ShipperId);
+                    table.PrimaryKey("PK_Order", x => x.OrderId);
                     table.ForeignKey(
-                        name: "FK_Shipper_AspNetUsers_userId",
-                        column: x => x.userId,
+                        name: "FK_Order_AspNetUsers_MemberId",
+                        column: x => x.MemberId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -207,36 +214,6 @@ namespace Business_Layer.Migrations
                         column: x => x.CategoryId,
                         principalTable: "Category",
                         principalColumn: "CategoryId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Order",
-                columns: table => new
-                {
-                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MemberId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ShipperId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 5, 24, 22, 42, 51, 231, DateTimeKind.Local).AddTicks(2386)),
-                    ShippedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 5, 29, 22, 42, 51, 231, DateTimeKind.Local).AddTicks(2859)),
-                    RequiredDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 5, 27, 22, 42, 51, 231, DateTimeKind.Local).AddTicks(2685)),
-                    Address = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    TotalPrice = table.Column<decimal>(type: "money", nullable: true),
-                    StatusOrder = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Order", x => x.OrderId);
-                    table.ForeignKey(
-                        name: "FK_Order_AspNetUsers_MemberId",
-                        column: x => x.MemberId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Order_Shipper_ShipperId",
-                        column: x => x.ShipperId,
-                        principalTable: "Shipper",
-                        principalColumn: "ShipperId",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -264,25 +241,24 @@ namespace Business_Layer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OrderDetail",
+                name: "OrderStatus",
                 columns: table => new
                 {
+                    OrderStatusId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ShipperId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FoodId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    Quantity = table.Column<int>(type: "int", nullable: false)
+                    OrderStatusName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderDetail", x => new { x.OrderId, x.FoodId });
+                    table.PrimaryKey("PK_OrderStatus", x => x.OrderStatusId);
                     table.ForeignKey(
-                        name: "FK_OrderDetail_MenuFoodItem_FoodId",
-                        column: x => x.FoodId,
-                        principalTable: "MenuFoodItem",
-                        principalColumn: "FoodId",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_OrderStatus_AspNetUsers_ShipperId",
+                        column: x => x.ShipperId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_OrderDetail_Order_OrderId",
+                        name: "FK_OrderStatus_Order_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Order",
                         principalColumn: "OrderId",
@@ -301,6 +277,60 @@ namespace Business_Layer.Migrations
                     table.PrimaryKey("PK_Transactions", x => x.TractionId);
                     table.ForeignKey(
                         name: "FK_Transactions_Order_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Order",
+                        principalColumn: "OrderId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Carts",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ProductID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Quannity = table.Column<int>(type: "int", nullable: false),
+                    FoodId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Carts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Carts_AspNetUsers_UserID",
+                        column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Carts_MenuFoodItem_FoodId",
+                        column: x => x.FoodId,
+                        principalTable: "MenuFoodItem",
+                        principalColumn: "FoodId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderDetail",
+                columns: table => new
+                {
+                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FoodId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OrderDetailId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Quantity = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderDetail", x => new { x.OrderId, x.FoodId });
+                    table.ForeignKey(
+                        name: "FK_OrderDetail_MenuFoodItem_FoodId",
+                        column: x => x.FoodId,
+                        principalTable: "MenuFoodItem",
+                        principalColumn: "FoodId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderDetail_Order_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Order",
                         principalColumn: "OrderId",
@@ -347,6 +377,16 @@ namespace Business_Layer.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Carts_FoodId",
+                table: "Carts",
+                column: "FoodId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Carts_UserID",
+                table: "Carts",
+                column: "UserID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_FeedBack_OrderId",
                 table: "FeedBack",
                 column: "OrderId");
@@ -367,19 +407,19 @@ namespace Business_Layer.Migrations
                 column: "MemberId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Order_ShipperId",
-                table: "Order",
-                column: "ShipperId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_OrderDetail_FoodId",
                 table: "OrderDetail",
                 column: "FoodId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Shipper_userId",
-                table: "Shipper",
-                column: "userId");
+                name: "IX_OrderStatus_OrderId",
+                table: "OrderStatus",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderStatus_ShipperId",
+                table: "OrderStatus",
+                column: "ShipperId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_OrderId",
@@ -405,10 +445,16 @@ namespace Business_Layer.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Carts");
+
+            migrationBuilder.DropTable(
                 name: "FeedBack");
 
             migrationBuilder.DropTable(
                 name: "OrderDetail");
+
+            migrationBuilder.DropTable(
+                name: "OrderStatus");
 
             migrationBuilder.DropTable(
                 name: "Transactions");
@@ -424,9 +470,6 @@ namespace Business_Layer.Migrations
 
             migrationBuilder.DropTable(
                 name: "Category");
-
-            migrationBuilder.DropTable(
-                name: "Shipper");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

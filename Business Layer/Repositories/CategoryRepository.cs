@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Business_Layer.Commons;
 using Business_Layer.DataAccess;
-using Business_Layer.Migrations;
 using Data_Layer.Models;
 using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel;

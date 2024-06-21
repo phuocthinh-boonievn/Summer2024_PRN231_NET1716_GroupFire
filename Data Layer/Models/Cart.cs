@@ -10,7 +10,7 @@ namespace Data_Layer.Models
     {
         public Guid Id { get; set; }
 
-        public Guid UserID { get; set; }
+        public string? UserID { get; set; }
         public Guid ProductID { get; set; }
         public int Quannity { get; set; }
         

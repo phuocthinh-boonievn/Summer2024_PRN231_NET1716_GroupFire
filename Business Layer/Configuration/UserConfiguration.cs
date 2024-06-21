@@ -17,6 +17,7 @@ namespace Business_Layer.Configuration
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
             builder.Property(x => x.FullName).HasMaxLength(100);
             builder.Property(x => x.Address).HasMaxLength(100);
+            builder.Property(x => x.Status).HasMaxLength(100);
         }
     }
 }
