@@ -14,7 +14,9 @@ namespace Business_Layer.Repositories
     {
         Task<APIResponseModel> Login(LoginVM model);
         Task<APIResponseModel> Register(RegisterVM model);
-        Task<User> GetUserByID(Guid id);
+        Task<User> GetUserByID(string id);
         Task<List<LoyalCustomer>> GetTopFiveCustomerAsync();
+        User UpdateStatusUser(User user);
+        Task<IEnumerable<User>> GetUserAccountAll();
     }
 }

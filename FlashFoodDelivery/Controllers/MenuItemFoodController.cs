@@ -105,6 +105,7 @@ namespace API.Controllers
             return Ok(c);
         }
 
+
         [HttpDelete("{id:Guid}")]
         [EnableCors("CorsPolicy")]
         [ProducesResponseType(StatusCodes.Status200OK)]

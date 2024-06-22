@@ -4,7 +4,7 @@ using Data_Layer.ResourceModel.ViewModel;
 using Data_Layer.ResourceModel.ViewModel.MenuFoodItemVMs;
 using Data_Layer.ResourceModel.ViewModel.OrderDetailVMs;
 using Data_Layer.ResourceModel.ViewModel.OrderVMs;
-
+using Data_Layer.ResourceModel.ViewModel.User;
 
 namespace Business_Layer.AutoMapper
 {
@@ -28,6 +28,8 @@ namespace Business_Layer.AutoMapper
             CreateMap<MenuFoodItem, MenuFoodItemViewVM>().ReverseMap();
             CreateMap<MenuFoodItem, MenuFoodItemCreateVM>().ReverseMap();
             CreateMap<MenuFoodItem, MenuFoodItemUpdateVM>().ReverseMap();
+
+            CreateMap<User, UserViewModel>().ReverseMap();
         }
     }
 }

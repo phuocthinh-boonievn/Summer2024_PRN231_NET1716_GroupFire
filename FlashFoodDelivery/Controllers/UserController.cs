@@ -33,8 +33,17 @@ namespace API.Controllers
                 Data = users
             };
         }
+        [HttpGet]
+        [EnableCors("CorsPolicy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ViewAllACcountUser()
+        {
+            var result = await _userSerivce.GetUsersAsync();
+            return Ok(result);
+        }
         [HttpGet("GetUserById/{id}")]
-        public async Task<APIResponseModel> GetUserById(Guid id)
+        public async Task<APIResponseModel> GetUserById(string id)
         {
             try
             {
@@ -131,49 +140,32 @@ namespace API.Controllers
         }
         
         [HttpPut("UpdateUser")]
-        public async Task <APIResponseModel> UpdateUser(Guid id, [FromBody] UserViewModel model)
+        [EnableCors("CorsPolicy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task <IActionResult> UpdateUser(string id, [FromBody] UserViewModel model)
         {
-            try
-            {
-                var user = await _userSerivce.UpdateUser(id, model);
-                return new APIResponseModel
+           
+              var user = await _userSerivce.UpdateUser(id, model);
+                if( !user.IsSuccess )
                 {
-                    code = 200,
-                    IsSuccess = true,
-                    Data = user,
-                    message = "Update User success !",
-                };
-            }
-            catch (Exception ex)
-            {
-                return new APIResponseModel()
-                {
-                    code = StatusCodes.Status400BadRequest,
-                    message = ex.Message,
-                    Data = ex,
-                    IsSuccess = false
-                };
-            }
+                    return BadRequest(user);
+                }
+            return Ok(user);
+
         }
         [HttpDelete("DeleteUser")]
-        public async Task<APIResponseModel> DeleteUser(Guid id)
+        [EnableCors("CorsPolicy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> DeleteUser(string id)
         {
-            bool deleteSuccess = await _userSerivce.DeleteUser(id);
-            if(!deleteSuccess)
+            var deleteSuccess = await _userSerivce.DeleteUser(id);
+            if(!deleteSuccess.IsSuccess)
             {
-                return new APIResponseModel()
-                {
-                    code = StatusCodes.Status400BadRequest,
-                    message = "Delete User Failed !",
-                    IsSuccess = false
-                };
+                return BadRequest(deleteSuccess);
             }
-            return new APIResponseModel
-            {
-                code = 200,
-                IsSuccess = true,
-                message = "Delete User success !",
-            };
+            return Ok(deleteSuccess);
         }        
     }
 }

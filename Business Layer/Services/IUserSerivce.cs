@@ -1,5 +1,6 @@
 ﻿using Business_Layer.Commons;
 using Data_Layer.Models;
+using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel.User;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,10 @@ namespace Business_Layer.Services
 {
     public interface IUserSerivce
     {
-        Task<UserViewModel> GetUserById(Guid id);
-        Task<UserViewModel> UpdateUser(Guid id, UserViewModel model);
-        Task<bool> DeleteUser (Guid id);
+        Task<APIResponseModel> GetUsersAsync();
+        Task<UserViewModel> GetUserById(string id);
+        Task<APIResponseModel> UpdateUser(string id, UserViewModel model);
+        Task<APIResponseModel> DeleteUser (string id);
         Task<Pagination<UserViewModel>> GetUserPagingsionsAsync(int pageIndex = 0, int pageSize = 10);
     }
 }

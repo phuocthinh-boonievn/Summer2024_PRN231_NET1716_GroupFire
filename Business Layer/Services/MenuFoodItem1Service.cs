@@ -82,7 +82,7 @@ namespace Business_Layer.Services
             catch (Exception e)
             {
                 reponse.IsSuccess = false;
-                reponse.message = $"Update food fail!, exception {e.Message}";
+                reponse.message = $"Delete food fail!, exception {e.Message}";
             }
 
             return reponse;

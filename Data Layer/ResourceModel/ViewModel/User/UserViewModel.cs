@@ -13,6 +13,5 @@ namespace Data_Layer.ResourceModel.ViewModel.User
         public string Email { get; set; }
         public string PhoneNumber {  get; set; }
         public string? Role { get; set; }
-        public bool? IsDeleted { get; set; }
     }
 }

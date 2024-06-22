@@ -1,11 +1,15 @@
-﻿using Business_Layer.Commons;
+﻿using AutoMapper;
+using Business_Layer.Commons;
 using Business_Layer.Repositories;
 using Business_Layer.Utils;
 using Data_Layer.Models;
+using Data_Layer.ResourceModel.Common;
+using Data_Layer.ResourceModel.ViewModel.Enum;
 using Data_Layer.ResourceModel.ViewModel.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,13 +19,14 @@ namespace Business_Layer.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IClaimsService _claimsService;
+        private readonly IMapper _mapper;
         
         public UserService(IUserRepository userRepository, IClaimsService claimsService)
         {
             _userRepository = userRepository;
             _claimsService = claimsService;
         }
-        public async Task<UserViewModel> GetUserById(Guid id)
+        public async Task<UserViewModel> GetUserById(string id)
         {
             var user = await _userRepository.GetUserByID(id);
             if (user == null)
@@ -32,39 +37,88 @@ namespace Business_Layer.Services
             return userViewModel;
         }
 
-        public async Task<UserViewModel> UpdateUser(Guid id, UserViewModel model)
+        public async Task<APIResponseModel> UpdateUser(string id, UserViewModel model)
         {
-            var user = await _userRepository.GetByIdAsync(id);
-            if (user == null)
-            {
-                throw new Exception("User is not existed !");
+            var response = new APIResponseModel();
+            try {
+                var user = await _userRepository.GetUserByID(id);
+                if (user == null || user.Status.ToString() != UserEnum.Active.ToString())
+                {
+                    response.IsSuccess = false;
+                    response.message = "Account is not exist";
+                    
+                }else
+                {
+                    user.FullName = model.FullName;
+                    user.Address = model.Address;
+                    user.Email = model.Email;
+                    user.PhoneNumber = model.PhoneNumber;
+                    user.Status = UserEnum.Active.ToString();
+                    _userRepository.Update(user);
+                    bool isSuccessed = await _userRepository.SaveAsync() > 0;
+                    if (!isSuccessed)
+                    {
+                        response.IsSuccess = false;
+                        response.message = "Update fail";
+
+                    }
+                    else
+                    {
+                        response.code = 200;
+                        response.IsSuccess = true;
+                        response.message = "Update Account Successfully";
+                    }
+                }
+                
             }
-            user.FullName = model.FullName;
-            user.Address = model.Address;
-            user.Email = model.Email;
-            user.PhoneNumber = model.PhoneNumber;
-            _userRepository.Update(user);
-            bool isSuccessed = await _userRepository.SaveAsync() > 0;
-            if(!isSuccessed)
+            catch (Exception ex)
             {
-                throw new Exception("Update Failed !");
+                response.IsSuccess = false;
+                response.message = $"Update food fail!, exception {ex.Message}";
             }
-            return model;
+
+            return response;
+            
         }
-        public async Task<bool> DeleteUser (Guid id)
+        public async Task<APIResponseModel> DeleteUser (string id)
         {
-            var user = await _userRepository.GetByIdAsync(id);
-            if (user == null)
+            var reponse = new APIResponseModel();
+            try
             {
-                throw new Exception("User is not existed !");
-            }
-            _userRepository.Remove(user);
-            bool isSuccessed = await _userRepository.SaveAsync() > 0;
-            if(!isSuccessed)
+                var user = await _userRepository.GetUserByID(id);
+                if (user == null)
+                {
+                    throw new Exception("User is not existed !");
+                }
+                else if (user.Status.ToString() == UserEnum.IsDeleted.ToString())
+                {
+                    reponse.IsSuccess = false;
+                    reponse.message = "Account is Deleted";
+                }
+                else
+                {
+                    user = _userRepository.UpdateStatusUser(user);
+                    if (await _userRepository.SaveAsync() > 0)
+                    {
+                        reponse.Data = user;
+                        reponse.IsSuccess = true;
+                        reponse.message = "Delete User Succefull";
+                    }
+                    else
+                    {
+                        reponse.Data = user;
+                        reponse.IsSuccess = false;
+                        reponse.message = "Delete User fail!";
+                    }
+                }
+            }catch (Exception e)
             {
-                throw new Exception("Delete Failed !");
+                reponse.IsSuccess = false;
+                reponse.message = $"Delete food fail!, exception {e.Message}";
             }
-            return isSuccessed;
+
+            return reponse;
+
         }
         public async Task<Pagination<UserViewModel>> GetUserPagingsionsAsync(int pageIndex = 0, int pageSize = 10)
         {
@@ -72,5 +126,48 @@ namespace Business_Layer.Services
             var result = users.ToUserViewModel();
             return result;
         }
+
+        public async Task<APIResponseModel> GetUsersAsync()
+        {
+            var reponse = new APIResponseModel();
+            List<UserViewModel> userDTOs = new List<UserViewModel>();
+            try
+            {
+                var users = await _userRepository.GetUserAccountAll();
+
+                foreach (var user in users)
+                {
+                    var usermodel = new UserViewModel()
+                    {
+                        FullName = user.UserName,
+                        Email = user.Email,
+                        Address = user.Address,
+                        PhoneNumber = user.PhoneNumber,
+                        Role = "User",
+                    };
+                }
+                if(userDTOs.Count > 0)
+                {
+                    reponse.code = 200;
+                    reponse.Data = userDTOs;
+                    reponse.IsSuccess = true;
+                    reponse.message = $"Have {userDTOs.Count} Accounts";
+                    return reponse;
+                }
+                else
+                {
+                    reponse.IsSuccess=false;
+                    reponse.message = $"Have {userDTOs.Count} Accounts";
+                    return reponse;
+                }
+            }
+            catch (Exception e)
+            {
+                reponse.IsSuccess = false;
+                reponse.message = e.Message;
+                return reponse;
+            }
+        }
+        }
     }
-}
+
