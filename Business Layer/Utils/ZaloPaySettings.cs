@@ -8,6 +8,7 @@ namespace Business_Layer.Utils
 {
     public class ZaloPaySettings
     {
+        public static string ConfigName => "ZaloPay";
         public int AppId { get; set; }
         public string Key1 { get; set; }
         public string Key2 { get; set; }

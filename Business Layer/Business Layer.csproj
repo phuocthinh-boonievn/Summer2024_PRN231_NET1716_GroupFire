@@ -18,8 +18,4 @@
     <ProjectReference Include="..\Data Layer\Data Layer.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\ZaloPayService\" />
-  </ItemGroup>
-
 </Project>

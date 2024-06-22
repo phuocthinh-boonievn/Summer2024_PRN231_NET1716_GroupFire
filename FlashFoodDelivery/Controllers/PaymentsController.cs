@@ -4,6 +4,7 @@ using Data_Layer.ResourceModel.ViewModel.OrderVMs;
 using Data_Layer.ResourceModel.ViewModel;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace API.Controllers
 {
@@ -28,5 +29,16 @@ namespace API.Controllers
             var paymentUrl = await _paymentZaloService.CreatePaymentRequestAsync(orderCreateVM);
             return Ok(new { url = paymentUrl });
         }
+
+        //[HttpPost]
+        //[ProducesResponseType(typeof(BaseResultWithData<PaymentLinkDtos>), 200)]
+        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        //public async Task<IActionResult> Create([FromBody] CreatePayment request)
+        //{
+        //    var response = new BaseResultWithData<PaymentLinkDtos>();
+        //    response = await mediator.Send(request);
+        //    return Ok(response);
+        //}
+
     }
 }

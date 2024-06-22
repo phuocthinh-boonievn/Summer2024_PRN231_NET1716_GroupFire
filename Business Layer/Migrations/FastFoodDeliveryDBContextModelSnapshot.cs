@@ -143,17 +143,17 @@ namespace Business_Layer.Migrations
                     b.Property<DateTime>("OrderDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 6, 21, 20, 18, 55, 637, DateTimeKind.Local).AddTicks(1358));
+                        .HasDefaultValue(new DateTime(2024, 6, 21, 23, 0, 26, 251, DateTimeKind.Local).AddTicks(246));
 
                     b.Property<DateTime?>("RequiredDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 6, 24, 20, 18, 55, 637, DateTimeKind.Local).AddTicks(1602));
+                        .HasDefaultValue(new DateTime(2024, 6, 24, 23, 0, 26, 251, DateTimeKind.Local).AddTicks(438));
 
                     b.Property<DateTime?>("ShippedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 6, 26, 20, 18, 55, 637, DateTimeKind.Local).AddTicks(1771));
+                        .HasDefaultValue(new DateTime(2024, 6, 26, 23, 0, 26, 251, DateTimeKind.Local).AddTicks(549));
 
                     b.Property<Guid?>("ShipperId")
                         .HasColumnType("uniqueidentifier");
