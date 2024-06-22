@@ -120,8 +120,6 @@ namespace API.Controllers
                     _vnPaySettings.HashSecret); //check chữ ký đúng hay không?
                 if (checkSignature && _vnPaySettings.TmnCode == json["vnp_TmnCode"].ToString())
                 {
-                    // Sử dụng orderInfo chứ k phải orderId vì nó là id của vnpay
-                    // Demo xử lý Order
                     // Order order = await _orderRepository.GetByOrderIdAsync((int)orderInfor);
                     if (vnp_ResponseCode == "00")
                     {
@@ -129,7 +127,7 @@ namespace API.Controllers
                         // var transaction = await _transactionRepository.GetByIdAsync((int)orderInfor);
                         // transaction.Status = true;
                         // await _transactionRepository.UpdateAsync(transaction);
-                        // order.Status = 1; // assuming '1' is the status code for successful payment
+                        // order.Status = Paid;
                         // await _orderRepository.UpdateOrderAsync(order);
 
                         return StatusCode(200, "Ok");
@@ -138,7 +136,7 @@ namespace API.Controllers
                     else
                     {
                         // Payment failed
-                        // order.Status = 3; // assuming '3' is the status code for failed payment
+                        // order.Status = Pending; 
                         // await _orderRepository.UpdateOrderAsync(order);
                         return StatusCode(402, $"Payment Required. Error Code: {vnp_ResponseCode}");
                     }
