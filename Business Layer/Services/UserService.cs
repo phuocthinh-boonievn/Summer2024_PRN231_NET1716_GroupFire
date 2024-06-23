@@ -6,6 +6,7 @@ using Data_Layer.Models;
 using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel.Enum;
 using Data_Layer.ResourceModel.ViewModel.User;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +21,14 @@ namespace Business_Layer.Services
         private readonly IUserRepository _userRepository;
         private readonly IClaimsService _claimsService;
         private readonly IMapper _mapper;
-        
-        public UserService(IUserRepository userRepository, IClaimsService claimsService)
+        private readonly UserManager<User> _userManager;
+
+        public UserService(IUserRepository userRepository, IClaimsService claimsService, IMapper mapper, UserManager<User> userManager)
         {
             _userRepository = userRepository;
             _claimsService = claimsService;
+            _mapper = mapper;
+            _userManager = userManager;
         }
         public async Task<UserViewModel> GetUserById(string id)
         {
@@ -137,16 +141,16 @@ namespace Business_Layer.Services
 
                 foreach (var user in users)
                 {
-                    var usermodel = new UserViewModel()
-                    {
-                        FullName = user.UserName,
-                        Email = user.Email,
-                        Address = user.Address,
-                        PhoneNumber = user.PhoneNumber,
-                        Role = "User",
-                    };
+                    var mapper = _mapper.Map<UserViewModel>(user);
+
+                    var roles = await _userManager.GetRolesAsync(user);
+                    mapper.Role = roles.First();
+                    userDTOs.Add(mapper);
+
+
                 }
-                if(userDTOs.Count > 0)
+
+                if (userDTOs.Count > 0)
                 {
                     reponse.code = 200;
                     reponse.Data = userDTOs;
