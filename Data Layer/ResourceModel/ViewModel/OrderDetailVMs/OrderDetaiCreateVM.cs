@@ -10,7 +10,6 @@ namespace Data_Layer.ResourceModel.ViewModel.OrderDetailVMs
     {
         public Guid? OrderId { get; set; }
         public Guid? FoodId { get; set; }
-        public decimal? UnitPrice { get; set; }
         public int? Quantity { get; set; }
     }
 }
