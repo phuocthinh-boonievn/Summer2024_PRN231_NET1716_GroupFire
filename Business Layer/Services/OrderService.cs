@@ -3,6 +3,7 @@ using Business_Layer.Repositories;
 using Data_Layer.Models;
 using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel;
+using Data_Layer.ResourceModel.ViewModel.OrderDetailVMs;
 using Data_Layer.ResourceModel.ViewModel.OrderVMs;
 
 namespace Business_Layer.Services
@@ -19,10 +20,14 @@ namespace Business_Layer.Services
     {
         private readonly IMapper _mapper;
         private readonly IOrderRepository _orderRepository;
-        public OrderService(IMapper mapper, IOrderRepository orderRepository)
+        private readonly IOrderDetailRepository _orderDetailRepository;
+        private readonly IMenuFoodItem1Repository _menuFoodItem1Repository;
+        public OrderService(IMapper mapper, IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IMenuFoodItem1Repository menuFoodItem1Repository)
         {
             _mapper = mapper;
             _orderRepository = orderRepository;
+            _orderDetailRepository = orderDetailRepository;
+            _menuFoodItem1Repository = menuFoodItem1Repository;
         }
 
         public async Task<APIResponseModel> CancelOrderAsync(Guid id)
@@ -76,7 +81,66 @@ namespace Business_Layer.Services
             return reponse;
         }
 
-    
+        public async Task<APIResponseModel> CheckoutAsync(OrderCreateVM orderdto, List<OrderDetaiCreateVM> orderDetaildto)
+        {
+            var response = new APIResponseModel();
+            try
+            {
+                var orderDetailEntity = _mapper.Map<List<OrderDetail>>(orderDetaildto);
+                decimal totalPrice = 0;
+                if (orderDetailEntity.Count > 0)
+                {
+                    foreach (var orderDetail in orderDetailEntity)
+                    {
+                        totalPrice += (decimal)(orderDetail.UnitPrice * orderDetail.Quantity);
+                    }
+                    var orderEntity = _mapper.Map<Order>(orderdto);
+                    orderEntity.StatusOrder = "Pending";
+                    orderEntity.TotalPrice = totalPrice;
+                    await _orderRepository.AddAsync(orderEntity);
+
+                    if (await _orderRepository.SaveAsync() > 0)
+                    {
+                        foreach (OrderDetail od in orderDetailEntity)
+                        {
+                            od.OrderId = orderEntity.OrderId;
+                            od.UnitPrice = _menuFoodItem1Repository.GetByIdAsync(od.FoodId.GetValueOrDefault()).Result.UnitPrice;
+                            await _orderDetailRepository.AddAsync(od);
+                        }
+
+                        if (await _orderDetailRepository.SaveAsync() > 0)
+                        {
+                            response.IsSuccess = true;
+                            response.message = "Order and Order Details added successfully.";
+                        }
+                        else
+                        {
+                            response.IsSuccess = false;
+                            response.message = "Failed to add Order Details.";
+                        }
+                    }
+                    else
+                    {
+                        response.IsSuccess = false;
+                        response.message = "Failed to add Order.";
+                    }
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.message = "No products found for checkout. Please add one or more products.";
+                }
+            }
+            catch (Exception e)
+            {
+                response.IsSuccess = false;
+                response.message = $"Order creation failed! Exception: {e.Message}";
+            }
+
+            return response;
+        }
+
+
         public async Task<APIResponseModel> CreateOrderAsync(OrderCreateVM createdto)
         {
             var reponse = new APIResponseModel();

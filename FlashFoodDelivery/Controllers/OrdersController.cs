@@ -1,4 +1,5 @@
 ﻿using Business_Layer.Services;
+using Data_Layer.ResourceModel.ViewModel.OrderDetailVMs;
 using Data_Layer.ResourceModel.ViewModel.OrderVMs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -55,6 +56,24 @@ namespace API.Controllers
                 return BadRequest();
             }
             var c = await _orderService.CreateOrderAsync(createDto);
+            if (!c.IsSuccess)
+            {
+                return BadRequest(c);
+            }
+            return Ok(c);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Checkout([FromBody] OrderCreateVM orderDto)
+        {
+            if (orderDto == null)
+            {
+                return BadRequest();
+            }
+            var c = await _orderService.CheckoutAsync(orderDto, orderDto.OrderDetails);
             if (!c.IsSuccess)
             {
                 return BadRequest(c);
