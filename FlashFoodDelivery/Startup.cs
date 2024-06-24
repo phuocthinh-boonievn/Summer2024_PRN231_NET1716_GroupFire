@@ -82,6 +82,10 @@ namespace API
             services.AddScoped<ICartRepository, CartRepository>();
             services.AddScoped<ICartService, CartService>();
 
+            //feedback
+            services.AddScoped<IFeedBackRepository, FeedBackRepository>();
+            services.AddScoped<IFeedBackService, FeedBackService>();
+
             //AdminDashboard
             services.AddScoped<IDashboardService, DashBoardService>();
 
