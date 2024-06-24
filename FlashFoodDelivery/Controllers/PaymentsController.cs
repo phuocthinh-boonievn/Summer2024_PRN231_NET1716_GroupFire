@@ -9,6 +9,8 @@ using Business_Layer.Repositories;
 using Business_Layer.Services.VNPay;
 using Microsoft.Extensions.Options;
 using System.Web;
+using Stripe.Climate;
+using Data_Layer.ResourceModel.Common;
 
 namespace API.Controllers
 {
@@ -18,12 +20,15 @@ namespace API.Controllers
     {
         private readonly IPaymentZaloService _paymentZaloService;
         private readonly VNPaySettings _vnPaySettings;
-        private readonly IOrderRepository _orderRepository;
-        public PaymentsController(IPaymentZaloService paymentZaloService, IOptions<VNPaySettings> vnPaySettings, IOrderRepository orderRepository)
+        private readonly IOrderService _orderService;
+
+        private readonly IVNPayService _vnPayService;
+        public PaymentsController(IPaymentZaloService paymentZaloService, IOptions<VNPaySettings> vnPaySettings, IOrderService orderService, IVNPayService vnPayService)
         {
             _paymentZaloService = paymentZaloService;
             _vnPaySettings = vnPaySettings.Value;
-            _orderRepository = orderRepository;
+            _orderService = orderService;
+            _vnPayService = vnPayService;
         }
 
         //[HttpPost]
@@ -46,51 +51,35 @@ namespace API.Controllers
         //    response = await mediator.Send(request);
         //    return Ok(response);
         //}
-        
 
 
-        [HttpGet("payment/{amount}/{infor}")]
+
         /**
          * param amount: số tiền
-         * param info: orderId được tạo trong bảng order
+         * param id: orderId được tạo trong bảng order
          */
-        //[EnableCors("CorsPolicy")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult VnPaymentRequest(string amount, string infor)
+        [EnableCors("CorsPolicy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpPost("VNPay")]
+        public async Task<IActionResult> VnPaymentRequest([FromBody] OrderPaymentVM model)
         {
-            // find order in table order and checking exits
-
-            string orderinfor = DateTime.Now.Ticks.ToString();
-            string hostName = System.Net.Dns.GetHostName();
-            string clientIPAddress = System.Net.Dns.GetHostAddresses(hostName).GetValue(0).ToString();
-            VNPayHelper pay = new VNPayHelper();
-            amount += "00";
-            pay.AddRequestData("vnp_Version", "2.1.0"); //Phiên bản api mà merchant kết nối. Phiên bản hiện tại là 2.1.0
-            pay.AddRequestData("vnp_Command", "pay"); //Mã API sử dụng, mã cho giao dịch thanh toán là 'pay'
-            pay.AddRequestData("vnp_TmnCode",
-                _vnPaySettings
-                    .TmnCode); //Mã website của merchant trên hệ thống của VNPAY (khi đăng ký tài khoản sẽ có trong mail VNPAY gửi về)
-            pay.AddRequestData("vnp_Amount",
-                amount); //số tiền cần thanh toán, công thức: số tiền * 100 - ví dụ 10.000 (mười nghìn đồng) --> 1000000
-            // pay.AddRequestData("vnp_BankCode",
-            //     "");
-            //Mã Ngân hàng thanh toán (tham khảo: https://sandbox.vnpayment.vn/apis/danh-sach-ngan-hang/), có thể để trống, người dùng có thể chọn trên cổng thanh toán VNPAY
-            pay.AddRequestData("vnp_CreateDate",
-                DateTime.Now.ToString("yyyyMMddHHmmss")); //ngày thanh toán theo định dạng yyyyMMddHHmmss
-            pay.AddRequestData("vnp_CurrCode", "VND"); //Đơn vị tiền tệ sử dụng thanh toán. Hiện tại chỉ hỗ trợ VND
-            pay.AddRequestData("vnp_IpAddr", clientIPAddress); //Địa chỉ IP của khách hàng thực hiện giao dịch
-            pay.AddRequestData("vnp_Locale", "vn"); //Ngôn ngữ giao diện hiển thị - Tiếng Việt (vn), Tiếng Anh (en)
-            pay.AddRequestData("vnp_OrderInfo", infor); //Thông tin mô tả nội dung thanh toán
-            pay.AddRequestData("vnp_OrderType",
-                "other"); //topup: Nạp tiền điện thoại - billpayment: Thanh toán hóa đơn - fashion: Thời trang - other: Thanh toán trực tuyến
-            pay.AddRequestData("vnp_ReturnUrl",
-                _vnPaySettings.ReturnUrl); //URL thông báo kết quả giao dịch khi Khách hàng kết thúc thanh toán
-            pay.AddRequestData("vnp_TxnRef", orderinfor); //mã hóa đơn
-
-            string paymentUrl = pay.CreateRequestUrl(_vnPaySettings.Url, _vnPaySettings.HashSecret);
-            return Redirect(paymentUrl);
+            try
+            {
+                var paymentUrl = await _vnPayService.CreatePaymentRequestAsync(model.OrderId);
+                return Ok(new { url = paymentUrl });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                Console.WriteLine(ex);
+                return StatusCode(500, "An error occurred while processing the payment request.");
+            }
         }
 
         [HttpGet("PaymentConfirm")]
@@ -102,53 +91,35 @@ namespace API.Controllers
         {
             if (Request.QueryString.HasValue)
             {
-                //lấy toàn bộ dữ liệu trả về
-                var queryString = Request.QueryString.Value;
-                var json = HttpUtility.ParseQueryString(queryString);
-
-                long orderId = Convert.ToInt64(json["vnp_TxnRef"]); //mã hóa đơn
-                string orderInfor = json["vnp_OrderInfo"].ToString(); //Thông tin giao dịch
-                long vnpayTranId = Convert.ToInt64(json["vnp_TransactionNo"]); //mã giao dịch tại hệ thống VNPAY
-                string
-                    vnp_ResponseCode =
-                        json["vnp_ResponseCode"]
-                            .ToString(); //response code: 00 - thành công, khác 00 - xem thêm https://sandbox.vnpayment.vn/apis/docs/bang-ma-loi/
-                string vnp_SecureHash = json["vnp_SecureHash"].ToString(); //hash của dữ liệu trả về
-                var pos = Request.QueryString.Value.IndexOf("&vnp_SecureHash");
-
-                bool checkSignature = ValidateSignature(Request.QueryString.Value.Substring(1, pos - 1), vnp_SecureHash,
-                    _vnPaySettings.HashSecret); //check chữ ký đúng hay không?
-                if (checkSignature && _vnPaySettings.TmnCode == json["vnp_TmnCode"].ToString())
+                try
                 {
-                    // Order order = await _orderRepository.GetByOrderIdAsync((int)orderInfor);
-                    if (vnp_ResponseCode == "00")
+                    var result = await _vnPayService.ConfirmPaymentAsync(Request.Query);
+                    if (result == "Payment successful.")
                     {
-                        // Payment successful
-                        // var transaction = await _transactionRepository.GetByIdAsync((int)orderInfor);
-                        // transaction.Status = true;
-                        // await _transactionRepository.UpdateAsync(transaction);
-                        // order.Status = Paid;
-                        // await _orderRepository.UpdateOrderAsync(order);
-
-                        return StatusCode(200, "Ok");
-                        // return Redirect("localhosst");
+                        return Ok(result);
+                    }
+                    else if (result.StartsWith("Payment failed"))
+                    {
+                        return StatusCode(402, result);
                     }
                     else
                     {
-                        // Payment failed
-                        // order.Status = Pending; 
-                        // await _orderRepository.UpdateOrderAsync(order);
-                        return StatusCode(402, $"Payment Required. Error Code: {vnp_ResponseCode}");
+                        return BadRequest(result);
                     }
                 }
-                else
+                catch (ArgumentException ex)
                 {
-                    return Redirect("đường dẫn nếu phản hồi ko hợp lệ");
+                    return BadRequest(ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception
+                    Console.WriteLine(ex);
+                    return StatusCode(500, "An error occurred while processing the payment confirmation.");
                 }
             }
+            return StatusCode(500, "No query data");
 
-            //phản hồi không hợp lệ
-            return StatusCode(500, new { message = "An error occurred while processing your request." });
         }
 
         private bool ValidateSignature(string rspraw, string inputHash, string secretKey)

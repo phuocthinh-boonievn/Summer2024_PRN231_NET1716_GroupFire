@@ -91,6 +91,8 @@ namespace API
             // VNPay setting 
             services.AddSingleton<VNPayHelper>();
             services.Configure<VNPaySettings>(Configuration.GetSection("VNPaySettings"));
+            services.AddScoped<IVNPayService, VNPayService>();
+
             services.AddControllers();
             //Map API
             services.AddCors(options =>
