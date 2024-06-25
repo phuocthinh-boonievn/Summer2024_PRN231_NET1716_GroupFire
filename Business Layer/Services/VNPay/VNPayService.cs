@@ -94,14 +94,15 @@ namespace Business_Layer.Services.VNPay
                 {
                     // Payment successful
                     order.StatusOrder = "Paid";
-                    _orderRepository.Update(order);
+                    await _orderRepository.SaveAsync();
                     return "Payment successful.";
                 }
                 else
                 {
                     // Payment failed
                     order.StatusOrder = "Pending";
-                    _orderRepository.Update(order);
+                    await _orderRepository.SaveAsync();
+
                     return $"Payment failed. Error Code: {vnp_ResponseCode}";
                 }
             }
