@@ -10,7 +10,6 @@ namespace Data_Layer.ResourceModel.ViewModel.OrderVMs
     {
         public Guid OrderId { get; set; }
         public string? MemberId { get; set; }
-        public Guid? ShipperId { get; set; }
         public DateTime? OrderDate { get; set; }
         public DateTime? ShippedDate { get; set; }
         public DateTime? RequiredDate { get; set; }

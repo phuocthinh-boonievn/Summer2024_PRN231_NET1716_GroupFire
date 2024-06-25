@@ -19,6 +19,8 @@ const fastFoodCart = createSlice({
       return state.filter((item) => item.id !== action.payload);
     },
 
+    removeAll: (state, action) => initialValue,
+
     increaseQuantity: (state, action) => {
       const food = state.find((item) => item.id === action.payload);
       if (food) {
@@ -39,6 +41,11 @@ const fastFoodCart = createSlice({
   },
 });
 
-export const { addFood, removeFood, increaseQuantity, decreaseQuantity } =
-  fastFoodCart.actions;
+export const {
+  addFood,
+  removeFood,
+  increaseQuantity,
+  decreaseQuantity,
+  removeAll,
+} = fastFoodCart.actions;
 export default fastFoodCart.reducer;

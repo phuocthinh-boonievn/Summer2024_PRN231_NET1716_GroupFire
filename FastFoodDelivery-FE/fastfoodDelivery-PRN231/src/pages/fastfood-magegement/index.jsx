@@ -105,7 +105,7 @@ function FoodItemManagement() {
             onClick={() => {
               setVisibleEditModal(true);
               handleOnEdit(data);
-              setOldFood(data);
+              // setOldFood(data);
             }}
             type="primary"
             style={{ background: "orange" }}
@@ -236,7 +236,7 @@ function FoodItemManagement() {
     );
 
     fetchFastFood();
-    handleResetEditing();
+    handleCloseEditModal();
   }
   const [formUpdate] = Form.useForm();
 
@@ -290,13 +290,14 @@ function FoodItemManagement() {
 
           <Form.Item label="Image" name={"image"}>
             <Upload
-              action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+              // action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
               listType="picture-card"
               fileList={fileList}
               onPreview={handlePreview}
               onChange={handleChange}
+              beforeUpload={() => false}
             >
-              {fileList.length >= 8 ? null : uploadButton}
+              {fileList.length >= 1 ? null : uploadButton}
             </Upload>
           </Form.Item>
         </Form>

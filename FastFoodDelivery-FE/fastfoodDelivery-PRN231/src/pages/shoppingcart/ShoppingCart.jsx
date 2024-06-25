@@ -9,14 +9,81 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   decreaseQuantity,
   increaseQuantity,
+  removeAll,
   removeFood,
 } from "../../redux/features/fastfoodCart";
+import { store } from "../../redux/store";
+import axios from "axios";
+import { async } from "@firebase/util";
 
 const ShoppingCart = () => {
   const initialItems = useSelector((state) => state.fastfoodcard);
+  const userAccount = useSelector((state) => state.userAccount);
   const [items, setItems] = useState([]);
+  const [dataSource, setDataSource] = useState([]);
   const [shipping, setShipping] = useState(5);
   const dispatch = useDispatch();
+
+  const cartData = useSelector((store) => store.fastfoodcard);
+  const userData = useSelector((store) => store.accountmanage);
+  console.log("cartData", cartData);
+  console.log("userAccount", userData);
+  console.log(userData);
+
+  const handleSubmit = async () => {
+    const orderDetails = initialItems.map((item) => ({
+      foodId: item.id,
+      quantity: item.quantity,
+      price: item.price,
+    }));
+    // const totalPrice = initialItems.reduce(
+    //   (total, item) => total + item.price * item.quantity
+    // );
+
+    const payload = {
+      memberId: userData?.UserId, // fill this with appropriate memberId
+      orderDate: new Date().toISOString(),
+      shippedDate: new Date().toISOString(), // Corrected from ShipperDate to shippedDate
+      requiredDate: new Date().toISOString(),
+      address: "userData?.address", // fill this with appropriate address
+      totalPrice: totalPrice,
+      orderDetails: orderDetails,
+    };
+
+    console.log(payload);
+    if (!userData?.UserId) {
+      console.error("Error: memberId is missing");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        "https://localhost:7173/api/Orders/CreateOrder",
+        payload
+      );
+      console.log("Order response", response.data.data);
+    } catch (error) {
+      console.error("Error creating order", error);
+    }
+  };
+
+  // async function handleSubmit(values) {
+  //   const response = await axios.post(
+  //     "https://localhost:7173/api/Orders/CreateOrder",
+  //    {
+  //     {
+  //       "memberId": userData.UserId,
+  //       "orderDate": "2024-06-24T07:47:17.091Z",
+  //       "shippedDate": "2024-06-24T07:47:17.091Z",
+  //       "requiredDate": "2024-06-24T07:47:17.091Z",
+  //       "address": "string",
+  //       "totalPrice": 0,
+  //       "orderDetails": cartData
+  //     }
+  //    }
+  //   );
+  //   setDataSource([...dataSource, values]);
+  // }
+
   const handleAdd = (id) => {
     dispatch(increaseQuantity(id));
   };
@@ -32,6 +99,12 @@ const ShoppingCart = () => {
 
   const handleCheckout = () => {
     alert("Checkout successful!");
+    handleSubmit();
+    handleRemove();
+  };
+
+  const handleRemove = () => {
+    dispatch(removeAll());
   };
 
   const totalPrice = initialItems?.reduce(

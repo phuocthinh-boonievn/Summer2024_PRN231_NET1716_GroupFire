@@ -5,6 +5,7 @@ import Category from "./pages/category-management";
 import FoodItemManagement from "./pages/fastfood-magegement";
 import HomePage from "./pages/home";
 import Login from "./pages/login";
+import PaymentSuccess from "./pages/payment/paymentSuccess";
 import Register from "./pages/register";
 import ShoppingCart from "./pages/shoppingcart/ShoppingCart";
 
@@ -41,6 +42,10 @@ function App() {
         {
           path: "/shoppingcart",
           element: <ShoppingCart />,
+        },
+        {
+          path: "/paymentSuccess",
+          element: <PaymentSuccess />,
         },
       ],
     },
