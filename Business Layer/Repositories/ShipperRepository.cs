@@ -80,6 +80,38 @@ namespace Business_Layer.Repositories
                 Data = result
             };
         }
+        public async Task<APIResponseModel> ChangeToShipper(string userId)
+        {
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                await _userManager.RemoveFromRoleAsync(user, "User");
+                var resultRole = await _userManager.AddToRoleAsync(user, "Shipper");
+
+                if (!resultRole.Succeeded)
+                {
+                    return new APIResponseModel()
+                    {
+                        code = 200,
+                        message = "Error when change user's role",
+                        IsSuccess = false,
+                    };
+                }
+                return new APIResponseModel()
+                {
+                    code = 200,
+                    message = "Changed successfully",
+                    IsSuccess = true,
+                };
+            }
+            else return new APIResponseModel()
+            {
+                code = 200,
+                message = "User does not exist",
+                IsSuccess = false,
+            };
+        }
 
     }
 }

@@ -81,5 +81,38 @@ namespace API.Controllers
             }
         }
 
+        [HttpPost("change to shipper")]
+        public async Task<APIResponseModel> ChangeToShipper(string userId)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                  .Select(e => e.ErrorMessage).ToList();
+                    return new APIResponseModel
+                    {
+                        code = 400,
+                        Data = errors,
+                        IsSuccess = false,
+                        message = string.Join(";", errors)
+                    };
+                }
+
+                var result = await _shipperRepository.ChangeToShipper(userId);
+                return result;
+
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel()
+                {
+                    code = StatusCodes.Status400BadRequest,
+                    message = ex.Message,
+                    Data = ex,
+                    IsSuccess = false
+                };
+            }
+        }
     }
 }
