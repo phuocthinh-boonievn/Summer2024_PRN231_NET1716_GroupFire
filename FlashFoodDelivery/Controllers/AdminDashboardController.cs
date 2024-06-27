@@ -96,5 +96,16 @@ namespace API.Controllers
             }
             return Ok(response.Data);
         }
+        [HttpGet("dashboard/food-menu")]
+        [EnableCors("CorsPolicy")]
+        public async Task<IActionResult> GetTopSalesFood()
+        {
+            var response = await _dashboardService.GetTopSalesFood();
+            if(response.Data is null)
+            {
+                return BadRequest(response.message);
+            }
+            return Ok(response.Data);
+        }
     }
 }

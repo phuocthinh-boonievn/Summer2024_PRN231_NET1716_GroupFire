@@ -1,5 +1,6 @@
 ﻿using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel.DashboardViewModel;
+using Data_Layer.ResourceModel.ViewModel.MenuFoodItemVMs;
 using Data_Layer.ResourceModel.ViewModel.ShipperViewModels;
 using System;
 using System.Collections.Generic;
@@ -19,5 +20,6 @@ namespace Business_Layer.Services
         public Task<APIGenericReposneModel<int>> GetTotalActiveUser();
         public Task<APIGenericReposneModel<int>> CountTotalOrder();
         public Task<APIGenericReposneModel<List<ShipperReport>>>? GetTopFiveShippersAsync();
+        public Task<APIGenericReposneModel<List<MostSalesFood>>> GetTopSalesFood();
     }
 }
