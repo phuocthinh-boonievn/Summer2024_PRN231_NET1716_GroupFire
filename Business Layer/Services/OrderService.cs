@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Business_Layer.Repositories;
+using Business_Layer.Services.VNPay;
 using Data_Layer.Models;
 using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel;
@@ -22,12 +23,15 @@ namespace Business_Layer.Services
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
         private readonly IMenuFoodItem1Repository _menuFoodItem1Repository;
-        public OrderService(IMapper mapper, IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IMenuFoodItem1Repository menuFoodItem1Repository)
+        private readonly IVNPayService _vNPayService;
+
+        public OrderService(IMapper mapper, IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IMenuFoodItem1Repository menuFoodItem1Repository, IVNPayService vNPayService)
         {
             _mapper = mapper;
             _orderRepository = orderRepository;
             _orderDetailRepository = orderDetailRepository;
             _menuFoodItem1Repository = menuFoodItem1Repository;
+            _vNPayService = vNPayService;
         }
 
         public async Task<APIResponseModel> CancelOrderAsync(Guid id)
@@ -110,8 +114,18 @@ namespace Business_Layer.Services
 
                         if (await _orderDetailRepository.SaveAsync() > 0)
                         {
-                            response.IsSuccess = true;
-                            response.message = "Order and Order Details added successfully.";
+                            var payment = _vNPayService.CreatePaymentRequestAsync(orderEntity.OrderId).ToString();
+                            if (payment != null)
+                            {
+                                response.IsSuccess = true;
+                                response.message = payment.ToString();
+                            }
+                            else
+                            {
+                                response.IsSuccess = false;
+                                response.message = "payment fail"; 
+                            }
+                            
                         }
                         else
                         {
@@ -153,9 +167,18 @@ namespace Business_Layer.Services
 
                 if (await _orderRepository.SaveAsync() > 0)
                 {
-                    reponse.Data = _mapper.Map<OrderViewVM>(orderentity);
-                    reponse.IsSuccess = true;
-                    reponse.message = "Create new order successfully";
+                    var paymentUrl = await _vNPayService.CreatePaymentRequestAsync(orderentity.OrderId);
+                    if (!string.IsNullOrEmpty(paymentUrl))
+                    {
+                        reponse.Data = _mapper.Map<OrderViewVM>(orderentity);
+                        reponse.IsSuccess = true;
+                        reponse.message = paymentUrl;
+                    }
+                    else
+                    {
+                        reponse.IsSuccess = false;
+                        reponse.message = "Payment failed.";
+                    }
                     return reponse;
                 }
             }

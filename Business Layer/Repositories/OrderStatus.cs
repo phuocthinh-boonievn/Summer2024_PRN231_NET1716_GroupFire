@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data_Layer.ResourceModel.ViewModel
+namespace Business_Layer.Repositories
 {
-    public class CategoryVM
+    public class OrderStatus
     {
-        public string CategoriesName { get; set; }
     }
 }
