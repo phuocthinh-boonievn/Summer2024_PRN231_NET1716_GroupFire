@@ -3,6 +3,7 @@ using Business_Layer.DataAccess;
 using Data_Layer.Models;
 using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel;
+using Data_Layer.ResourceModel.ViewModel.ShipperViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -80,6 +81,19 @@ namespace Business_Layer.Repositories
                 Data = result
             };
         }
-
+        public async Task<List<ShipperReport>>? GetTopFiveShippersAsync()
+        {
+            var shippers = await _userManager.GetUsersInRoleAsync("Shipper");
+            var shipperHasMostOrder = shippers.Select(s => new ShipperReport
+            {
+                ShipperName = s.FullName,
+                TotalReceivedOrders = s.OrderStatuses.Count(),
+                TotalShippedOrders = s.OrderStatuses.Count(os => os.Order.StatusOrder == "Confirmed")
+            })
+                .OrderByDescending(x => x.TotalShippedOrders)
+                .Take(5)
+                .ToList();
+            return shipperHasMostOrder;
+        }
     }
 }
