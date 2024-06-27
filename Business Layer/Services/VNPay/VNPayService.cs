@@ -1,4 +1,5 @@
 ﻿using Business_Layer.Repositories;
+using Data_Layer.ResourceModel.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.Options;
@@ -52,8 +53,10 @@ namespace Business_Layer.Services.VNPay
             string paymentUrl = pay.CreateRequestUrl(_vnPaySettings.Url, _vnPaySettings.HashSecret);
             return paymentUrl;
         }
-        public async Task<string> ConfirmPaymentAsync(IQueryCollection queryString)
+        public async Task<APIResponseModel> ConfirmPaymentAsync(IQueryCollection queryString)
         {
+            var reponse = new APIResponseModel();
+
             var queryParameters = new Dictionary<string, string>();
             foreach (var key in queryString.Keys)
             {
@@ -95,20 +98,27 @@ namespace Business_Layer.Services.VNPay
                     // Payment successful
                     order.StatusOrder = "Paid";
                     await _orderRepository.SaveAsync();
-                    return "Payment successful.";
+                    reponse.Data = order;
+                    reponse.IsSuccess = true;
+                    reponse.message = $"Payment succesfull.";
+                    return reponse;
                 }
                 else
                 {
                     // Payment failed
                     order.StatusOrder = "Pending";
                     await _orderRepository.SaveAsync();
-
-                    return $"Payment failed. Error Code: {vnp_ResponseCode}";
+                    reponse.Data = order;
+                    reponse.IsSuccess = false;
+                    reponse.message = $"Payment failed. Error code: {vnp_ResponseCode}";
+                    return reponse;
                 }
             }
             else
             {
-                return "Invalid response.";
+                reponse.IsSuccess = false;
+                reponse.message = $"Invalid response!";
+                return reponse;
             }
         }
 

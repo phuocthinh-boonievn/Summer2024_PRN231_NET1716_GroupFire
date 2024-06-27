@@ -94,11 +94,11 @@ namespace API.Controllers
                 try
                 {
                     var result = await _vnPayService.ConfirmPaymentAsync(Request.Query);
-                    if (result == "Payment successful.")
+                    if (result.IsSuccess)
                     {
-                        return Ok(result);
+                        return Redirect("http://localhost:5173/paymentsuccess");
                     }
-                    else if (result.StartsWith("Payment failed"))
+                    else if (!result.IsSuccess)
                     {
                         return StatusCode(402, result);
                     }
@@ -119,7 +119,6 @@ namespace API.Controllers
                 }
             }
             return StatusCode(500, "No query data");
-
         }
 
         private bool ValidateSignature(string rspraw, string inputHash, string secretKey)
