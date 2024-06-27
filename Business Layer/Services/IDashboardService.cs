@@ -1,4 +1,6 @@
-﻿using Data_Layer.ResourceModel.ViewModel.DashboardViewModel;
+﻿using Data_Layer.ResourceModel.Common;
+using Data_Layer.ResourceModel.ViewModel.DashboardViewModel;
+using Data_Layer.ResourceModel.ViewModel.ShipperViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +16,8 @@ namespace Business_Layer.Services
         public Task<decimal> GetTotalRevenue();
         public Task<decimal> GetTotalSalesByWeek(int year, int weekNumber);
         public Task<List<LoyalCustomer>> GetTopLoyalCustomer();
+        public Task<APIGenericReposneModel<int>> GetTotalActiveUser();
+        public Task<APIGenericReposneModel<int>> CountTotalOrder();
+        public Task<APIGenericReposneModel<List<ShipperReport>>>? GetTopFiveShippersAsync();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Business_Layer.Services;
 using Data_Layer.ResourceModel.Common;
+using Data_Layer.ResourceModel.ViewModel.ShipperViewModels;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -61,6 +62,39 @@ namespace API.Controllers
         {
             var loyalCustomers = await _dashboardService.GetTopLoyalCustomer();
             return Ok(loyalCustomers);
+        }
+        [HttpGet("dashboard/active-user")]
+        [EnableCors("CorsPolicy")]
+        public async Task<IActionResult> GetTotalActiveUser()
+        {
+            var response  = await _dashboardService.GetTotalActiveUser();
+            if(response.Data > 0)
+            {
+                return Ok(response.Data);
+            }
+            return BadRequest(response.message);
+        }
+        [HttpGet("dashboard/total-orders")]
+        [EnableCors("CorsPolicy")]
+        public async Task<IActionResult> CountTotalOrder()
+        {
+            var response = await _dashboardService.CountTotalOrder();
+            if(response.Data > 0)
+            {
+                return Ok(response.Data);
+            }
+            return BadRequest(response.message);
+        }
+        [HttpGet("dashboard/shipper-orders")]
+        [EnableCors("CorsPolicy")]
+        public async Task<IActionResult> GetTopFiveShippersAsync()
+        {
+            var response = await _dashboardService.GetTopFiveShippersAsync();
+            if(response.Data is null)
+            {
+                return BadRequest(response.message);
+            }
+            return Ok(response.Data);
         }
     }
 }
