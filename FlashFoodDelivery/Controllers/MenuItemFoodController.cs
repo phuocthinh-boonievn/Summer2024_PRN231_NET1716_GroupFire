@@ -54,6 +54,16 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("search")]
+        [EnableCors("CorsPolicy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> SearchFoods([FromQuery] string searchTerm)
+        {
+            var result = await _menuFoodItem1Service.SearchFoodsAsync(searchTerm);
+            return Ok(result);
+        }
+
         [HttpGet("{categoryId:Guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

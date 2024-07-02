@@ -96,7 +96,10 @@ namespace API.Controllers
                     var result = await _vnPayService.ConfirmPaymentAsync(Request.Query);
                     if (result.IsSuccess)
                     {
-                        return Redirect("http://localhost:5173/paymentsuccess");
+                        var order = result.Data as Data_Layer.Models.Order;
+                        var redirectUrl = $"http://localhost:5173/paymentsuccess?orderId={order.OrderId}&amount={order.TotalPrice}&orderDate={order.OrderDate.ToString("yyyy-MM-ddTHH:mm:ss")}";
+                        return Redirect(redirectUrl);
+                            
                     }
                     else if (!result.IsSuccess)
                     {

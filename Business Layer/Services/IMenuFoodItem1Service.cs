@@ -13,6 +13,7 @@ namespace Business_Layer.Services
         Task<APIResponseModel> GetFoodsAsync();
         Task<APIResponseModel> GetFoodByIdsAsync(Guid foodId);
         Task<APIResponseModel> GetFoodsByCategoryIdAsync(Guid categoryId);
+        Task<APIResponseModel> SearchFoodsAsync(string searchTerm);
         Task<APIResponseModel> CreateFoodAsync(MenuFoodItemCreateVM createdto);
         Task<APIResponseModel> UpdateFoodAsync(Guid id, MenuFoodItemUpdateVM updatedto);
         Task<APIResponseModel> DeleteFood(Guid id);

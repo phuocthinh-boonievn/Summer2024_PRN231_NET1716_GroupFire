@@ -211,6 +211,53 @@ namespace Business_Layer.Services
             }
         }
 
+        public async Task<APIResponseModel> SearchFoodsAsync(string searchTerm)
+        {
+            var response = new APIResponseModel();
+            List<MenuFoodItemViewVM> foodDTOs = new List<MenuFoodItemViewVM>();
+            try
+            {
+                var foods = await _menuFoodItem1Repository.GetAllAsync(x => x.Category);
+
+                // Apply search filter if searchTerm is provided
+                if (!string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    searchTerm = searchTerm.ToLower();
+                    foods = foods.Where(f => f.FoodName.ToLower().Contains(searchTerm) || f.FoodDescription.ToLower().Contains(searchTerm)).ToList();
+                }
+
+                foreach (var food in foods)
+                {
+                    if (food.FoodStatus.ToString() == MenuFoodItemStatusEnum.Active.ToString())
+                    {
+                        var entityDTO = _mapper.Map<MenuFoodItemViewVM>(food);
+                        entityDTO.CategoryName = food.Category.CategoriesName;
+                        foodDTOs.Add(entityDTO);
+                    }
+                }
+
+                if (foodDTOs.Count > 0)
+                {
+                    response.Data = foodDTOs;
+                    response.IsSuccess = true;
+                    response.message = $"Found {foodDTOs.Count} food items.";
+                }
+                else
+                {
+                    response.Data = foodDTOs; // Returning empty list to maintain consistency
+                    response.IsSuccess = false;
+                    response.message = "No food items found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.message = ex.Message;
+            }
+
+            return response;
+        }
+
         public async Task<APIResponseModel> UpdateFoodAsync(Guid id, MenuFoodItemUpdateVM updatedto)
         {
             var reponse = new APIResponseModel();
