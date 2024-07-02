@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business_Layer.Repositories
+namespace Data_Layer.ResourceModel.ViewModel.Enum
 {
-    public class OrderStatus
+    internal class OrderStatusEnum
     {
     }
 }

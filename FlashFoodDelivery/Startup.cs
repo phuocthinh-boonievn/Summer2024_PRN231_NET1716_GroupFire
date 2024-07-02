@@ -70,6 +70,7 @@ namespace API
             services.AddScoped<IOrderDetailService, OrderDetailService>();
             services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 
+           
             //MenuFoodItem
             services.AddScoped<IMenuFoodItem1Repository, MenuFoodItem1Repository>();
             services.AddScoped<IMenuFoodItem1Service, MenuFoodItem1Service>();
@@ -96,6 +97,8 @@ namespace API
             services.AddSingleton<VNPayHelper>();
             services.Configure<VNPaySettings>(Configuration.GetSection("VNPaySettings"));
             services.AddScoped<IVNPayService, VNPayService>();
+
+            
 
             services.AddControllers();
             //Map API

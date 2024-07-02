@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using System.Web;
 using Stripe.Climate;
 using Data_Layer.ResourceModel.Common;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace API.Controllers
 {
@@ -96,7 +97,16 @@ namespace API.Controllers
                     var result = await _vnPayService.ConfirmPaymentAsync(Request.Query);
                     if (result.IsSuccess)
                     {
-                        return Redirect("http://localhost:5173/paymentsuccess");
+                        //return Ok(result);
+
+                        //var order = result.Data as Data_Layer.Models.Order ;
+                        //var redirectUrl = $"http://localhost:5173/paymentsuccess?order";
+                        // var redirectUrl = $"http://localhost:5173/paymentsuccess?{result}";
+                        // return Redirect(redirectUrl);
+
+                        //var queryParams = new QueryBuilder(result.ToDictionary()).ToQueryString();
+                        var redirectUrl = $"http://localhost:5173/paymentsuccess{result}";
+                        return Redirect(redirectUrl);
                     }
                     else if (!result.IsSuccess)
                     {

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 import { ShoppingCartOutlined } from "@ant-design/icons";
-
+import "react-toastify/dist/ReactToastify.css";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
@@ -16,6 +16,7 @@ import { Button, Card } from "antd";
 import Meta from "antd/es/card/Meta";
 import { useDispatch } from "react-redux";
 import { addFood } from "../../redux/features/fastfoodCart";
+import { ToastContainer, toast } from "react-toastify";
 
 //
 
@@ -56,10 +57,13 @@ export default function Carousel({
         image: e.image,
       })
     );
+    console.log("hi");
+    return toast.success("Add Food Successfully");
   }
 
   return (
     <>
+      <ToastContainer />
       <h3>{Category}</h3>
       <Swiper
         slidesPerView={numberOfSlides}

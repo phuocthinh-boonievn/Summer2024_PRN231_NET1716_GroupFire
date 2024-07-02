@@ -17,10 +17,12 @@ namespace Business_Layer.Utils
         {
             return new UserViewModel
             {
+                Id = user.Id,
                 FullName = user.FullName,
                 Address = user.Address,
                 PhoneNumber = user.PhoneNumber,
-                Email = user.Email                
+                Email = user.Email,
+                Status = user.Status,
             };
         }
         public static User ToUser(this UserViewModel model)
