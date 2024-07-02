@@ -94,20 +94,17 @@ namespace API.Controllers
                 try
                 {
                     var result = await _vnPayService.ConfirmPaymentAsync(Request.Query);
-                    if (result.IsSuccess)
+                    if (result.IsSuccess && result.message.StartsWith("http"))
                     {
-                        var order = result.Data as Data_Layer.Models.Order;
-                        var redirectUrl = $"http://localhost:5173/paymentsuccess?orderId={order.OrderId}&amount={order.TotalPrice}&orderDate={order.OrderDate.ToString("yyyy-MM-ddTHH:mm:ss")}";
-                        return Redirect(redirectUrl);
-                            
+                        return Redirect(result.message);
                     }
-                    else if (!result.IsSuccess)
+                    else if (result.message.StartsWith("Payment failed"))
                     {
-                        return StatusCode(402, result);
+                        return StatusCode(402, result.message);
                     }
                     else
                     {
-                        return BadRequest(result);
+                        return BadRequest(result.message);
                     }
                 }
                 catch (ArgumentException ex)

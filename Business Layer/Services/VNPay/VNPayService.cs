@@ -55,7 +55,7 @@ namespace Business_Layer.Services.VNPay
         }
         public async Task<APIResponseModel> ConfirmPaymentAsync(IQueryCollection queryString)
         {
-            var reponse = new APIResponseModel();
+            var response = new APIResponseModel();
 
             var queryParameters = new Dictionary<string, string>();
             foreach (var key in queryString.Keys)
@@ -98,27 +98,27 @@ namespace Business_Layer.Services.VNPay
                     // Payment successful
                     order.StatusOrder = "Paid";
                     await _orderRepository.SaveAsync();
-                    reponse.Data = order;
-                    reponse.IsSuccess = true;
-                    reponse.message = $"Payment succesfull.";
-                    return reponse;
+                    response.Data = order;
+                    response.IsSuccess = true;
+                    response.message = $"http://localhost:5173/paymentsuccess?vnp_Amount={queryParameters["vnp_Amount"]}&vnp_BankCode={queryParameters["vnp_BankCode"]}&vnp_BankTranNo={queryParameters["vnp_BankTranNo"]}&vnp_CardType={queryParameters["vnp_CardType"]}&vnp_OrderInfo={queryParameters["vnp_OrderInfo"]}&vnp_PayDate={queryParameters["vnp_PayDate"]}&vnp_ResponseCode={queryParameters["vnp_ResponseCode"]}&vnp_TmnCode={queryParameters["vnp_TmnCode"]}&vnp_TransactionNo={queryParameters["vnp_TransactionNo"]}&vnp_TransactionStatus={queryParameters["vnp_TransactionStatus"]}&vnp_TxnRef={queryParameters["vnp_TxnRef"]}&vnp_SecureHash={queryParameters["vnp_SecureHash"]}";
+                    return response;
                 }
                 else
                 {
                     // Payment failed
                     order.StatusOrder = "Pending";
                     await _orderRepository.SaveAsync();
-                    reponse.Data = order;
-                    reponse.IsSuccess = false;
-                    reponse.message = $"Payment failed. Error code: {vnp_ResponseCode}";
-                    return reponse;
+                    response.Data = order;
+                    response.IsSuccess = false;
+                    response.message = $"Payment failed. Error code: {vnp_ResponseCode}";
+                    return response;
                 }
             }
             else
             {
-                reponse.IsSuccess = false;
-                reponse.message = $"Invalid response!";
-                return reponse;
+                response.IsSuccess = false;
+                response.message = $"Invalid response!";
+                return response;
             }
         }
 
