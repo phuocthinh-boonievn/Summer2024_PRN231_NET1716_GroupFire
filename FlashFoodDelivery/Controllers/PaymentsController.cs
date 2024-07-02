@@ -98,9 +98,9 @@ namespace API.Controllers
                     {
                         return Redirect(result.message);
                     }
-                    else if (result.message.StartsWith("Payment failed"))
+                    else if (!result.IsSuccess && result.message.StartsWith("http"))
                     {
-                        return StatusCode(402, result.message);
+                        return Redirect(result.message);
                     }
                     else
                     {
