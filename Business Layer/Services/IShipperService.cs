@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Business_Layer.Services
 {
-    internal class IShipperService
+    public class IShipperService
     {
     }
 }

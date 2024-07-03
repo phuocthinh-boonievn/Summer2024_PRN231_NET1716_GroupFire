@@ -78,6 +78,8 @@ namespace API
             //Category
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ICategoryService, CategoryService>();
+            //Shipper
+            services.AddScoped<IShipperRepository, ShipperRepository>();
 
             //Cart
             services.AddScoped<ICartRepository, CartRepository>();

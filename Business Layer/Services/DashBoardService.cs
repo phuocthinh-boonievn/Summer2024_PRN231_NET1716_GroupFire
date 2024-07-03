@@ -1,6 +1,9 @@
 ﻿using Business_Layer.Repositories;
 using Data_Layer.Models;
+using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel.DashboardViewModel;
+using Data_Layer.ResourceModel.ViewModel.MenuFoodItemVMs;
+using Data_Layer.ResourceModel.ViewModel.ShipperViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +17,20 @@ namespace Business_Layer.Services
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IShipperRepository _shipperRepository;
+        private readonly IMenuFoodItem1Repository _menuFoodItem1Repository;
 
-        public DashBoardService(IOrderRepository order, IOrderDetailRepository orderDetail, IUserRepository userRepository) 
+        public DashBoardService(IOrderRepository order,
+            IOrderDetailRepository orderDetail,
+            IUserRepository userRepository,
+            IShipperRepository shipperRepository,
+            IMenuFoodItem1Repository menuFoodItem1Repository) 
         {
             _orderRepository = order;
             _orderDetailRepository = orderDetail;
             _userRepository = userRepository;
+            _shipperRepository = shipperRepository;
+            _menuFoodItem1Repository = menuFoodItem1Repository;
         }
 
         public async Task<decimal> GetTotalSalesByMonth(int month, int year)
@@ -70,6 +81,84 @@ namespace Business_Layer.Services
         {
             var loyalCustomeList = await _userRepository.GetTopFiveCustomerAsync();
             return loyalCustomeList;
+        }
+        public async Task<APIGenericReposneModel<int>> GetTotalActiveUser()
+        {
+            var response = new APIGenericReposneModel<int>();
+            var users = await _userRepository.GetAllAsync();
+            var activeUser = users.Where(u => u.Status == "Active").Count();
+            if (activeUser > 0)
+            {
+                response.code = 200;
+                response.IsSuccess = true;
+                response.message = "Total Active User !";
+                response.Data = activeUser;
+            }
+            else
+            {
+                response.code = 500;
+                response.IsSuccess = false;
+                response.message = "Can not find active user !";
+            }
+            return response;
+        }
+
+        public async Task<APIGenericReposneModel<int>> CountTotalOrder()
+        {
+            var response = new APIGenericReposneModel<int>();
+            var orders = await _orderRepository.GetConfirmedOrders();
+            var total = orders.Count();
+            if(total > 0)
+            {
+                response.code = 200;
+                response.message = "Total Orders !";
+                response.IsSuccess = true;
+                response.Data = total;
+            }
+            else
+            {
+                response.code = 500;
+                response.message = "There is no any order !";
+                response.IsSuccess= false;
+            }
+            return response;
+        }
+        public async Task<APIGenericReposneModel<List<ShipperReport>>>? GetTopFiveShippersAsync()
+        {
+            var response = new APIGenericReposneModel<List<ShipperReport>>();
+            response.Data = await _shipperRepository.GetTopFiveShippersAsync();
+            if (response.Data is null)
+            {
+                response.code = 500;
+                response.IsSuccess = false;
+                response.message = "There is not any shipped order !";                
+            }
+            else
+            {
+                response.code = 200;
+                response.IsSuccess = true;
+                response.message = "Top 5 shippers !";
+            }
+            return response;
+        }
+
+        public async Task<APIGenericReposneModel<List<MostSalesFood>>> GetTopSalesFood()
+        {
+            var response = new APIGenericReposneModel<List<MostSalesFood>>();
+            response.Data = await _menuFoodItem1Repository.GetTopSalesFood();
+            if (response.Data is null)
+            {
+                response.code = 500;
+                response.message = "List of sale food is empty !";
+                response.IsSuccess = false;
+            }
+            else
+            {
+                response.code = 200;
+                response.message = "Top Sales Food !";
+                response.IsSuccess = true;
+            }
+            return response;
         }
     }
 }
