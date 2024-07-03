@@ -110,7 +110,7 @@ namespace Business_Layer.Services.VNPay
                     await _orderRepository.SaveAsync();
                     response.Data = order;
                     response.IsSuccess = false;
-                    response.message = $"Payment failed. Error code: {vnp_ResponseCode}";
+                    response.message = $"http://localhost:5173/PaymentFail";
                     return response;
                 }
             }
