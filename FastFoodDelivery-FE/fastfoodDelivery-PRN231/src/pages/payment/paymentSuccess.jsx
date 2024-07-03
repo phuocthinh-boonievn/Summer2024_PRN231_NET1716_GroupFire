@@ -1,7 +1,25 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import useGetParams from "../../hooks/useGetParams";
 import "./paymentSuccess.scss"; // Importing the CSS file for styling
 
 const PaymentSuccess = ({ transactionId, amount, date }) => {
+  const [dataSource, setDataSource] = useState([]);
+  const params = useGetParams();
+  const orderId = params("vnp_OrderInfo");
+  console.log(orderId);
+  const handleGetOrderById = async () => {
+    const response = await axios.get(
+      `https://localhost:7173/api/Orders/ViewOrderByID/${orderId}`
+    );
+
+    console.log(response.data.data);
+    setDataSource(response.data.data);
+  };
+
+  useEffect(() => {
+    handleGetOrderById();
+  }, []);
   return (
     <div className="payment-success">
       <div className="payment-success__icon">
@@ -20,13 +38,14 @@ const PaymentSuccess = ({ transactionId, amount, date }) => {
       <p>Your payment has been processed successfully.</p>
       <div className="payment-success__details">
         <p>
-          <strong>Order ID:</strong> {transactionId}
+          <strong>ShippedDate:</strong> {dataSource?.shippedDate}
+        </p>
+
+        <p>
+          <strong>OrderDate:</strong> {dataSource?.orderDate}
         </p>
         <p>
-          <strong>Amount:</strong> ${amount}
-        </p>
-        <p>
-          <strong>OrderDate:</strong> {date}
+          <strong>Amount:</strong> {dataSource?.totalPrice}
         </p>
       </div>
       <button
