@@ -41,7 +41,11 @@ namespace Business_Layer.AutoMapper
             CreateMap<FeedBack, FeedBackViewVM>().ReverseMap();
 
             CreateMap<User, UserViewModel>().ReverseMap();
+
             CreateMap<OrderStatus, OrderStatusVM>().ReverseMap();
+            CreateMap<OrderStatus, OrderStatusViewVM>().ReverseMap();
+            CreateMap<OrderStatus, OrderStatusUpdateVM>().ReverseMap();
+
         }
     }
 }

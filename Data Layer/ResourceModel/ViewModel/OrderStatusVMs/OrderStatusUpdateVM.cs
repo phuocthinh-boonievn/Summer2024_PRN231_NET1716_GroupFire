@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace Data_Layer.ResourceModel.ViewModel.OrderStatusVMs
 {
-    public class OrderStatusVM
+    public class OrderStatusUpdateVM
     {
-        public string? ShipperId { get; set; }
-        public Guid? OrderId { get; set; }
-
-         
+        public string? OrderStatusName { get; set; }
     }
 }

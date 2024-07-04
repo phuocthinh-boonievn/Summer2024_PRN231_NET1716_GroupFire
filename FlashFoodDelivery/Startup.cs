@@ -70,6 +70,10 @@ namespace API
             services.AddScoped<IOrderDetailService, OrderDetailService>();
             services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 
+            //OrderStatus
+            services.AddScoped<IOrderStatusService, OrderStatusService>();
+            services.AddScoped<IOrderStatusRepository, OrderStatusRepository>();
+
            
             //MenuFoodItem
             services.AddScoped<IMenuFoodItem1Repository, MenuFoodItem1Repository>();

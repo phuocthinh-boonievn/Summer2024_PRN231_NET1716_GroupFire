@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Data_Layer.ResourceModel.ViewModel.Enum
 {
-    internal class OrderStatusEnum
+    public enum OrderStatusEnum
     {
+        Processing,
+        Delivered,
+        CancelOrder,
     }
 }
