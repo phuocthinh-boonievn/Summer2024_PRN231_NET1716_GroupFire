@@ -85,7 +85,7 @@ namespace API.Controllers
             }
             return BadRequest(response.message);
         }
-        [HttpGet("dashboard/shipper-orders")]
+      /*  [HttpGet("dashboard/shipper-orders")]
         [EnableCors("CorsPolicy")]
         public async Task<IActionResult> GetTopFiveShippersAsync()
         {
@@ -95,7 +95,7 @@ namespace API.Controllers
                 return BadRequest(response.message);
             }
             return Ok(response.Data);
-        }
+        } */
         [HttpGet("dashboard/food-menu")]
         [EnableCors("CorsPolicy")]
         public async Task<IActionResult> GetTopSalesFood()

@@ -4,6 +4,7 @@ using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel;
 using Data_Layer.ResourceModel.ViewModel.User;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -14,39 +15,29 @@ namespace API.Controllers
     [ApiController]
     public class ShipperController : ControllerBase
     {
-        private readonly IShipperRepository _shipperRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IUserSerivce _userSerivce;
 
-        public ShipperController(IShipperRepository shipperRepository)
+        public ShipperController(IUserRepository userRepository, IUserSerivce userSerivce)
         {
-            _shipperRepository = shipperRepository;
+            _userRepository = userRepository;
+            _userSerivce = userSerivce;
         }
 
-        // GET: api/<ShipperController>
-        [HttpGet("GetAllShippers")]
-        //[Authorize(Roles = UserRole.Admin)]
-        public async Task<APIResponseModel> GetAllShipper()
+        [HttpGet]
+        [EnableCors("CorsPolicy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ViewAllACcountShipper()
         {
-            try
-            {
-                var result = await _shipperRepository.GetAllShipper();
-                return new APIResponseModel()
-                {
-                    code = 200,
-                    message = "Get successful",
-                    IsSuccess = true,
-                    Data = result,
-                };
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            var result = await _userSerivce.GetShippersAsync();
+            return Ok(result);
         }
 
-        // POST api/<ShipperController>
-        [HttpGet("GetOrderStatusByShipperId")]
-        //[Authorize(Roles = UserRole.Admin)]
-        public async Task<APIResponseModel> GetOrderStatusByShipperId(string userId)
+
+        [HttpPost("register")]
+        [EnableCors("CorsPolicy")]
+        public async Task<APIResponseModel> RegisterShipper([FromBody] RegisterVM model)
         {
             try
             {
@@ -65,8 +56,8 @@ namespace API.Controllers
 
                 }
 
-                var result = _shipperRepository.GetOrderStatusByShipperId(userId);
-                return await result;
+                var result = await _userRepository.RegisterShipper(model);
+                return result;
 
             }
             catch (Exception ex)
@@ -80,6 +71,37 @@ namespace API.Controllers
                 };
             }
         }
+
+        [HttpPut("UpdateShipper")]
+        [EnableCors("CorsPolicy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateUser(string id, [FromBody] UserUpdateViewModel model)
+        {
+
+            var user = await _userSerivce.UpdateShipper(id, model);
+            if (!user.IsSuccess)
+            {
+                return BadRequest(user);
+            }
+            return Ok(user);
+
+        }
+
+        [HttpDelete("DeleteUser")]
+        [EnableCors("CorsPolicy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> DeleteShipper(string id)
+        {
+            var deleteSuccess = await _userSerivce.DeleteShipper(id);
+            if (!deleteSuccess.IsSuccess)
+            {
+                return BadRequest(deleteSuccess);
+            }
+            return Ok(deleteSuccess);
+        }
+
 
     }
 }

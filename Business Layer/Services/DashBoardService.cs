@@ -17,19 +17,19 @@ namespace Business_Layer.Services
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IShipperRepository _shipperRepository;
+        //private readonly IShipperRepository _shipperRepository;
         private readonly IMenuFoodItem1Repository _menuFoodItem1Repository;
 
         public DashBoardService(IOrderRepository order,
             IOrderDetailRepository orderDetail,
             IUserRepository userRepository,
-            IShipperRepository shipperRepository,
+            //IShipperRepository shipperRepository,
             IMenuFoodItem1Repository menuFoodItem1Repository) 
         {
             _orderRepository = order;
             _orderDetailRepository = orderDetail;
             _userRepository = userRepository;
-            _shipperRepository = shipperRepository;
+            //_shipperRepository = shipperRepository;
             _menuFoodItem1Repository = menuFoodItem1Repository;
         }
 
@@ -123,7 +123,7 @@ namespace Business_Layer.Services
             }
             return response;
         }
-        public async Task<APIGenericReposneModel<List<ShipperReport>>>? GetTopFiveShippersAsync()
+      /*  public async Task<APIGenericReposneModel<List<ShipperReport>>>? GetTopFiveShippersAsync()
         {
             var response = new APIGenericReposneModel<List<ShipperReport>>();
             response.Data = await _shipperRepository.GetTopFiveShippersAsync();
@@ -140,7 +140,7 @@ namespace Business_Layer.Services
                 response.message = "Top 5 shippers !";
             }
             return response;
-        }
+        } */ 
 
         public async Task<APIGenericReposneModel<List<MostSalesFood>>> GetTopSalesFood()
         {

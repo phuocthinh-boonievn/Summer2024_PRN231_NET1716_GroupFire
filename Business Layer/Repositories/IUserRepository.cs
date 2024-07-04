@@ -14,6 +14,7 @@ namespace Business_Layer.Repositories
     {
         Task<APIResponseModel> Login(LoginVM model);
         Task<APIResponseModel> Register(RegisterVM model);
+        Task<APIResponseModel> RegisterShipper(RegisterVM model);
         Task<User> GetUserByID(string id);
         Task<List<LoyalCustomer>> GetTopFiveCustomerAsync();
         User UpdateStatusUser(User user);
