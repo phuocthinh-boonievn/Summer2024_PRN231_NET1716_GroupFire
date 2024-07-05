@@ -7,6 +7,7 @@ import HomePage from "./pages/home";
 import Login from "./pages/login";
 import PaymentFailure from "./pages/payment/paymentFail";
 import PaymentSuccess from "./pages/payment/paymentSuccess";
+import UserAccount from "./pages/profolio";
 import Register from "./pages/register";
 import ShoppingCart from "./pages/shoppingcart/ShoppingCart";
 
@@ -52,9 +53,16 @@ function App() {
           path: "/paymentFail",
           element: <PaymentFailure />,
         },
+        {
+          path: "/profolio",
+          element: <UserAccount />,
+        },
       ],
     },
-
+    // {
+    //   path: "/profolio",
+    //   element: <UserAccount />,
+    // },
     // {
     //   path: "/",
     //   element: <HomePage />,

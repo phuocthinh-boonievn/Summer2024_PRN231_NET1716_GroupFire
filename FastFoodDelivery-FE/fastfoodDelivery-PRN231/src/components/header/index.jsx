@@ -27,8 +27,16 @@ function Header() {
       dispatch(logout());
       navigate("/login");
     }
+    if (key === "profile") {
+      navigate("/profolio");
+    }
   };
   const items = [
+    {
+      label: "Profile",
+      key: "profile",
+      icon: <UserOutlined />,
+    },
     {
       label: "Logout",
       key: "logout",

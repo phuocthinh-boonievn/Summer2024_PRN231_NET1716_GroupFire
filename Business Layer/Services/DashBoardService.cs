@@ -43,7 +43,7 @@ namespace Business_Layer.Services
         }
         public async Task<decimal> GetTotalSalesByYear(int year)
         {
-            var orders = await _orderRepository.GetAllAsync();
+            var orders = await _orderRepository.GetConfirmedOrders();
             var totalSalesByYear = orders.Where(order => order.OrderDate.Year == year)
                                           .Sum(order => order.TotalPrice);
             return totalSalesByYear.GetValueOrDefault();
