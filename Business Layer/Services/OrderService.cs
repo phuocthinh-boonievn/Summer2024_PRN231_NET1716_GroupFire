@@ -3,6 +3,7 @@ using Business_Layer.Repositories;
 using Data_Layer.Models;
 using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel;
+using Data_Layer.ResourceModel.ViewModel.Enum;
 using Data_Layer.ResourceModel.ViewModel.OrderDetailVMs;
 using Data_Layer.ResourceModel.ViewModel.OrderVMs;
 
@@ -81,6 +82,48 @@ namespace Business_Layer.Services
             return reponse;
         }
 
+        public async Task<APIResponseModel> CancelOrderForShipperAsync(Guid id, OrderUpdateForShipperVM updatedto)
+        {
+            var reponse = new APIResponseModel();
+            try
+            {
+                var orderChecked = await _orderRepository.GetByIdAsync(id);
+
+                if (orderChecked == null && orderChecked.StatusOrder == "Cancelled")
+                {
+                    reponse.IsSuccess = false;
+                    reponse.message = "Not found order, you are sure input";
+                }
+                else
+                {
+                    if (orderChecked.DeliveryStatus == DeliveryStatusEnum.InTransit.ToString() || orderChecked.DeliveryStatus == DeliveryStatusEnum.Received.ToString())
+                    {
+                        var orderFofUpdate = _mapper.Map(updatedto, orderChecked);
+                        orderChecked.DeliveryStatus = DeliveryStatusEnum.Cancelled.ToString();
+                        var orderDTOAfterUpdate = _mapper.Map<OrderViewVM>(orderFofUpdate);
+                        if (await _orderRepository.SaveAsync() > 0)
+                        {
+                            reponse.Data = orderDTOAfterUpdate;
+                            reponse.IsSuccess = true;
+                            reponse.message = "Update status delivery of order successfully";
+                        }
+                        else
+                        {
+                            reponse.Data = orderDTOAfterUpdate;
+                            reponse.IsSuccess = false;
+                            reponse.message = "Update status delivery of order fail!";
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                reponse.IsSuccess = false;
+                reponse.message = $"Update order fail!, exception {e.Message}";
+            }
+
+            return reponse;
+        }
         public async Task<APIResponseModel> CheckoutAsync(OrderCreateVM orderdto, List<OrderDetaiCreateVM> orderDetaildto)
         {
             var response = new APIResponseModel();
@@ -262,6 +305,78 @@ namespace Business_Layer.Services
             }
         }
 
+        public async Task<APIResponseModel> GetOrdersAsyncForShipper()
+        {
+            var reponse = new APIResponseModel();
+            List<OrderViewVM> OrderDTOs = new List<OrderViewVM>();
+            try
+            {
+                var orders = await _orderRepository.GetAllAsync();
+                var orderFilter = orders.Where(x => x.ShipperId == null).ToList();
+                foreach (var order in orderFilter)
+                {
+                    if (order.StatusOrder.Equals("Confirmed"))
+                    {
+                        OrderDTOs.Add(_mapper.Map<OrderViewVM>(order));
+                    }
+                }
+                if (OrderDTOs.Count > 0)
+                {
+                    reponse.Data = OrderDTOs;
+                    reponse.IsSuccess = true;
+                    reponse.message = $"Have {OrderDTOs.Count} order for shipper.";
+                    return reponse;
+                }
+                else
+                {
+                    reponse.IsSuccess = false;
+                    reponse.message = $"Have {OrderDTOs.Count} order for shipper.";
+                    return reponse;
+                }
+            }
+            catch (Exception ex)
+            {
+                reponse.IsSuccess = false;
+                reponse.message = ex.Message;
+                return reponse;
+            }
+        }
+
+        public async Task<APIResponseModel> GetOrdersAsyncOfShipper(Guid shipperId)
+        {
+            var reponse = new APIResponseModel();
+            List<OrderViewVM> OrderDTOs = new List<OrderViewVM>();
+            try
+            {
+                var orders = await _orderRepository.GetAllAsync(x => x.User);
+                var orderFilter = orders.Where(x => x.ShipperId == shipperId).ToList();
+                foreach (var order in orderFilter)
+                {
+                    
+                        OrderDTOs.Add(_mapper.Map<OrderViewVM>(order));
+                }
+                if (OrderDTOs.Count > 0)
+                {
+                    reponse.Data = OrderDTOs;
+                    reponse.IsSuccess = true;
+                    reponse.message = $"Have {OrderDTOs.Count} order for shipper.";
+                    return reponse;
+                }
+                else
+                {
+                    reponse.IsSuccess = false;
+                    reponse.message = $"Have {OrderDTOs.Count} order for shipper.";
+                    return reponse;
+                }
+            }
+            catch (Exception ex)
+            {
+                reponse.IsSuccess = false;
+                reponse.message = ex.Message;
+                return reponse;
+            }
+        }
+
         public Task<APIResponseModel> GetSortedOrdersAsync(string sortName)
         {
             throw new NotImplementedException();
@@ -281,20 +396,20 @@ namespace Business_Layer.Services
                 }
                 else
                 {
-                        var orderFofUpdate = _mapper.Map(updatedto, orderChecked);
-                        var orderDTOAfterUpdate = _mapper.Map<OrderViewVM>(orderFofUpdate);
-                        if (await _orderRepository.SaveAsync() > 0)
-                        {
-                            reponse.Data = orderDTOAfterUpdate;
-                            reponse.IsSuccess = true;
-                            reponse.message = "Update order successfully";
-                        }
-                        else
-                        {
-                            reponse.Data = orderDTOAfterUpdate;
-                            reponse.IsSuccess = false;
-                            reponse.message = "Update order fail!";
-                        }
+                    var orderFofUpdate = _mapper.Map(updatedto, orderChecked);
+                    var orderDTOAfterUpdate = _mapper.Map<OrderViewVM>(orderFofUpdate);
+                    if (await _orderRepository.SaveAsync() > 0)
+                    {
+                        reponse.Data = orderDTOAfterUpdate;
+                        reponse.IsSuccess = true;
+                        reponse.message = "Update order successfully";
+                    }
+                    else
+                    {
+                        reponse.Data = orderDTOAfterUpdate;
+                        reponse.IsSuccess = false;
+                        reponse.message = "Update order fail!";
+                    }
                 }
             }
             catch (Exception e)
@@ -303,6 +418,69 @@ namespace Business_Layer.Services
                 reponse.message = $"Update order fail!, exception {e.Message}";
             }
 
+            return reponse;
+        }
+
+        public async Task<APIResponseModel> UpdateOrderForShipperAsync(Guid id, OrderUpdateForShipperVM updatedto)
+        {
+            var reponse = new APIResponseModel();
+            try
+            {
+                var orderChecked = await _orderRepository.GetByIdAsync(id);
+
+                if (orderChecked == null && orderChecked.StatusOrder == "Cancelled")
+                {
+                    reponse.IsSuccess = false;
+                    reponse.message = "Not found order, you are sure input";
+                }
+                else
+                {
+                    Order orderFofUpdate;
+                    OrderViewVM orderDTOAfterUpdate;
+                    if (orderChecked.ShipperId == null)
+                    {
+                        orderFofUpdate = _mapper.Map(updatedto, orderChecked);
+                        orderChecked.ShipperId = updatedto.ShipperId;
+                        orderChecked.DeliveryStatus = DeliveryStatusEnum.Received.ToString();
+                        orderDTOAfterUpdate = _mapper.Map<OrderViewVM>(orderFofUpdate);
+                        if (await _orderRepository.SaveAsync() > 0)
+                        {
+                            reponse.Data = orderDTOAfterUpdate;
+                            reponse.IsSuccess = true;
+                            reponse.message = "Update status delivery of order successfully";
+                        }
+                        else
+                        {
+                            reponse.Data = orderDTOAfterUpdate;
+                            reponse.IsSuccess = false;
+                            reponse.message = "Update status delivery of order fail!";
+                        }
+                    }
+                    else if (orderChecked.DeliveryStatus == DeliveryStatusEnum.Received.ToString())
+                    {
+                        orderFofUpdate = _mapper.Map(updatedto, orderChecked);
+                        orderChecked.DeliveryStatus = DeliveryStatusEnum.InTransit.ToString();
+                        orderDTOAfterUpdate = _mapper.Map<OrderViewVM>(orderFofUpdate);
+                        if (await _orderRepository.SaveAsync() > 0)
+                        {
+                            reponse.Data = orderDTOAfterUpdate;
+                            reponse.IsSuccess = true;
+                            reponse.message = "Update status delivery of order successfully";
+                        }
+                        else
+                        {
+                            reponse.Data = orderDTOAfterUpdate;
+                            reponse.IsSuccess = false;
+                            reponse.message = "Update status delivery of order fail!";
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                reponse.IsSuccess = false;
+                reponse.message = $"Update order fail!, exception {e.Message}";
+            }
             return reponse;
         }
     }
