@@ -18,6 +18,7 @@ namespace Data_Layer.Models
         public string? Address { get; set; }
         public Decimal? TotalPrice { get; set; }
         public string? StatusOrder { get; set; }
+        public string? DeliveryStatus { get; set; }
 
         public virtual User User { get; set; }
 
