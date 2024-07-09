@@ -38,6 +38,25 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{shipperId:Guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ViewAllOrderOfShipperID(Guid shipperId)
+        {
+            var result = await _orderService.GetOrdersAsyncOfShipper(shipperId);
+            return Ok(result);
+        }
+
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ViewAllOrderForShipper()
+        {
+            var result = await _orderService.GetOrdersAsyncForShipper();
+            return Ok(result);
+        }
+
         [HttpGet("{id:Guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -90,6 +109,32 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateOrder(Guid id, [FromBody] OrderUpdateVM updateDto)
         {
             var c = await _orderService.UpdateOrderAsync(id, updateDto);
+            if (!c.IsSuccess)
+            {
+                return BadRequest(c);
+            }
+            return Ok(c);
+        }
+
+        [HttpPut("{id:Guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateOrderForShipper(Guid id, [FromBody] OrderUpdateForShipperVM updateDto)
+        {
+            var c = await _orderService.UpdateOrderForShipperAsync(id, updateDto);
+            if (!c.IsSuccess)
+            {
+                return BadRequest(c);
+            }
+            return Ok(c);
+        }
+
+        [HttpPut("{id:Guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CancelOrderForShipper(Guid id, [FromBody] OrderUpdateForShipperVM updateDto)
+        {
+            var c = await _orderService.CancelOrderForShipperAsync(id, updateDto);
             if (!c.IsSuccess)
             {
                 return BadRequest(c);
