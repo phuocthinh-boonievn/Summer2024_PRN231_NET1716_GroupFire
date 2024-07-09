@@ -1,6 +1,7 @@
 ﻿using Business_Layer.Services;
 using Data_Layer.ResourceModel.ViewModel.OrderDetailVMs;
 using Data_Layer.ResourceModel.ViewModel.OrderVMs;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -148,6 +149,48 @@ namespace API.Controllers
         public async Task<IActionResult> CancelOrder(Guid id)
         {
             var c = await _orderService.CancelOrderAsync(id);
+            if (!c.IsSuccess)
+            {
+                return BadRequest(c);
+            }
+            return Ok(c);
+        }
+
+        [HttpDelete("{id:Guid}")]
+        [EnableCors("CorsPolicy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetConfirmOrderByUser(Guid id)
+        {
+            var c = await _orderService.ConfirmOrderForUserAsync(id);
+            if (!c.IsSuccess)
+            {
+                return BadRequest(c);
+            }
+            return Ok(c);
+        }
+
+        [HttpDelete("{id:Guid}")]
+        [EnableCors("CorsPolicy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetConfirmOrderByShipper(Guid id)
+        {
+            var c = await _orderService.ConfirmOrderForShipperAsync(id);
+            if (!c.IsSuccess)
+            {
+                return BadRequest(c);
+            }
+            return Ok(c);
+        }
+
+        [HttpDelete("{id:Guid}")]
+        [EnableCors("CorsPolicy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCancelOrderByShipper(Guid id)
+        {
+            var c = await _orderService.CancelOrderForShipperAsync(id);
             if (!c.IsSuccess)
             {
                 return BadRequest(c);

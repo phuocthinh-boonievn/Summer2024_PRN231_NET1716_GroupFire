@@ -18,5 +18,6 @@ namespace Data_Layer.ResourceModel.ViewModel.OrderStatusVMs
         public DateTime? RequiredDate { get; set; }
         public string? Address { get; set; }
         public Decimal? TotalPrice { get; set; }
+
     }
 }

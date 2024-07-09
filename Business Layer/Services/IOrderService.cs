@@ -18,6 +18,11 @@ namespace Business_Layer.Services
         Task<APIResponseModel> CreateOrderAsync(OrderCreateVM createdto);
         Task<APIResponseModel> UpdateOrderAsync(Guid id, OrderUpdateVM updatedto);
         Task<APIResponseModel> CancelOrderAsync(Guid id);
+        // Shipper
+
+        Task<APIResponseModel> ConfirmOrderForShipperAsync(Guid Id);
+        Task<APIResponseModel> CancelOrderForShipperAsync(Guid Id);
+        Task<APIResponseModel> ConfirmOrderForUserAsync(Guid Id);
         Task<APIResponseModel> GetSortedOrdersAsync(string sortName);
         Task<APIResponseModel> CheckoutAsync(OrderCreateVM orderdto, List<OrderDetaiCreateVM> orderDetaildto);
     }

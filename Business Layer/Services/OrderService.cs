@@ -128,6 +128,56 @@ namespace Business_Layer.Services
 
             return reponse;
         }
+
+        public async Task<APIResponseModel> CancelOrderForShipperAsync(Guid Id)
+        {
+            var response = new APIResponseModel();
+            try
+            {
+                var orderChecked = await _orderRepository.GetByIdAsync(Id);
+                if (orderChecked == null)
+                {
+
+                    response.IsSuccess = false;
+                    response.message = "Not found order, you are sure input";
+                }
+                else if (orderChecked.DeliveryStatus == "Received" || orderChecked.DeliveryStatus == "Delivered")
+                {
+                    response.IsSuccess = false;
+                    response.message = "Bill is delivered";
+                }
+                else if (orderChecked.DeliveryStatus == "Cancelled")
+                {
+                    response.IsSuccess = false;
+                    response.message = "Bill is Cancelled";
+                }
+                else
+                {
+                    orderChecked.DeliveryStatus = "Cancelled";
+                    var orderofUpdate = _mapper.Map<OrderViewVM>(orderChecked);
+                    var orderDTOAfterUpdate = _mapper.Map<OrderViewVM>(orderofUpdate);
+                    if (await _orderRepository.SaveAsync() > 0)
+                    {
+                        response.Data = orderDTOAfterUpdate;
+                        response.IsSuccess = true;
+                        response.message = "Update Order successfully";
+                    }
+                    else
+                    {
+                        response.Data = orderDTOAfterUpdate;
+                        response.IsSuccess = false;
+                        response.message = "Update Order fail!";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.message = $"Confirm food Fail!, exception {ex.Message}";
+            }
+            return response;
+        }
+
         public async Task<APIResponseModel> CheckoutAsync(OrderCreateVM orderdto, List<OrderDetaiCreateVM> orderDetaildto)
         {
             var response = new APIResponseModel();
@@ -197,6 +247,90 @@ namespace Business_Layer.Services
             return response;
         }
 
+        public async Task<APIResponseModel> ConfirmOrderForShipperAsync(Guid Id)
+        {
+            var response = new APIResponseModel();
+            try
+            {
+                var orderChecked = await _orderRepository.GetByIdAsync(Id);
+                if (orderChecked == null)
+                {
+
+                    response.IsSuccess = false;
+                    response.message = "Not found order, you are sure input";
+                }
+                else if (orderChecked.DeliveryStatus == "Received" || orderChecked.DeliveryStatus == "Delivered")
+                {
+                    response.IsSuccess = false;
+                    response.message = "Bill is delivered";
+                }
+                else
+                {
+                    orderChecked.DeliveryStatus = "Delivered";
+                    var orderofUpdate = _mapper.Map<OrderViewVM>(orderChecked);
+                    var orderDTOAfterUpdate = _mapper.Map<OrderViewVM>(orderofUpdate);
+                    if (await _orderRepository.SaveAsync() > 0)
+                    {
+                        response.Data = orderDTOAfterUpdate;
+                        response.IsSuccess = true;
+                        response.message = "Update Order successfully";
+                    }
+                    else
+                    {
+                        response.Data = orderDTOAfterUpdate;
+                        response.IsSuccess = false;
+                        response.message = "Update Order fail!";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.message = $"Confirm food Fail!, exception {ex.Message}";
+            }
+            return response;
+        }
+
+        public async Task<APIResponseModel> ConfirmOrderForUserAsync(Guid Id)
+        {
+           var response = new APIResponseModel();
+            try
+            {
+                var orderChecked = await _orderRepository.GetByIdAsync(Id);
+                if (orderChecked == null) {
+                
+                      response.IsSuccess = false;
+                    response.message = "Not found order, you are sure input";
+                }else if(orderChecked.DeliveryStatus == "Received")
+                {
+                    response.IsSuccess = false;
+                    response.message = "Bill is recieved";
+                }
+                else
+                {
+                    orderChecked.DeliveryStatus = "Received";
+                    var orderofUpdate = _mapper.Map<OrderViewVM>(orderChecked);
+                    var orderDTOAfterUpdate = _mapper.Map<OrderViewVM>(orderofUpdate);
+                    if(await _orderRepository.SaveAsync() > 0)
+                    {
+                        response.Data = orderDTOAfterUpdate;
+                        response.IsSuccess = true;
+                        response.message = "Update Order successfully";
+                    }
+                    else
+                    {
+                        response.Data = orderDTOAfterUpdate;
+                        response.IsSuccess = false;
+                        response.message = "Update Order fail!";
+                    }
+                }
+            }catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.message = $"Confirm food Fail!, exception {ex.Message}";
+            }
+            return response;
+        }
 
         public async Task<APIResponseModel> CreateOrderAsync(OrderCreateVM createdto)
         {
@@ -328,6 +462,8 @@ namespace Business_Layer.Services
             }
         }
 
+
+
         public async Task<APIResponseModel> GetOrdersAsyncForShipper()
         {
             var reponse = new APIResponseModel();
@@ -338,7 +474,7 @@ namespace Business_Layer.Services
                 var orderFilter = orders.Where(x => x.ShipperId == null).ToList();
                 foreach (var order in orderFilter)
                 {
-                    if (order.StatusOrder.Equals("Confirmed"))
+                    if (order.StatusOrder.Equals("Paid"))
                     {
                         OrderDTOs.Add(_mapper.Map<OrderViewVM>(order));
                     }
@@ -506,5 +642,7 @@ namespace Business_Layer.Services
             }
             return reponse;
         }
+
+        
     }
 }
