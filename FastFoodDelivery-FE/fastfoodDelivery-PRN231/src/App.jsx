@@ -1,6 +1,6 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Layout from "./components/layout";
-import AdminAccountManagement from "./pages/accountuser-management";
+// import AdminAccountManagement from "./pages/accountuser-management";
 import Category from "./pages/category-management";
 import FoodItemManagement from "./pages/fastfood-magegement";
 import HomePage from "./pages/home";
@@ -10,6 +10,11 @@ import PaymentSuccess from "./pages/payment/paymentSuccess";
 import UserAccount from "./pages/profolio";
 import Register from "./pages/register";
 import ShoppingCart from "./pages/shoppingcart/ShoppingCart";
+import UserFeedback from "././pages/feedback/UserFeedback";
+import ShipperAccountManagement from "./pages/accountuser-management/ShipperAccountManagement";
+import AddShipper from "./pages/accountuser-management/AddShipper";
+import AdminAccountManagement from "./pages/accountuser-management/AdminAccountManagement";
+import Dashboard from "./pages/dashboard-management";
 
 function App() {
   const router = createBrowserRouter([
@@ -25,13 +30,25 @@ function App() {
           path: "/fastfood-magegement",
           element: <FoodItemManagement />,
         },
-        {
-          path: "/category-management",
-          element: <Category />,
-        },
+        // {
+        //   path: "/category-management",
+        //   element: <Category />,
+        // },
         {
           path: "/accountuser-management",
           element: <AdminAccountManagement />,
+        },
+        {
+          path: "/view-feedback",
+          element: <UserFeedback />,
+        },
+        {
+          path: "/shipper-account-management",
+          element: <ShipperAccountManagement />,
+        },
+        {
+          path: "/add-shipper",
+          element: <AddShipper />,
         },
         {
           path: "/login",
@@ -56,6 +73,16 @@ function App() {
         {
           path: "/profolio",
           element: <UserAccount />,
+        },
+      ],
+    },
+    {
+      path: "/dashboard",
+      element: <Dashboard />,
+      children: [
+        {
+          path: "/dashboard/category",
+          element: <Category />,
         },
       ],
     },
