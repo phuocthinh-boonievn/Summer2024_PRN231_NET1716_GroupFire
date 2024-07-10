@@ -85,24 +85,24 @@ namespace API.Controllers
             return Ok(c);
         }
 
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Checkout([FromBody] OrderCreateVM orderDto)
-        {
-            if (orderDto == null)
-            {
-                return BadRequest();
-            }
-            var c = await _orderService.CheckoutAsync(orderDto, orderDto.OrderDetails);
-            if (!c.IsSuccess)
-            {
-                return BadRequest(c);
-            }
+        //[HttpPost]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //public async Task<IActionResult> Checkout([FromBody] OrderCreateVM orderDto)
+        //{
+        //    if (orderDto == null)
+        //    {
+        //        return BadRequest();
+        //    }
+        //    var c = await _orderService.CheckoutAsync(orderDto, orderDto.OrderDetails);
+        //    if (!c.IsSuccess)
+        //    {
+        //        return BadRequest(c);
+        //    }
             
-            return Ok(c);
-        }
+        //    return Ok(c);
+        //}
 
         [HttpPut("{id:Guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -143,7 +143,7 @@ namespace API.Controllers
             return Ok(c);
         }
 
-        [HttpDelete("{id:Guid}")]
+        [HttpGet("{id:Guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CancelOrder(Guid id)
@@ -156,7 +156,7 @@ namespace API.Controllers
             return Ok(c);
         }
 
-        [HttpDelete("{id:Guid}")]
+        [HttpGet("{id:Guid}")]
         [EnableCors("CorsPolicy")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -170,7 +170,7 @@ namespace API.Controllers
             return Ok(c);
         }
 
-        [HttpDelete("{id:Guid}")]
+        [HttpGet("{id:Guid}")]
         [EnableCors("CorsPolicy")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -184,7 +184,7 @@ namespace API.Controllers
             return Ok(c);
         }
 
-        [HttpDelete("{id:Guid}")]
+        [HttpGet("{id:Guid}")]
         [EnableCors("CorsPolicy")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
