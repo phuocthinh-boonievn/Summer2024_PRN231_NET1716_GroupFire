@@ -91,7 +91,7 @@ namespace API.Controllers
         {
             var response = await _dashboardService.GetTopFiveShippersAsync();
             if(response.Data is null)
-            {
+            { 
                 return BadRequest(response.message);
             }
             return Ok(response.Data);
