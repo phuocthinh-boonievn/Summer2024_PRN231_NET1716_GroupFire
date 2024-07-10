@@ -143,7 +143,7 @@ namespace API.Controllers
         [EnableCors("CorsPolicy")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task <IActionResult> UpdateUser(string id, [FromBody] UserViewModel model)
+        public async Task <IActionResult> UpdateUser(string id, [FromBody] UserUpdateViewModel model)
         {
            
               var user = await _userSerivce.UpdateUser(id, model);

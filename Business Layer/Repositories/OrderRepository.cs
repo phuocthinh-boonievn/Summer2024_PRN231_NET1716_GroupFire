@@ -39,7 +39,7 @@ namespace Business_Layer.Repositories
         public async Task<IEnumerable<Order>> GetConfirmedOrders()
         {
             var orders = await _dbContext.Orders.ToListAsync();
-            var confirmedOrders = orders.Where(o => o.StatusOrder == "Confirmed");
+            var confirmedOrders = orders.Where(o => o.StatusOrder == "Paid");
             return confirmedOrders.ToList();
         }
     }

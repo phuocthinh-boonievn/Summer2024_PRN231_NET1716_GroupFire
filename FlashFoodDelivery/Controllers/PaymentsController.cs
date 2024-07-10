@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using System.Web;
 using Stripe.Climate;
 using Data_Layer.ResourceModel.Common;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace API.Controllers
 {
@@ -94,17 +95,17 @@ namespace API.Controllers
                 try
                 {
                     var result = await _vnPayService.ConfirmPaymentAsync(Request.Query);
-                    if (result.IsSuccess)
+                    if (result.IsSuccess && result.message.StartsWith("http"))
                     {
-                        return Redirect("http://localhost:5173/paymentsuccess");
+                        return Redirect(result.message);
                     }
-                    else if (!result.IsSuccess)
+                    else if (!result.IsSuccess && result.message.StartsWith("http"))
                     {
-                        return StatusCode(402, result);
+                        return Redirect(result.message);
                     }
                     else
                     {
-                        return BadRequest(result);
+                        return BadRequest(result.message);
                     }
                 }
                 catch (ArgumentException ex)

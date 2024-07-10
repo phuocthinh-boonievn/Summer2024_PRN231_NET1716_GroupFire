@@ -4,6 +4,7 @@ using Business_Layer.Repositories;
 using Business_Layer.Utils;
 using Data_Layer.Models;
 using Data_Layer.ResourceModel.Common;
+using Data_Layer.ResourceModel.ViewModel;
 using Data_Layer.ResourceModel.ViewModel.Enum;
 using Data_Layer.ResourceModel.ViewModel.User;
 using Microsoft.AspNetCore.Identity;
@@ -32,16 +33,16 @@ namespace Business_Layer.Services
         }
         public async Task<UserViewModel> GetUserById(string id)
         {
-            var user = await _userRepository.GetUserByID(id);
-            if (user == null)
+            var users = await _userRepository.GetUserByID(id);
+            if (users == null)
             {
                 throw new Exception("User is not existed !");
             }
-            var userViewModel = user.ToUserViewModel();
+            var userViewModel = users.ToUserViewModel();
             return userViewModel;
         }
 
-        public async Task<APIResponseModel> UpdateUser(string id, UserViewModel model)
+        public async Task<APIResponseModel> UpdateUser(string id, UserUpdateViewModel model)
         {
             var response = new APIResponseModel();
             try {
@@ -78,7 +79,7 @@ namespace Business_Layer.Services
             catch (Exception ex)
             {
                 response.IsSuccess = false;
-                response.message = $"Update food fail!, exception {ex.Message}";
+                response.message = $"Update Account fail!, exception {ex.Message}";
             }
 
             return response;
@@ -141,13 +142,15 @@ namespace Business_Layer.Services
 
                 foreach (var user in users)
                 {
-                    var mapper = _mapper.Map<UserViewModel>(user);
-
                     var roles = await _userManager.GetRolesAsync(user);
-                    mapper.Role = roles.First();
-                    userDTOs.Add(mapper);
-
-
+                    var roleFirst = roles.First();
+                    if(roleFirst == "User")
+                    {
+                        var mapper = _mapper.Map<UserViewModel>(user);
+                        mapper.Role = roleFirst;
+                        userDTOs.Add(mapper);
+                    }
+                    
                 }
 
                 if (userDTOs.Count > 0)
@@ -172,6 +175,129 @@ namespace Business_Layer.Services
                 return reponse;
             }
         }
+
+        // Shipper
+        public async Task<APIResponseModel> GetShippersAsync()
+        {
+            var reponse = new APIResponseModel();
+            List<UserViewModel> shipperDTOs = new List<UserViewModel>();
+            try
+            {
+                var shippers = await _userRepository.GetUserAccountAll();
+                foreach (var shipper in shippers)
+                {
+                    var roles = await _userManager.GetRolesAsync(shipper);
+                    var roleFirst = roles.First();
+                    if (roleFirst == "Shipper") {
+                        var mapper = _mapper.Map<UserViewModel>(shipper);
+                        mapper.Role = roleFirst;
+                        shipperDTOs.Add(mapper);
+                    }
+                    
+                }
+                if(shipperDTOs.Count > 0)
+                {
+                    reponse.code = 200;
+                    reponse.Data = shipperDTOs;
+                    reponse.IsSuccess = true;
+                    reponse.message = $"Have {shipperDTOs.Count} Accounts";
+                    return reponse;
+                }
+                else
+                {
+                    reponse.IsSuccess = false;
+                    reponse.message = $"Have {shipperDTOs.Count} Accounts";
+                    return reponse;
+                }
+            }catch(Exception e)
+            {
+                reponse.IsSuccess = false;
+                reponse.message = e.Message;
+                return reponse;
+            }
         }
+
+        public async Task<APIResponseModel> UpdateShipper(string id, UserUpdateViewModel model)
+        {
+            var reponse = new APIResponseModel();
+            try
+            {
+                var shipper = await _userRepository.GetUserByID(id);
+                if(shipper == null || shipper.Status.ToString() != UserEnum.Active.ToString())
+                {
+                    reponse.IsSuccess = false;
+                    reponse.message = "Account is not exist";
+                }
+                else
+                {
+                    shipper.FullName = model.FullName;
+                    shipper.Address = model.Address;
+                    shipper.Email = model.Email;
+                    shipper.PhoneNumber = model.PhoneNumber;
+                    shipper.Status = UserEnum.Active.ToString();
+                    _userRepository.Update(shipper);
+                    bool isSuccessed = await _userRepository.SaveAsync() > 0;
+
+                    if (!isSuccessed)
+                    {
+                        reponse.IsSuccess = false;
+                        reponse.message = "Update fail";
+                    }
+                    else
+                    {
+                        reponse.code = 200;
+                        reponse.IsSuccess = true;
+                        reponse.message = "Update Account Successfully";
+                    }
+                }
+            }catch (Exception ex)
+            {
+                reponse.IsSuccess=false;
+                reponse.message = $"Update Account fail!, exception {ex.Message}";
+            }
+            return reponse;
+        }
+
+        public async Task<APIResponseModel> DeleteShipper(string id)
+        {
+            var reponse = new APIResponseModel();
+            try
+            {
+                var shipper = await _userRepository.GetUserByID(id);
+                if (shipper == null)
+                {
+                    throw new Exception("User is not existed !");
+                }
+                else if (shipper.Status.ToString() == UserEnum.IsDeleted.ToString())
+                {
+                    reponse.IsSuccess = false;
+                    reponse.message = "Account is Deleted";
+                }
+                else
+                {
+                    shipper = _userRepository.UpdateStatusUser(shipper);
+                    if (await _userRepository.SaveAsync() > 0)
+                    {
+                        reponse.Data = shipper;
+                        reponse.IsSuccess = true;
+                        reponse.message = "Delete User Succefull";
+                    }
+                    else
+                    {
+                        reponse.Data = shipper;
+                        reponse.IsSuccess = false;
+                        reponse.message = "Delete User fail!";
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                reponse.IsSuccess = false;
+                reponse.message = $"Delete Shipper fail!, exception {e.Message}";
+            }
+
+            return reponse;
+        }
+    }
     }
 

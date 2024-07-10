@@ -85,13 +85,24 @@ namespace API.Controllers
             }
             return BadRequest(response.message);
         }
-        [HttpGet("dashboard/shipper-orders")]
+      /*  [HttpGet("dashboard/shipper-orders")]
         [EnableCors("CorsPolicy")]
         public async Task<IActionResult> GetTopFiveShippersAsync()
         {
             var response = await _dashboardService.GetTopFiveShippersAsync();
             if(response.Data is null)
             { 
+                return BadRequest(response.message);
+            }
+            return Ok(response.Data);
+        } */
+        [HttpGet("dashboard/food-menu")]
+        [EnableCors("CorsPolicy")]
+        public async Task<IActionResult> GetTopSalesFood()
+        {
+            var response = await _dashboardService.GetTopSalesFood();
+            if(response.Data is null)
+            {
                 return BadRequest(response.message);
             }
             return Ok(response.Data);

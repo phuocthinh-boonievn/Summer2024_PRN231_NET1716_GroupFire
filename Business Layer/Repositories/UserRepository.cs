@@ -215,6 +215,9 @@ namespace Business_Layer.Repositories
                     Data = user,
             };
         }
+
+
+
         public async Task<User> GetUserByID(string id)
         {
             //var stringId = id.ToString();
@@ -247,6 +250,61 @@ namespace Business_Layer.Repositories
         {
             var userAccountList = await _context.Users.Where(x => x.Status == UserEnum.Active.ToString()).ToListAsync();
             return userAccountList;
+        }
+
+        // Shipper
+        public async Task<APIResponseModel> RegisterShipper(RegisterVM model)
+        {
+            APIResponseModel result = new APIResponseModel()
+            {
+                code = 200,
+                IsSuccess = true,
+                message = "shipper created success",
+            };
+
+            var shipperEmail = await _userManager.FindByEmailAsync(model.Email);
+            var shipperUsername = await _userManager.FindByNameAsync(model.Username);
+
+            if(shipperEmail != null || shipperUsername != null) {
+                return new APIResponseModel
+                {
+                    code = 400,
+                    IsSuccess = false,
+                    message = "Email and Username is exist",
+                };
+            }
+
+            var shipper = new User()
+            {
+                Email = model.Email,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = model.Username,
+                FullName = model.FullName,
+                Address = model.Address,
+                PhoneNumber = model.phoneNumber,
+                Status = UserEnum.Active.ToString(),
+
+            };
+            var resultCreateUser = await _userManager.CreateAsync(shipper, model.Password);
+            var resultRole = await _userManager.AddToRoleAsync(shipper, "Shipper");
+
+            if (!resultCreateUser.Succeeded)
+            {
+                return new APIResponseModel()
+                {
+                    code = 200,
+                    message = "Error when create user",
+                    IsSuccess = false,
+
+                };
+            }
+            return new APIResponseModel()
+            {
+                code = 200,
+                message = "Register successfully",
+                IsSuccess = true,
+                Data = shipper,
+            };
         }
     }
 }

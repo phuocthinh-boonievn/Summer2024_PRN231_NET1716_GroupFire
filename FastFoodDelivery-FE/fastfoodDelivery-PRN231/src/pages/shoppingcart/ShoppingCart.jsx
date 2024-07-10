@@ -15,6 +15,7 @@ import {
 import { store } from "../../redux/store";
 import axios from "axios";
 import { async } from "@firebase/util";
+import { toast } from "react-toastify";
 
 const ShoppingCart = () => {
   const initialItems = useSelector((state) => state.fastfoodcard);
@@ -22,6 +23,7 @@ const ShoppingCart = () => {
   const [items, setItems] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [shipping, setShipping] = useState(5);
+  const [oderId, setOderId] = useState([]);
   const dispatch = useDispatch();
 
   const cartData = useSelector((store) => store.fastfoodcard);
@@ -36,9 +38,6 @@ const ShoppingCart = () => {
       quantity: item.quantity,
       price: item.price,
     }));
-    // const totalPrice = initialItems.reduce(
-    //   (total, item) => total + item.price * item.quantity
-    // );
 
     const payload = {
       memberId: userData?.UserId, // fill this with appropriate memberId
@@ -61,6 +60,7 @@ const ShoppingCart = () => {
         payload
       );
       console.log("Order response", response.data.data);
+      window.open(response.data.message);
     } catch (error) {
       console.error("Error creating order", error);
     }
@@ -98,7 +98,8 @@ const ShoppingCart = () => {
   };
 
   const handleCheckout = () => {
-    alert("Checkout successful!");
+    console.log("hi");
+
     handleSubmit();
     handleRemove();
   };
@@ -133,7 +134,7 @@ const ShoppingCart = () => {
         items={items}
         totalPrice={totalPrice}
         shipping={shipping}
-        onCheckout={handleCheckout}
+        onCheckout={() => handleCheckout()}
       />
     </div>
   );

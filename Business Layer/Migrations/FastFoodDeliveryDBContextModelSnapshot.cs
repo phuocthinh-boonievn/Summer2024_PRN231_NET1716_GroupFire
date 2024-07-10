@@ -137,23 +137,26 @@ namespace Business_Layer.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("DeliveryStatus")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("MemberId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("OrderDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 6, 23, 6, 18, 27, 844, DateTimeKind.Local).AddTicks(5076));
+                        .HasDefaultValue(new DateTime(2024, 7, 5, 21, 47, 38, 673, DateTimeKind.Local).AddTicks(9063));
 
                     b.Property<DateTime?>("RequiredDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 6, 26, 6, 18, 27, 844, DateTimeKind.Local).AddTicks(5324));
+                        .HasDefaultValue(new DateTime(2024, 7, 8, 21, 47, 38, 673, DateTimeKind.Local).AddTicks(9366));
 
                     b.Property<DateTime?>("ShippedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 6, 28, 6, 18, 27, 844, DateTimeKind.Local).AddTicks(5536));
+                        .HasDefaultValue(new DateTime(2024, 7, 10, 21, 47, 38, 673, DateTimeKind.Local).AddTicks(9595));
 
                     b.Property<Guid?>("ShipperId")
                         .HasColumnType("uniqueidentifier");

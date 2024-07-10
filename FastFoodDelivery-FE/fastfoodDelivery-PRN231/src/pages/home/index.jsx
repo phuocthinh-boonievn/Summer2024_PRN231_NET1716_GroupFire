@@ -15,8 +15,7 @@ function HomePage() {
 
       {/* <Carousel autoplay /> */}
 
-      <Carousel  numberOfSlides={6} Category="Trending">   
-      </Carousel>
+      <Carousel numberOfSlides={6} Category="Trending"></Carousel>
       <Carousel numberOfSlides={6} Category="Burger"></Carousel>
     </div>
   );

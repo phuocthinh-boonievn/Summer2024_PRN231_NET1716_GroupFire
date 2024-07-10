@@ -2,6 +2,7 @@
 using Data_Layer.Models;
 using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel.DashboardViewModel;
+using Data_Layer.ResourceModel.ViewModel.MenuFoodItemVMs;
 using Data_Layer.ResourceModel.ViewModel.ShipperViewModels;
 using System;
 using System.Collections.Generic;
@@ -16,17 +17,20 @@ namespace Business_Layer.Services
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IShipperRepository _shipperRepository;
+        //private readonly IShipperRepository _shipperRepository;
+        private readonly IMenuFoodItem1Repository _menuFoodItem1Repository;
 
         public DashBoardService(IOrderRepository order,
             IOrderDetailRepository orderDetail,
             IUserRepository userRepository,
-            IShipperRepository shipperRepository) 
+            //IShipperRepository shipperRepository,
+            IMenuFoodItem1Repository menuFoodItem1Repository) 
         {
             _orderRepository = order;
             _orderDetailRepository = orderDetail;
             _userRepository = userRepository;
-            _shipperRepository = shipperRepository;
+            //_shipperRepository = shipperRepository;
+            _menuFoodItem1Repository = menuFoodItem1Repository;
         }
 
         public async Task<decimal> GetTotalSalesByMonth(int month, int year)
@@ -39,7 +43,7 @@ namespace Business_Layer.Services
         }
         public async Task<decimal> GetTotalSalesByYear(int year)
         {
-            var orders = await _orderRepository.GetAllAsync();
+            var orders = await _orderRepository.GetConfirmedOrders();
             var totalSalesByYear = orders.Where(order => order.OrderDate.Year == year)
                                           .Sum(order => order.TotalPrice);
             return totalSalesByYear.GetValueOrDefault();
@@ -119,7 +123,7 @@ namespace Business_Layer.Services
             }
             return response;
         }
-        public async Task<APIGenericReposneModel<List<ShipperReport>>>? GetTopFiveShippersAsync()
+      /*  public async Task<APIGenericReposneModel<List<ShipperReport>>>? GetTopFiveShippersAsync()
         {
             var response = new APIGenericReposneModel<List<ShipperReport>>();
             response.Data = await _shipperRepository.GetTopFiveShippersAsync();
@@ -134,6 +138,25 @@ namespace Business_Layer.Services
                 response.code = 200;
                 response.IsSuccess = true;
                 response.message = "Top 5 shippers !";
+            }
+            return response;
+        } */ 
+
+        public async Task<APIGenericReposneModel<List<MostSalesFood>>> GetTopSalesFood()
+        {
+            var response = new APIGenericReposneModel<List<MostSalesFood>>();
+            response.Data = await _menuFoodItem1Repository.GetTopSalesFood();
+            if (response.Data is null)
+            {
+                response.code = 500;
+                response.message = "List of sale food is empty !";
+                response.IsSuccess = false;
+            }
+            else
+            {
+                response.code = 200;
+                response.message = "Top Sales Food !";
+                response.IsSuccess = true;
             }
             return response;
         }

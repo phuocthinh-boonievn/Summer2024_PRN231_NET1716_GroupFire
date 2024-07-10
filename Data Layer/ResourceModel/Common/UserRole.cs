@@ -10,6 +10,7 @@ namespace Data_Layer.ResourceModel.Common
     {
         public const string Admin = "Admin";
         public const string User = "User";
-        public static readonly List<string> Roles = new List<string> { Admin, User };
+        public const string Shipper = "Shipper";
+        public static readonly List<string> Roles = new List<string> { Admin, User, Shipper };
     }
 }

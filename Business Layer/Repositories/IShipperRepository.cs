@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace Business_Layer.Repositories
 {
-    public interface IShipperRepository 
-    {
-        Task<List<ShipperVM>> GetAllShipper();
-        Task<APIResponseModel> GetOrderStatusByShipperId(string userId);
-        Task<List<ShipperReport>>? GetTopFiveShippersAsync();
-    }
+    //public interface IShipperRepository 
+    //{
+    //    Task<List<ShipperVM>> GetAllShipper();
+    //    Task<APIResponseModel> GetOrderStatusByShipperId(string userId);
+    //    Task<List<ShipperReport>>? GetTopFiveShippersAsync();
+    //}
 }

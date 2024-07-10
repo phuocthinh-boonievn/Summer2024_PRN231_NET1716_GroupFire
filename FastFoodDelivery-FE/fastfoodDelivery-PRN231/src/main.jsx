@@ -3,6 +3,8 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import App from "./App.jsx";
 import "./main.scss";
+import "mdb-react-ui-kit/dist/css/mdb.min.css";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 import { persistor, store } from "./redux/store.js";
 
 ReactDOM.createRoot(document.getElementById("root")).render(

@@ -2,6 +2,7 @@
 using Business_Layer.DataAccess;
 using Data_Layer.Models;
 using Data_Layer.ResourceModel.ViewModel;
+using Data_Layer.ResourceModel.ViewModel.MenuFoodItemVMs;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,6 @@ namespace Business_Layer.Repositories
             var menuFoodItems = await _context.MenuFoodItems.FirstOrDefaultAsync(x => x.FoodId == Id);
             var result = _mapper.Map<MenuFoodItemVM>(menuFoodItems);
             return result;
-        }
+        }        
     }
 }

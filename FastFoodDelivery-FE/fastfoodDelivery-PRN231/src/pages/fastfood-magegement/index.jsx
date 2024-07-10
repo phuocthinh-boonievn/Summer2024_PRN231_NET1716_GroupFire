@@ -165,18 +165,18 @@ function FoodItemManagement() {
 
   async function handleSubmit(values) {
     console.log(values);
-    console.log(values.image.file.originFileObj);
-
-    const url = await uploadFile(values.image.file.originFileObj);
-    values.image = url;
-    console.log(values);
+    console.log(values.image.file);
+    if (values.image?.file) {
+      const url = await uploadFile(values.image.file);
+      values.image = url;
+      console.log(values);
+    }
 
     const response = await axios.post(
       "https://localhost:7173/api/MenuItemFood/CreateFood",
       values
     );
-
-    setDataSource([...dataSource, values]);
+    setDataSource([...dataSource, response.data.data]);
 
     // clear form
     formVariable.resetFields();
@@ -222,21 +222,40 @@ function FoodItemManagement() {
     handleCloseEditModal();
   }
 
-  function handleEditCource() {
-    console.log(oldFood);
-    const response = axios.put(
-      `https://localhost:7173/api/MenuItemFood/UpdateFood/${oldFood.foodId}`,
-      {
-        foodName: oldFood.foodName,
-        foodDescription: oldFood.foodDescription,
-        unitPrice: oldFood.unitPrice,
-        categoryId: oldFood.categoryId,
-        image: oldFood.image,
-      }
-    );
+  async function handleEditCource() {
+    // console.log(oldFood);
+    // const response = axios.put(
+    //   `https://localhost:7173/api/MenuItemFood/UpdateFood/${oldFood.foodId}`,
+    //   {
+    //     foodId: oldFood.foodId,
+    //     foodName: oldFood.foodName,
+    //     foodDescription: oldFood.foodDescription,
+    //     unitPrice: oldFood.unitPrice,
+    //     categoryId: oldFood.categoryId,
+    //     image: oldFood.image,foodId: oldFood.foodId,
 
-    fetchFastFood();
-    handleCloseEditModal();
+    //   }
+    // );
+
+    // fetchFastFood();
+    // handleCloseEditModal();
+
+    const updatedFood = formUpdate.getFieldsValue();
+    let imageUrl = oldFood.image;
+
+    if (fileList.length && fileList[0].originFileObj) {
+      imageUrl = await uploadFile(fileList[0].originFileObj);
+    }
+
+    axios
+      .put(
+        `https://localhost:7173/api/MenuItemFood/UpdateFood/${oldFood.foodId}`,
+        { ...updatedFood, foodId: oldFood.foodId, image: imageUrl }
+      )
+      .then(() => {
+        fetchFastFood();
+        setVisibleEditModal(false);
+      });
   }
   const [formUpdate] = Form.useForm();
 
@@ -290,7 +309,7 @@ function FoodItemManagement() {
 
           <Form.Item label="Image" name={"image"}>
             <Upload
-              // action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+              action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
               listType="picture-card"
               fileList={fileList}
               onPreview={handlePreview}
@@ -411,13 +430,13 @@ function FoodItemManagement() {
                   afterOpenChange: (visible) => !visible && setPreviewImage(""),
                 }}
                 src={oldFood?.image}
-                onChange={(e) => {
-                  const value = e;
-                  setFastFoodEdit((oldFood) => ({
-                    ...oldFood,
-                    image: value,
-                  }));
-                }}
+                // onChange={(e) => {
+                //   const value = e;
+                //   setFastFoodEdit((oldFood) => ({
+                //     ...oldFood,
+                //     image: value,
+                //   }));
+                // }}
                 // onChange={(e) => {
                 //   console.log(oldFood);
                 //   setFastFoodEdit((oldFood) => {
