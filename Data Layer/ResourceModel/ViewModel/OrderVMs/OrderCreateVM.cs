@@ -11,10 +11,9 @@ namespace Data_Layer.ResourceModel.ViewModel.OrderVMs
     {
         public string? MemberId { get; set; }
         public DateTime? OrderDate { get; set; }
-
         public DateTime? ShippedDate { get; set; }
         public DateTime? RequiredDate { get; set; }
-        public string? Address { get; set; }
+        //public string? Address { get; set; }
         public Decimal? TotalPrice { get; set; }
         public List<OrderDetaiCreateVM> OrderDetails { get; set; }
     }

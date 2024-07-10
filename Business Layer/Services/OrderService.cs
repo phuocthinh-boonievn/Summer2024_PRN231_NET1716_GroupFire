@@ -3,10 +3,9 @@ using Business_Layer.Repositories;
 using Business_Layer.Services.VNPay;
 using Data_Layer.Models;
 using Data_Layer.ResourceModel.Common;
-using Data_Layer.ResourceModel.ViewModel;
 using Data_Layer.ResourceModel.ViewModel.Enum;
-using Data_Layer.ResourceModel.ViewModel.OrderDetailVMs;
 using Data_Layer.ResourceModel.ViewModel.OrderVMs;
+using Stripe.Climate;
 
 namespace Business_Layer.Services
 {
@@ -25,6 +24,7 @@ namespace Business_Layer.Services
         private readonly IOrderDetailRepository _orderDetailRepository;
         private readonly IMenuFoodItem1Repository _menuFoodItem1Repository;
         private readonly IVNPayService _vNPayService;
+        private readonly IUserRepository _userRepository;
 
         public OrderService(IMapper mapper, IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IMenuFoodItem1Repository menuFoodItem1Repository, IVNPayService vNPayService)
         {
@@ -178,74 +178,74 @@ namespace Business_Layer.Services
             return response;
         }
 
-        public async Task<APIResponseModel> CheckoutAsync(OrderCreateVM orderdto, List<OrderDetaiCreateVM> orderDetaildto)
-        {
-            var response = new APIResponseModel();
-            try
-            {
-                var orderDetailEntity = _mapper.Map<List<OrderDetail>>(orderDetaildto);
-                decimal totalPrice = 0;
-                if (orderDetailEntity.Count > 0)
-                {
-                    foreach (var orderDetail in orderDetailEntity)
-                    {
-                        totalPrice += (decimal)(orderDetail.UnitPrice * orderDetail.Quantity);
-                    }
-                    var orderEntity = _mapper.Map<Order>(orderdto);
-                    orderEntity.StatusOrder = "Pending";
-                    orderEntity.TotalPrice = totalPrice;
-                    await _orderRepository.AddAsync(orderEntity);
+        //public async Task<APIResponseModel> CheckoutAsync(OrderCreateVM orderdto, List<OrderDetaiCreateVM> orderDetaildto)
+        //{
+        //    var response = new APIResponseModel();
+        //    try
+        //    {
+        //        var orderDetailEntity = _mapper.Map<List<OrderDetail>>(orderDetaildto);
+        //        decimal totalPrice = 0;
+        //        if (orderDetailEntity.Count > 0)
+        //        {
+        //            foreach (var orderDetail in orderDetailEntity)
+        //            {
+        //                totalPrice += (decimal)(orderDetail.UnitPrice * orderDetail.Quantity);
+        //            }
+        //            var orderEntity = _mapper.Map<Order>(orderdto);
+        //            orderEntity.StatusOrder = "Pending";
+        //            orderEntity.TotalPrice = totalPrice;
+        //            await _orderRepository.AddAsync(orderEntity);
 
-                    if (await _orderRepository.SaveAsync() > 0)
-                    {
-                        foreach (OrderDetail od in orderDetailEntity)
-                        {
-                            od.OrderId = orderEntity.OrderId;
-                            od.UnitPrice = _menuFoodItem1Repository.GetByIdAsync(od.FoodId.GetValueOrDefault()).Result.UnitPrice;
-                            await _orderDetailRepository.AddAsync(od);
-                        }
+        //            if (await _orderRepository.SaveAsync() > 0)
+        //            {
+        //                foreach (OrderDetail od in orderDetailEntity)
+        //                {
+        //                    od.OrderId = orderEntity.OrderId;
+        //                    od.UnitPrice = _menuFoodItem1Repository.GetByIdAsync(od.FoodId.GetValueOrDefault()).Result.UnitPrice;
+        //                    await _orderDetailRepository.AddAsync(od);
+        //                }
 
-                        if (await _orderDetailRepository.SaveAsync() > 0)
-                        {
-                            var payment = _vNPayService.CreatePaymentRequestAsync(orderEntity.OrderId).ToString();
-                            if (payment != null)
-                            {
-                                response.IsSuccess = true;
-                                response.message = payment.ToString();
-                            }
-                            else
-                            {
-                                response.IsSuccess = false;
-                                response.message = "payment fail"; 
-                            }
+        //                if (await _orderDetailRepository.SaveAsync() > 0)
+        //                {
+        //                    var payment = _vNPayService.CreatePaymentRequestAsync(orderEntity.OrderId).ToString();
+        //                    if (payment != null)
+        //                    {
+        //                        response.IsSuccess = true;
+        //                        response.message = payment.ToString();
+        //                    }
+        //                    else
+        //                    {
+        //                        response.IsSuccess = false;
+        //                        response.message = "payment fail"; 
+        //                    }
                             
-                        }
-                        else
-                        {
-                            response.IsSuccess = false;
-                            response.message = "Failed to add Order Details.";
-                        }
-                    }
-                    else
-                    {
-                        response.IsSuccess = false;
-                        response.message = "Failed to add Order.";
-                    }
-                }
-                else
-                {
-                    response.IsSuccess = false;
-                    response.message = "No products found for checkout. Please add one or more products.";
-                }
-            }
-            catch (Exception e)
-            {
-                response.IsSuccess = false;
-                response.message = $"Order creation failed! Exception: {e.Message}";
-            }
+        //                }
+        //                else
+        //                {
+        //                    response.IsSuccess = false;
+        //                    response.message = "Failed to add Order Details.";
+        //                }
+        //            }
+        //            else
+        //            {
+        //                response.IsSuccess = false;
+        //                response.message = "Failed to add Order.";
+        //            }
+        //        }
+        //        else
+        //        {
+        //            response.IsSuccess = false;
+        //            response.message = "No products found for checkout. Please add one or more products.";
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        response.IsSuccess = false;
+        //        response.message = $"Order creation failed! Exception: {e.Message}";
+        //    }
 
-            return response;
-        }
+        //    return response;
+        //}
 
         public async Task<APIResponseModel> ConfirmOrderForShipperAsync(Guid Id)
         {
@@ -338,8 +338,10 @@ namespace Business_Layer.Services
 
             try
             {
-                var orderentity = _mapper.Map<Order>(createdto);
+                var customer = _userRepository.GetByIdAsync(Guid.Parse(createdto.MemberId)).Result;
+                var orderentity = _mapper.Map<Data_Layer.Models.Order>(createdto);
                 orderentity.StatusOrder = "Pending";
+                orderentity.Address = customer.Address;
                 await _orderRepository.AddAsync(orderentity);
 
                 if (await _orderRepository.SaveAsync() > 0)
@@ -368,13 +370,12 @@ namespace Business_Layer.Services
 
             return reponse;
         }
-
         public async Task<APIResponseModel> GetOrderByIdAsync(Guid orderId)
         {
             var _response = new APIResponseModel();
             try
             {
-                var c = await _orderRepository.GetByIdAsync(orderId);
+                var c = await _orderRepository.GetByIdAsync(orderId, x => x.User);
                 if (c == null)
                 {
                     _response.IsSuccess = false;
@@ -382,6 +383,9 @@ namespace Business_Layer.Services
                 }
                 else
                 {
+                    var mapper = _mapper.Map<OrderViewVM>(c);
+                    mapper.MemberName = c.User.UserName;
+                    mapper.PhoneNumber = c.User.PhoneNumber;
                     _response.Data = _mapper.Map<OrderViewVM>(c);
                     _response.IsSuccess = true;
                     _response.message = "Order Retrieved Successfully";
@@ -402,10 +406,13 @@ namespace Business_Layer.Services
             List<OrderViewVM> OrderDTOs = new List<OrderViewVM>();
             try
             {
-                List<Order> orders = (await _orderRepository.GetAllOrderByUserIdAsync(userId.ToString())).ToList();
+                List<Data_Layer.Models.Order> orders = (await _orderRepository.GetAllOrderByUserIdAsync(userId.ToString())).ToList();
                 foreach (var order in orders)
                 {
-                    OrderDTOs.Add(_mapper.Map<OrderViewVM>(order));
+                    var mapper = _mapper.Map<OrderViewVM>(order);
+                    mapper.MemberName = order.User.UserName;
+                    mapper.PhoneNumber = order.User.PhoneNumber;
+                    OrderDTOs.Add(mapper);
                 }
                 if (OrderDTOs.Count > 0)
                 {
@@ -435,10 +442,13 @@ namespace Business_Layer.Services
             List<OrderViewVM> OrderDTOs = new List<OrderViewVM>();
             try
             {
-                var orders = await _orderRepository.GetAllAsync();
+                var orders = await _orderRepository.GetAllAsync(x => x.User);
                 foreach (var order in orders)
                 {
-                    OrderDTOs.Add(_mapper.Map<OrderViewVM>(order));
+                    var mapper = _mapper.Map<OrderViewVM>(order);
+                    mapper.MemberName = order.User.UserName;
+                    mapper.PhoneNumber = order.User.PhoneNumber;
+                    OrderDTOs.Add(mapper);
                 }
                 if (OrderDTOs.Count > 0)
                 {
@@ -461,8 +471,6 @@ namespace Business_Layer.Services
                 return reponse;
             }
         }
-
-
 
         public async Task<APIResponseModel> GetOrdersAsyncForShipper()
         {
@@ -511,8 +519,10 @@ namespace Business_Layer.Services
                 var orderFilter = orders.Where(x => x.ShipperId == shipperId).ToList();
                 foreach (var order in orderFilter)
                 {
-                    
-                        OrderDTOs.Add(_mapper.Map<OrderViewVM>(order));
+                    var mapper = _mapper.Map<OrderViewVM>(order);
+                    mapper.MemberName = order.User.UserName;
+                    mapper.PhoneNumber = order.User.PhoneNumber;
+                    OrderDTOs.Add(_mapper.Map<OrderViewVM>(mapper));
                 }
                 if (OrderDTOs.Count > 0)
                 {
@@ -594,7 +604,7 @@ namespace Business_Layer.Services
                 }
                 else
                 {
-                    Order orderFofUpdate;
+                    Data_Layer.Models.Order orderFofUpdate;
                     OrderViewVM orderDTOAfterUpdate;
                     if (orderChecked.ShipperId == null)
                     {
