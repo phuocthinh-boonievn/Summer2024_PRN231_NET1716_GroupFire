@@ -8,5 +8,6 @@ namespace Business_Layer.Repositories
         Task<IEnumerable<MenuFoodItem>> GetMenuFoodItemAll();
         Task<List<MostSalesFood>> GetTopSalesFood();
         Task<IEnumerable<MenuFoodItem>> SearchMenuFoodItems(string searchTerm);
+        Task<int> GetTotalFood();
     }
 }

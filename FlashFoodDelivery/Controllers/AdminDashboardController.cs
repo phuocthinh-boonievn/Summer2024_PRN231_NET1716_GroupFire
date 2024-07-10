@@ -107,5 +107,21 @@ namespace API.Controllers
             }
             return Ok(response.Data);
         }
+
+        [HttpGet("dashboard/total-food-menu")]
+        [EnableCors("CorsPolicy")]
+        public async Task<IActionResult> GetTotalFoodMenu()
+        {
+            var response = await _dashboardService.GetTotalFood();
+            return Ok(response.Data);
+        }
+
+        [HttpGet("dashboard/total-categories")]
+        [EnableCors("CorsPolicy")]
+        public async Task<IActionResult> GetTotalCategories()
+        {
+            var response = await _dashboardService.GetTotalCategories();
+            return Ok(response.Data);
+        }
     }
 }

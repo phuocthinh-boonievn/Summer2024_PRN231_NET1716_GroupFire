@@ -56,5 +56,11 @@ namespace Business_Layer.Repositories
                 .ToList();
             return topSalesFood;
         }
+
+        public async Task<int> GetTotalFood()
+        {
+            var totalFood = await _dbContext.MenuFoodItems.Where(m => m.FoodStatus == "Active").CountAsync();
+            return totalFood;
+        }
     }
 }
