@@ -91,7 +91,7 @@ namespace API.Controllers
         {
             var response = await _dashboardService.GetTopFiveShippersAsync();
             if(response.Data is null)
-            {
+            { 
                 return BadRequest(response.message);
             }
             return Ok(response.Data);
@@ -105,6 +105,22 @@ namespace API.Controllers
             {
                 return BadRequest(response.message);
             }
+            return Ok(response.Data);
+        }
+
+        [HttpGet("dashboard/total-food-menu")]
+        [EnableCors("CorsPolicy")]
+        public async Task<IActionResult> GetTotalFoodMenu()
+        {
+            var response = await _dashboardService.GetTotalFood();
+            return Ok(response.Data);
+        }
+
+        [HttpGet("dashboard/total-categories")]
+        [EnableCors("CorsPolicy")]
+        public async Task<IActionResult> GetTotalCategories()
+        {
+            var response = await _dashboardService.GetTotalCategories();
             return Ok(response.Data);
         }
     }

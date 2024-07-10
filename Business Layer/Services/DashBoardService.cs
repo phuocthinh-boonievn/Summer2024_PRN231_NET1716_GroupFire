@@ -19,18 +19,21 @@ namespace Business_Layer.Services
         private readonly IUserRepository _userRepository;
         //private readonly IShipperRepository _shipperRepository;
         private readonly IMenuFoodItem1Repository _menuFoodItem1Repository;
+        private readonly ICategoryRepository _categoryRepository;
 
         public DashBoardService(IOrderRepository order,
             IOrderDetailRepository orderDetail,
             IUserRepository userRepository,
             //IShipperRepository shipperRepository,
-            IMenuFoodItem1Repository menuFoodItem1Repository) 
+            IMenuFoodItem1Repository menuFoodItem1Repository,
+            ICategoryRepository categoryRepository)
         {
             _orderRepository = order;
             _orderDetailRepository = orderDetail;
             _userRepository = userRepository;
             //_shipperRepository = shipperRepository;
             _menuFoodItem1Repository = menuFoodItem1Repository;
+            _categoryRepository = categoryRepository;
         }
 
         public async Task<decimal> GetTotalSalesByMonth(int month, int year)
@@ -159,6 +162,35 @@ namespace Business_Layer.Services
                 response.IsSuccess = true;
             }
             return response;
+        }
+
+        public async Task<APIGenericReposneModel<int>> GetTotalCategories()
+        {
+            var response = new APIGenericReposneModel<int>
+            {
+                message = "Total Categories !",
+                IsSuccess = true,
+                code = 200,
+                Data = await _categoryRepository.GetTotalCategories()
+            };
+            return response;
+        }
+
+        public async Task<APIGenericReposneModel<int>> GetTotalFood()
+        {
+            var response = new APIGenericReposneModel<int>
+            {
+                message = "Total Categories !",
+                IsSuccess = true,
+                code = 200,
+                Data = await _menuFoodItem1Repository.GetTotalFood()
+            };
+            return response;
+        }
+
+        public Task<APIGenericReposneModel<List<ShipperReport>>>? GetTopFiveShippersAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }

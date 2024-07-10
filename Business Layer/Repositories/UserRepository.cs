@@ -230,7 +230,7 @@ namespace Business_Layer.Repositories
             .Select(user => new LoyalCustomer
             {
                 CustomerName = user.UserName,
-                TotalOrders = user.Orders.Where(o => o.StatusOrder == "Confirmed").Count(),
+                TotalOrders = user.Orders.Where(o => o.StatusOrder == "Paid").Count(),
                 TotalCost = user.Orders.SelectMany(o => o.OrderDetails).Sum(od => od.UnitPrice).GetValueOrDefault(),
             })
             .OrderByDescending(order => order.TotalOrders)

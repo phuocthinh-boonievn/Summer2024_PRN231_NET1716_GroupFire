@@ -28,5 +28,10 @@ namespace Business_Layer.Repositories
             var categorylists = await _dbContext.Categories.Where(x => x.CategoriesStatus == CategoryStatusEnum.Active.ToString()).ToListAsync();
             return categorylists;
         }
+        public async Task<int> GetTotalCategories()
+        {
+            var totalCategories = await _dbContext.Categories.Where(c => c.CategoriesStatus == "Active").CountAsync();
+            return totalCategories;
+        }
     }
 }

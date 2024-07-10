@@ -20,7 +20,9 @@ namespace Business_Layer.Services
         public Task<APIGenericReposneModel<int>> GetTotalActiveUser();
         public Task<APIGenericReposneModel<int>> CountTotalOrder();
 
-      /*  public Task<APIGenericReposneModel<List<ShipperReport>>>? GetTopFiveShippersAsync(); */
+        /*  public Task<APIGenericReposneModel<List<ShipperReport>>>? GetTopFiveShippersAsync(); */
         public Task<APIGenericReposneModel<List<MostSalesFood>>> GetTopSalesFood();
+        public Task<APIGenericReposneModel<int>> GetTotalFood();
+        public Task<APIGenericReposneModel<int>> GetTotalCategories();
     }
 }
