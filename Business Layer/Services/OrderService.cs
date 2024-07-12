@@ -342,6 +342,7 @@ namespace Business_Layer.Services
                 var orderentity = _mapper.Map<Data_Layer.Models.Order>(createdto);
                 orderentity.StatusOrder = "Pending";
                 orderentity.Address = customer.Address;
+                orderentity.DeliveryStatus= DeliveryStatusEnum.Processing.ToString();
                 await _orderRepository.AddAsync(orderentity);
 
                 if (await _orderRepository.SaveAsync() > 0)
@@ -410,8 +411,6 @@ namespace Business_Layer.Services
                 foreach (var order in orders)
                 {
                     var mapper = _mapper.Map<OrderViewVM>(order);
-                    mapper.MemberName = order.User.UserName;
-                    mapper.PhoneNumber = order.User.PhoneNumber;
                     OrderDTOs.Add(mapper);
                 }
                 if (OrderDTOs.Count > 0)

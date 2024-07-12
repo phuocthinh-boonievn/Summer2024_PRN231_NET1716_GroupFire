@@ -9,6 +9,7 @@ namespace Data_Layer.ResourceModel.ViewModel.Enum
     public enum DeliveryStatusEnum
     {
         Received,
+        Processing,
         InTransit,
         Delivered,
         Cancelled
