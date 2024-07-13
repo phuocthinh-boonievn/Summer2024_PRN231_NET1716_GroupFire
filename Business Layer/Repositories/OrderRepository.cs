@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,6 +35,7 @@ namespace Business_Layer.Repositories
                 throw new Exception("User haven't Order");
             }
             return Orders;
+
         }
 
         public async Task<IEnumerable<Order>> GetConfirmedOrders()

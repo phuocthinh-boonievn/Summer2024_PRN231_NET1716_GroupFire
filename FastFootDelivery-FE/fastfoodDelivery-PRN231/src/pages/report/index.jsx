@@ -24,8 +24,44 @@ import "./report.scss";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { EffectCards } from "swiper/modules";
+import { TruckOutlined } from "@ant-design/icons";
 
 function Report() {
+  //Food
+  const [dataFood, setDateFood] = useState(0);
+  const fetchFood = async () => {
+    try {
+      const response = await axios.get(
+        "https://localhost:7173/api/AdminDashboard/dashboard/total-food-menu"
+      );
+      console.log(response.data);
+      setDateFood(response.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    fetchFood();
+  }, []);
+  //Category
+  const [dataCategories, setDateCategories] = useState(0);
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(
+        "https://localhost:7173/api/AdminDashboard/dashboard/total-categories"
+      );
+      console.log(response.data);
+      setDateCategories(response.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
   //Order
   const [dataOrder, setDateOrder] = useState(0);
   const fetchOrder = async () => {
@@ -42,23 +78,6 @@ function Report() {
 
   useEffect(() => {
     fetchOrder();
-  }, []);
-  //Revenue
-  const [dataRevenue, setDateRevenue] = useState(0);
-  const fetchRevenue = async () => {
-    try {
-      const response = await axios.get(
-        "https://localhost:7173/api/AdminDashboard/GetTotalRevenue"
-      );
-      console.log(response.data);
-      setDateRevenue(response.data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    fetchRevenue();
   }, []);
 
   //User
@@ -124,23 +143,16 @@ function Report() {
       <div className="main-cards-report">
         <div className="card-report">
           <div className="card-inner-report">
-            <FaSackDollar className="card_icon-report" />
-            <h3>Revenue</h3>
-            <h1>{dataRevenue}</h1>
-          </div>
-        </div>
-        <div className="card-report">
-          <div className="card-inner-report">
             <BsFillArchiveFill className="card_icon-report" />
             <h3>Product</h3>
-            <h1>7</h1>
+            <h1>{dataFood}</h1>
           </div>
         </div>
         <div className="card-report">
           <div className="card-inner-report">
             <BsFillGrid3X3GapFill className="card_icon-report" />
             <h3>CATEGORIES</h3>
-            <h1>5</h1>
+            <h1>{dataCategories}</h1>
           </div>
         </div>
         <div className="card-report">
@@ -152,7 +164,7 @@ function Report() {
         </div>
         <div className="card-report">
           <div className="card-inner-report">
-            <BsPeopleFill className="card_icon-report" />
+            <TruckOutlined className="card_icon-report" />
             <h3>TotalOrder</h3>
             <h1>{dataOrder}</h1>
           </div>

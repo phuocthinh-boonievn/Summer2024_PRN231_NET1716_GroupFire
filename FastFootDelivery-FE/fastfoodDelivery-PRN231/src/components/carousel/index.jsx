@@ -66,6 +66,8 @@ export default function Carousel({
       <ToastContainer />
       <h3>{Category}</h3>
       <Swiper
+        spaceBetween={5}
+        navigation
         slidesPerView={numberOfSlides}
         pagination={true}
         modules={autoplay ? [Pagination, Autoplay] : [Pagination]}
@@ -80,7 +82,6 @@ export default function Carousel({
           .map((fastfood) => (
             <SwiperSlide>
               {/* <img src={fastfood.image} alt="" /> */}
-               
               <Card
                 className="Card"
                 hoverable

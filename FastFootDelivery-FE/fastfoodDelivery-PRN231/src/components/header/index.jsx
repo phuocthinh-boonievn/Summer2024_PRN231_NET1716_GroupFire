@@ -109,9 +109,16 @@ function Header() {
             <Link to="/accountuser-management">AccountManagement</Link>
           </li> */}
 
-          <li onClick={() => setIsShowSearch(true)}>
+          {/* <li onClick={() => setIsShowSearch(true)}>
             <SearchOutlined />
-          </li>
+          </li> */}
+          <div className={`header__search ${isShowSearch ? "active" : ""}`}>
+            <Input type={Text} placeholder="Search a fast food..." />
+            {/* <CloseOutlined onClick={() => setIsShowSearch(false)} /> */}
+          </div>
+          <div className="search">
+            <SearchOutlined className="search_icon" />
+          </div>
           <li>
             <Link to="/shoppingcart">
               <Badge count={value.length} showZero>
@@ -132,10 +139,6 @@ function Header() {
           </li>
         </ul>
       </nav>
-      <div className={`header__search ${isShowSearch ? "active" : ""}`}>
-        <Input type={Text} placeholder="Search a fast food..." />
-        <CloseOutlined onClick={() => setIsShowSearch(false)} />
-      </div>
     </header>
   );
 }

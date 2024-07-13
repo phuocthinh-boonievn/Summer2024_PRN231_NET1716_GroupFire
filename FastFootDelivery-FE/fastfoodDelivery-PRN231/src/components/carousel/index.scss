@@ -4,8 +4,9 @@
         height: 80dvh;
         object-fit: cover;
         object-position: top;
+    
     }
-    &.multi-item{
+    &.multi-item{ 
         img{
             height: 200px;
         }
@@ -13,11 +14,15 @@
 .ant-card-body{
     display: flex;
     flex-direction: column;
-    padding-left: 20px;
+ 
 }
    &__cart{
     align-self: center;
     font-size: 2em;
     padding-left: 20px;
+
    }
+}
+.swiper-wrapper{
+    margin-left: 15px;
 }

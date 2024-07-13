@@ -156,7 +156,7 @@ namespace API.Controllers
             return Ok(c);
         }
 
-        [HttpGet("{id:Guid}")]
+        [HttpDelete("{id:Guid}")]
         [EnableCors("CorsPolicy")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -170,7 +170,7 @@ namespace API.Controllers
             return Ok(c);
         }
 
-        [HttpGet("{id:Guid}")]
+        [HttpDelete("{id:Guid}")]
         [EnableCors("CorsPolicy")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -184,7 +184,7 @@ namespace API.Controllers
             return Ok(c);
         }
 
-        [HttpGet("{id:Guid}")]
+        [HttpDelete("{id:Guid}")]
         [EnableCors("CorsPolicy")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

@@ -70,7 +70,9 @@ function OrderAdmin() {
           }}
           type="primary"
           style={{ background: "orange" }}
-          disabled={data.deliveryStatus !== "Processing"}
+          disabled={
+            data.deliveryStatus !== "Processing" || data.statusOrder !== "Paid"
+          }
         >
           Delivery
         </Button>

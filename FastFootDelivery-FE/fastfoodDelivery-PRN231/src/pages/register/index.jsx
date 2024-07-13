@@ -64,6 +64,7 @@ function Register() {
             <h3>Register Your Acount</h3>
             <Form form={formVariable} onFinish={handleSubmit}>
               <Form.Item
+                label="Email"
                 name={"email"}
                 rules={[
                   {
@@ -75,6 +76,7 @@ function Register() {
                 <Input type="text" placeholder="Email" />
               </Form.Item>
               <Form.Item
+                label="UserName"
                 name={"userName"}
                 rules={[
                   {
@@ -86,6 +88,7 @@ function Register() {
                 <Input type="text" placeholder="UserName" />
               </Form.Item>
               <Form.Item
+                label="FullName"
                 name={"fullName"}
                 rules={[
                   {
@@ -97,6 +100,7 @@ function Register() {
                 <Input type="text" placeholder="Full Name" />
               </Form.Item>
               <Form.Item
+                label="Address"
                 name={"address"}
                 rules={[
                   {
@@ -108,6 +112,7 @@ function Register() {
                 <Input type="text" placeholder="Address" />
               </Form.Item>
               <Form.Item
+                label="PhoneNumner"
                 name={"phoneNumber"}
                 rules={[
                   {
@@ -119,6 +124,7 @@ function Register() {
                 <Input type="number" placeholder="PhoneNumber" />
               </Form.Item>
               <Form.Item
+                label="Password"
                 name={"password"}
                 rules={[
                   {
@@ -130,6 +136,7 @@ function Register() {
                 <Input type="password" placeholder="Passowrd" />
               </Form.Item>
               <Form.Item
+                label="ConfirmPassword"
                 name={"confirmPassword"}
                 rules={[
                   {

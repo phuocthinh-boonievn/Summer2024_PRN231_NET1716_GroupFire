@@ -23,16 +23,18 @@ namespace Business_Layer.Services
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
         private readonly IMenuFoodItem1Repository _menuFoodItem1Repository;
+        private readonly IUserSerivce _userSerivce;
         private readonly IVNPayService _vNPayService;
         private readonly IUserRepository _userRepository;
 
-        public OrderService(IMapper mapper, IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IMenuFoodItem1Repository menuFoodItem1Repository, IVNPayService vNPayService)
+        public OrderService(IMapper mapper, IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IMenuFoodItem1Repository menuFoodItem1Repository, IVNPayService vNPayService, IUserSerivce userSerivce)
         {
             _mapper = mapper;
             _orderRepository = orderRepository;
             _orderDetailRepository = orderDetailRepository;
             _menuFoodItem1Repository = menuFoodItem1Repository;
             _vNPayService = vNPayService;
+            _userSerivce = userSerivce;
         }
 
         public async Task<APIResponseModel> CancelOrderAsync(Guid id)
@@ -338,10 +340,10 @@ namespace Business_Layer.Services
 
             try
             {
-                var customer = _userRepository.GetByIdAsync(Guid.Parse(createdto.MemberId)).Result;
+                var customer = _userSerivce.GetUserById(createdto.MemberId);
                 var orderentity = _mapper.Map<Data_Layer.Models.Order>(createdto);
                 orderentity.StatusOrder = "Pending";
-                orderentity.Address = customer.Address;
+                orderentity.Address = customer.Result.Address;
                 orderentity.DeliveryStatus= DeliveryStatusEnum.Processing.ToString();
                 await _orderRepository.AddAsync(orderentity);
 
@@ -408,9 +410,12 @@ namespace Business_Layer.Services
             try
             {
                 List<Data_Layer.Models.Order> orders = (await _orderRepository.GetAllOrderByUserIdAsync(userId.ToString())).ToList();
+                var user = _userSerivce.GetUserById(userId.ToString());
                 foreach (var order in orders)
                 {
                     var mapper = _mapper.Map<OrderViewVM>(order);
+                    mapper.MemberName = user.Result.FullName;
+                    mapper.PhoneNumber = user.Result.PhoneNumber;
                     OrderDTOs.Add(mapper);
                 }
                 if (OrderDTOs.Count > 0)
@@ -521,6 +526,7 @@ namespace Business_Layer.Services
                     var mapper = _mapper.Map<OrderViewVM>(order);
                     mapper.MemberName = order.User.UserName;
                     mapper.PhoneNumber = order.User.PhoneNumber;
+                    mapper.Address = order.User.Address;
                     OrderDTOs.Add(_mapper.Map<OrderViewVM>(mapper));
                 }
                 if (OrderDTOs.Count > 0)
@@ -557,13 +563,14 @@ namespace Business_Layer.Services
             {
                 var orderChecked = await _orderRepository.GetByIdAsync(id);
 
-                if (orderChecked == null && orderChecked.StatusOrder == "Cancelled")
+                if (orderChecked == null && orderChecked.StatusOrder == "Pending")
                 {
                     reponse.IsSuccess = false;
-                    reponse.message = "Not found order, you are sure input";
+                    reponse.message = "Order is Canceled Payment";
                 }
                 else
                 {
+                    
                     var orderFofUpdate = _mapper.Map(updatedto, orderChecked);
                     var orderDTOAfterUpdate = _mapper.Map<OrderViewVM>(orderFofUpdate);
                     if (await _orderRepository.SaveAsync() > 0)
@@ -596,10 +603,10 @@ namespace Business_Layer.Services
             {
                 var orderChecked = await _orderRepository.GetByIdAsync(id);
 
-                if (orderChecked == null && orderChecked.StatusOrder == "Cancelled")
+                if (orderChecked == null && orderChecked.StatusOrder == "Pending")
                 {
                     reponse.IsSuccess = false;
-                    reponse.message = "Not found order, you are sure input";
+                    reponse.message = "Order is Canceled Payment";
                 }
                 else
                 {
@@ -609,7 +616,7 @@ namespace Business_Layer.Services
                     {
                         orderFofUpdate = _mapper.Map(updatedto, orderChecked);
                         orderChecked.ShipperId = updatedto.ShipperId;
-                        orderChecked.DeliveryStatus = DeliveryStatusEnum.Received.ToString();
+                        orderChecked.DeliveryStatus = DeliveryStatusEnum.InTransit.ToString();
                         orderDTOAfterUpdate = _mapper.Map<OrderViewVM>(orderFofUpdate);
                         if (await _orderRepository.SaveAsync() > 0)
                         {
@@ -624,10 +631,10 @@ namespace Business_Layer.Services
                             reponse.message = "Update status delivery of order fail!";
                         }
                     }
-                    else if (orderChecked.DeliveryStatus == DeliveryStatusEnum.Received.ToString())
+                    else if (orderChecked.DeliveryStatus == DeliveryStatusEnum.InTransit.ToString())
                     {
                         orderFofUpdate = _mapper.Map(updatedto, orderChecked);
-                        orderChecked.DeliveryStatus = DeliveryStatusEnum.InTransit.ToString();
+                        orderChecked.DeliveryStatus = DeliveryStatusEnum.Delivered.ToString();
                         orderDTOAfterUpdate = _mapper.Map<OrderViewVM>(orderFofUpdate);
                         if (await _orderRepository.SaveAsync() > 0)
                         {

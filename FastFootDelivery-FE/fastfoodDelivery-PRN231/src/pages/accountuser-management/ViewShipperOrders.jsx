@@ -70,7 +70,7 @@ const ViewShipperOrders = () => {
 
   if (!orders.length) {
     return (
-      <div className="container mt-3">
+      <div className="mt-20">
         <h2>Shipper Orders</h2>
         <p>No orders to view.</p>
       </div>
@@ -78,7 +78,7 @@ const ViewShipperOrders = () => {
   }
 
   return (
-    <div className="container mt-3">
+    <div className=" mt-24">
       <h2>Shipper Orders</h2>
       <table className="table">
         <thead>

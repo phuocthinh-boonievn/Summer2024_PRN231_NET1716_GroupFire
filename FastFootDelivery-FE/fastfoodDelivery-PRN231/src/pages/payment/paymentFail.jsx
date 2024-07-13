@@ -5,9 +5,9 @@ import "./paymentFail.scss";
 
 const PaymentFailure = () => {
   return (
-    <div className="container">
-      <div className="iconContainer">
-        <div className="icon">!</div>
+    <div className="fail">
+      <div className="iconfail">
+        <div className="fail_icon">!</div>
       </div>
       <div className="message">Your payment failed</div>
       <div className="subMessage">Please try again</div>
