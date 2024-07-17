@@ -10,5 +10,6 @@ namespace Data_Layer.ResourceModel.ViewModel.User
     {
         public string username { get; set; }
         public string password { get; set; }
+        public string Status { get; set; } = "Active";
     }
 }

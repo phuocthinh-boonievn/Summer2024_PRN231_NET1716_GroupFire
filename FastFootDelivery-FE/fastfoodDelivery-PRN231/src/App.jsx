@@ -1,4 +1,8 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import {
+  Navigate,
+  RouterProvider,
+  createBrowserRouter,
+} from "react-router-dom";
 import Layout from "./components/layout";
 // import AdminAccountManagement from "./pages/accountuser-management";
 import Category from "./pages/category-management";
@@ -20,8 +24,24 @@ import OrderAdmin from "./pages/orderAdmin";
 import ReportRevenue from "./pages/reportRevenue";
 import ViewOrderHistory from "./pages/accountuser-management/ViewOrderHistory";
 import ViewShipperOrders from "./pages/accountuser-management/ViewShipperOrders";
+import { useDispatch, useSelector } from "react-redux";
+import { store } from "./redux/store";
+import { toast } from "react-toastify";
+import { logout } from "./redux/features/userAccount";
 
 function App() {
+  const AdminRoute = ({ children, role }) => {
+    const user = useSelector((store) => store.accountmanage);
+    const dispatch = useDispatch();
+    if (user?.role === role) {
+      return children;
+    } else {
+      toast.error(" Access Denied");
+      dispatch(logout());
+      return <Navigate to="/login" />;
+    }
+  };
+
   const router = createBrowserRouter([
     {
       path: "/",
@@ -81,17 +101,29 @@ function App() {
         },
         {
           path: "/viewOrderHistory",
-          element: <ViewOrderHistory />,
+          element: (
+            <AdminRoute role="User">
+              <ViewOrderHistory />
+            </AdminRoute>
+          ),
         },
         {
           path: "/viewshipperOrders",
-          element: <ViewShipperOrders />,
+          element: (
+            <AdminRoute role="Shipper">
+              <ViewShipperOrders />
+            </AdminRoute>
+          ),
         },
       ],
     },
     {
       path: "/dashboard",
-      element: <Dashboard />,
+      element: (
+        <AdminRoute role="Admin">
+          <Dashboard />
+        </AdminRoute>
+      ),
       children: [
         {
           path: "/dashboard/category",

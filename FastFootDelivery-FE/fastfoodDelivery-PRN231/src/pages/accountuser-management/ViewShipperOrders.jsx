@@ -85,6 +85,10 @@ const ViewShipperOrders = () => {
           <tr>
             <th>Order ID</th>
             <th>Required Date</th>
+            <th>MemberName</th>
+            <th>PhoneNumber</th>
+            <th>Address</th>
+            <th>TotalPrice</th>
             <th>Status Order</th>
             <th>Delivery Status</th>
             <th>Actions</th>
@@ -95,6 +99,10 @@ const ViewShipperOrders = () => {
             <tr key={order.orderId}>
               <td>{order.orderId}</td>
               <td>{order.requiredDate}</td>
+              <td>{order.memberName}</td>
+              <td>{order.phoneNumber}</td>
+              <td>{order.address}</td>
+              <td>{order.totalPrice}</td>
               <td>{order.statusOrder}</td>
               <td>{order.deliveryStatus ?? "NULL"}</td>
               <td>

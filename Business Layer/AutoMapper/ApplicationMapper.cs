@@ -2,6 +2,7 @@
 using Data_Layer.Models;
 using Data_Layer.ResourceModel.ViewModel;
 using Data_Layer.ResourceModel.ViewModel.CartVMs;
+using Data_Layer.ResourceModel.ViewModel.Category;
 using Data_Layer.ResourceModel.ViewModel.FeedBackVMs;
 using Data_Layer.ResourceModel.ViewModel.MenuFoodItemVMs;
 using Data_Layer.ResourceModel.ViewModel.OrderDetailVMs;
@@ -17,6 +18,9 @@ namespace Business_Layer.AutoMapper
         {
             CreateMap<MenuFoodItem, MenuFoodItemVM>().ReverseMap();
             CreateMap<Category, CategoryVM>().ReverseMap();
+            CreateMap<Category, CategoryCreateVM>().ReverseMap();
+            CreateMap<Category, CategoryUpdateVM>().ReverseMap();
+
             CreateMap<Order, OrderVM>().ReverseMap();
 
             CreateMap<Order, OrderViewVM>().ReverseMap();

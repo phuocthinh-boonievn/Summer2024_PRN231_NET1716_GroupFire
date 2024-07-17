@@ -3,6 +3,7 @@ import { useForm } from "antd/es/form/Form";
 import axios from "axios";
 import { Input } from "postcss";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 function OrderAdmin() {
   const [shipper, setShipper] = useState([]);
@@ -108,7 +109,12 @@ function OrderAdmin() {
           shipperId: value.ShipperId,
         }
       );
+      fetchOrder();
+      formVariable.resetFields;
+      handleHideModal();
+      toast.success("Assign to the shipper Successfully");
     } catch (error) {
+      toast.error("Assign to the shipper fail");
       console.log(e);
     }
   }
@@ -122,7 +128,16 @@ function OrderAdmin() {
         onOk={() => formVariable.submit()}
       >
         <Form form={formVariable} onFinish={handleEditShipper}>
-          <Form.Item label="Shipper" name="ShipperId">
+          <Form.Item
+            label="Shipper"
+            name="ShipperId"
+            rules={[
+              {
+                required: true,
+                message: "Please Input Shipper",
+              },
+            ]}
+          >
             <Select options={shipper} />
           </Form.Item>
         </Form>

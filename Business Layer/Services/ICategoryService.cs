@@ -1,5 +1,6 @@
 ﻿using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel;
+using Data_Layer.ResourceModel.ViewModel.Category;
 using Data_Layer.ResourceModel.ViewModel.MenuFoodItemVMs;
 using System;
 using System.Collections.Generic;
@@ -13,8 +14,8 @@ namespace Business_Layer.Services
     {
         Task<APIResponseModel> GetCategoryAsync();
         Task<APIResponseModel> GetCategoryByIdsAsync(Guid categoryId);
-        Task<APIResponseModel> CreateCategoryAsync(CategoryVM category);
-        Task<APIResponseModel> UpdateCategoryAsync(Guid id, CategoryVM category);
+        Task<APIResponseModel> CreateCategoryAsync(CategoryCreateVM category);
+        Task<APIResponseModel> UpdateCategoryAsync(Guid id, CategoryUpdateVM category);
         Task<APIResponseModel> DeleteCategory(Guid id);
     }
 }

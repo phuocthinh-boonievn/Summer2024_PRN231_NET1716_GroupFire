@@ -86,7 +86,7 @@ namespace Business_Layer.Repositories
 
             if( userIdentity != null )
             {
-                if(userIdentity.Status.ToString() == UserEnum.Active.ToString())
+                if (userIdentity.Status.ToString() != null || userIdentity.Status.ToString() == UserEnum.Active.ToString())
                 {
                     return result;
                 }
@@ -98,12 +98,19 @@ namespace Business_Layer.Repositories
                         IsSuccess = false,
                         message = "Username or password is incorrect!",
                     };
+
+                    //return new apiresponsemodel
+                    //{
+                    //    code = 400,
+                    //    issuccess = false,
+                    //    message = "username or password is incorrect!",
+                    //};
                 }
-                
+
             }
             else {
 
-                if (userIdentity == null || !await _userManager.CheckPasswordAsync(userIdentity, model.Password))
+                if (!await _userManager.CheckPasswordAsync(userIdentity, model.Password))
                 {
                     if (model.UserName == _adminAccount.username)
                     {
@@ -117,8 +124,7 @@ namespace Business_Layer.Repositories
                                 UserName = model.UserName,
                                 FullName = model.UserName,
                                 Address = model.UserName,
-
-
+                                Status = UserEnum.Active.ToString(),
                             };
                             var resultCreateUser = await _userManager.CreateAsync(admin, _adminAccount.password);
                             var resultRole = await _userManager.AddToRoleAsync(admin, "Admin");
@@ -135,11 +141,14 @@ namespace Business_Layer.Repositories
                     }
 
                 }
+               
+
             }
-           
 
             return result;
         }
+
+
 
         private async Task<List<Claim>> GetClaimsUsers(LoginVM model)
         {

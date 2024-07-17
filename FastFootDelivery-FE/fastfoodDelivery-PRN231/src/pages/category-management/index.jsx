@@ -4,23 +4,29 @@ import { useForm } from "antd/es/form/Form";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import "./index.scss";
+import { toast } from "react-toastify";
 
 function Category() {
   const [formVariable] = useForm();
+  const [formUpdate] = useForm();
   const [dataSource, setDataSource] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [visibleEditModal, setVisibleEditModal] = useState(false);
+  const [idCategory, SetidCategory] = useState("");
 
-  const handleDeleteCategory = async (CategoryId) => {
-    console.log("Delete Fast Food", CategoryId);
+  const handleDeleteCategory = async (categoryId) => {
+    console.log(categoryId);
 
-    // await axios.delete(
-    //   `https://localhost:7173/api/Category/DeleteCategory/${CategoryId}`
-    // );
+    await axios.delete(
+      `https://localhost:7173/api/Category/DeleteCategory/${categoryId}`
+    );
 
-    // const listAfterDelete = dataSource.filter(
-    //   (category) => category.CategoryId != CategoryId
-    // );
-    // setDataSource(listAfterDelete);
+    const listAfterDelete = dataSource.filter(
+      (category) => category.categoryId != categoryId
+    );
+
+    setDataSource(listAfterDelete);
+    toast.success("Delete Category Successfully");
   };
   const columns = [
     {
@@ -30,14 +36,14 @@ function Category() {
     },
     {
       title: "Action",
-      dataIndex: "CategoryId",
-      key: "CategoryId",
-      render: (CategoryId) => (
+      dataIndex: "categoryId",
+      key: "categoryId",
+      render: (categoryId, data) => (
         <Space>
           <Popconfirm
             title="Delete Category"
-            description="Are you sure to dele this Category?"
-            onConfirm={() => handleDeleteCategory(CategoryId)}
+            description="Are you sure to delete this Category?"
+            onConfirm={() => handleDeleteCategory(categoryId)}
             onText="Yes"
             cancelText="No"
           >
@@ -45,6 +51,17 @@ function Category() {
               Delete
             </Button>
           </Popconfirm>
+          <Button
+            onClick={() => {
+              setVisibleEditModal(true);
+              SetidCategory(categoryId);
+              formUpdate.setFieldsValue(data);
+            }}
+            type="primary"
+            style={{ background: "orange" }}
+          >
+            Update
+          </Button>
         </Space>
       ),
     },
@@ -53,6 +70,8 @@ function Category() {
   function handleShowModal() {
     setIsOpen(true);
   }
+
+  console.log(idCategory);
 
   function handleHideModal() {
     setIsOpen(false);
@@ -88,6 +107,24 @@ function Category() {
     fetchCategory();
   }, []);
 
+  function handleEditHideModal() {
+    setVisibleEditModal(false);
+  }
+
+  async function handleEditCategory(value) {
+    const updateCategory = formUpdate.getFieldsValue();
+    console.log(updateCategory);
+    axios
+      .put(`https://localhost:7173/api/Category/UpdateCategory/${idCategory}`, {
+        categoriesName: value.categoriesName,
+      })
+      .then(() => {
+        fetchCategory();
+        setVisibleEditModal(false);
+        toast.success("Update Category Successfully");
+      });
+  }
+
   return (
     <div className="categoryPage">
       <Button type="primary" onClick={handleShowModal}>
@@ -101,7 +138,44 @@ function Category() {
         onOk={handleOk}
       >
         <Form form={formVariable} onFinish={handleSubmit}>
-          <Form.Item label="Category Name" name={"categoriesName"}>
+          <Form.Item
+            label="Category Name"
+            name={"categoriesName"}
+            rules={[
+              {
+                required: true,
+                message: "Please Input Category Name",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        open={visibleEditModal}
+        title="Edit Category"
+        onCancel={() => {
+          setVisibleEditModal(false);
+          formUpdate.resetFields();
+        }}
+        onOk={() => {
+          formUpdate.submit();
+          handleEditCategory();
+        }}
+      >
+        <Form form={formUpdate} onFinish={handleEditCategory}>
+          <Form.Item
+            label="Category Name"
+            name={"categoriesName"}
+            rules={[
+              {
+                required: true,
+                message: "Please Input Category Name",
+              },
+            ]}
+          >
             <Input />
           </Form.Item>
         </Form>

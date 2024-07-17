@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../../redux/features/userAccount";
 import "./index.scss";
+import { toast } from "react-toastify";
 
 function Login() {
   const [formVariable] = useForm();
@@ -24,10 +25,11 @@ function Login() {
 
       const decoded = jwtDecode(response.data.data);
       dispatch(login(decoded));
+      toast.success("login succefully");
       navigate("/");
     } catch (err) {
-      console.log(err);
-      alert("Invalid Username or Passwprd");
+      toast.error("login fail");
+      formVariable.resetFields();
     }
   }
 

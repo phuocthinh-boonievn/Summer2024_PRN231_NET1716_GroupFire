@@ -17,6 +17,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import uploadFile from "../../utils/upload";
 import "./index.scss";
+import { toast } from "react-toastify";
 
 function FoodItemManagement() {
   const [category, setCategory] = useState([]);
@@ -56,6 +57,7 @@ function FoodItemManagement() {
       (fastfoot) => fastfoot.foodId != foodId
     );
     setDataSource(listAfterDelete);
+    toast.success("Delete Food Successfully");
   };
   const columns = [
     {
@@ -104,6 +106,7 @@ function FoodItemManagement() {
           <Button
             onClick={() => {
               setVisibleEditModal(true);
+              // formUpdate.setFieldsValue(data);
               handleOnEdit(data);
               // setOldFood(data);
             }}
@@ -164,25 +167,30 @@ function FoodItemManagement() {
   }
 
   async function handleSubmit(values) {
-    console.log(values);
-    console.log(values.image.file);
-    if (values.image?.file) {
-      const url = await uploadFile(values.image.file);
-      values.image = url;
+    try {
       console.log(values);
+      console.log(values.image.file);
+      if (values.image?.file) {
+        const url = await uploadFile(values.image.file);
+        values.image = url;
+        console.log(values);
+      }
+
+      const response = await axios.post(
+        "https://localhost:7173/api/MenuItemFood/CreateFood",
+        values
+      );
+      setDataSource([...dataSource, response.data.data]);
+
+      // clear form
+      formVariable.resetFields();
+
+      //hide form
+      handleHideModal();
+      toast.success("Create Food Item successfully!");
+    } catch (err) {
+      toast.error("Create Food Item Fail");
     }
-
-    const response = await axios.post(
-      "https://localhost:7173/api/MenuItemFood/CreateFood",
-      values
-    );
-    setDataSource([...dataSource, response.data.data]);
-
-    // clear form
-    formVariable.resetFields();
-
-    //hide form
-    handleHideModal();
   }
 
   function handleOk() {
@@ -240,22 +248,27 @@ function FoodItemManagement() {
     // fetchFastFood();
     // handleCloseEditModal();
 
-    const updatedFood = formUpdate.getFieldsValue();
-    let imageUrl = oldFood.image;
+    try {
+      const updatedFood = formUpdate.getFieldsValue();
+      let imageUrl = oldFood.image;
 
-    if (fileList.length && fileList[0].originFileObj) {
-      imageUrl = await uploadFile(fileList[0].originFileObj);
+      if (fileList.length && fileList[0].originFileObj) {
+        imageUrl = await uploadFile(fileList[0].originFileObj);
+      }
+
+      axios
+        .put(
+          `https://localhost:7173/api/MenuItemFood/UpdateFood/${oldFood.foodId}`,
+          { ...updatedFood, foodId: oldFood.foodId, image: imageUrl }
+        )
+        .then(() => {
+          fetchFastFood();
+          setVisibleEditModal(false);
+          toast.success("Update Food Item Successfully");
+        });
+    } catch (err) {
+      toast.error("Update Food Item Fail");
     }
-
-    axios
-      .put(
-        `https://localhost:7173/api/MenuItemFood/UpdateFood/${oldFood.foodId}`,
-        { ...updatedFood, foodId: oldFood.foodId, image: imageUrl }
-      )
-      .then(() => {
-        fetchFastFood();
-        setVisibleEditModal(false);
-      });
   }
   const [formUpdate] = Form.useForm();
 
@@ -293,21 +306,66 @@ function FoodItemManagement() {
           form={formVariable}
           onFinish={handleSubmit}
         >
-          <Form.Item label="Food name" name={"foodName"}>
+          <Form.Item
+            label="Food name"
+            name={"foodName"}
+            rules={[
+              {
+                required: true,
+                message: "Please Input Food name",
+              },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item label="Description" name={"foodDescription"}>
+          <Form.Item
+            label="Description"
+            name={"foodDescription"}
+            rules={[
+              {
+                required: true,
+                message: "Please Input Description",
+              },
+            ]}
+          >
             <TextArea rows={4} />
           </Form.Item>
-          <Form.Item label="UnitPrice" name={"unitPrice"}>
+          <Form.Item
+            label="UnitPrice"
+            name={"unitPrice"}
+            rules={[
+              {
+                required: true,
+                message: "Please Input UnitPrice",
+              },
+            ]}
+          >
             <Input />
           </Form.Item>
 
-          <Form.Item label="Category" name="categoryId">
+          <Form.Item
+            label="Category"
+            name="categoryId"
+            rules={[
+              {
+                required: true,
+                message: "Please Input Category",
+              },
+            ]}
+          >
             <Select options={category} />
           </Form.Item>
 
-          <Form.Item label="Image" name={"image"}>
+          <Form.Item
+            label="Image"
+            name={"image"}
+            rules={[
+              {
+                required: true,
+                message: "Please Input Image",
+              },
+            ]}
+          >
             <Upload
               action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
               listType="picture-card"
@@ -346,7 +404,16 @@ function FoodItemManagement() {
         okText={"Save"}
       >
         <Form form={formUpdate}>
-          <Form.Item label="Food name" name={"foodName"}>
+          <Form.Item
+            label="Food name"
+            name={"foodName"}
+            rules={[
+              {
+                required: true,
+                message: "Please Input Food name",
+              },
+            ]}
+          >
             <Input
               value={oldFood?.foodName}
               onChange={(e) => {
@@ -355,7 +422,16 @@ function FoodItemManagement() {
               }}
             />
           </Form.Item>
-          <Form.Item label="Description" name={"foodDescription"}>
+          <Form.Item
+            label="Description"
+            name={"foodDescription"}
+            rules={[
+              {
+                required: true,
+                message: "Please Input Description",
+              },
+            ]}
+          >
             <TextArea
               rows={4}
               value={oldFood?.description}
@@ -374,7 +450,16 @@ function FoodItemManagement() {
               // }}
             />
           </Form.Item>
-          <Form.Item label="UnitPrice" name={"unitPrice"}>
+          <Form.Item
+            label="UnitPrice"
+            name={"unitPrice"}
+            rules={[
+              {
+                required: true,
+                message: "Please Input UnitPrice",
+              },
+            ]}
+          >
             <Input
               value={oldFood?.unitPrice}
               onChange={(e) => {
@@ -392,7 +477,16 @@ function FoodItemManagement() {
               // }}
             />
           </Form.Item>
-          <Form.Item label="Category" name="categoryId">
+          <Form.Item
+            label="Category"
+            name="categoryId"
+            rules={[
+              {
+                required: true,
+                message: "Please Input Category",
+              },
+            ]}
+          >
             <Select
               value={oldFood?.categoryId}
               onChange={(e) => {
@@ -411,7 +505,16 @@ function FoodItemManagement() {
               options={category}
             />
           </Form.Item>
-          <Form.Item label="Image" name={"image"}>
+          <Form.Item
+            label="Image"
+            name={"image"}
+            rules={[
+              {
+                required: true,
+                message: "Please Input Image",
+              },
+            ]}
+          >
             <Upload
               action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
               listType="picture-card"

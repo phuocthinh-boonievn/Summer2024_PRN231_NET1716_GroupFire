@@ -6,6 +6,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./index.scss";
+import { toast } from "react-toastify";
 
 function Register() {
   const [formVariable] = useForm();
@@ -30,10 +31,11 @@ function Register() {
 
       setDataSource([...dataSource, values]);
       formVariable.resetFields();
+      toast.success("Register Successfully");
       navigate("/login");
     } catch (err) {
       console.log(err);
-      alert("Please input Correct Information");
+      toast.error("Please input Correct Information");
     }
   }
 

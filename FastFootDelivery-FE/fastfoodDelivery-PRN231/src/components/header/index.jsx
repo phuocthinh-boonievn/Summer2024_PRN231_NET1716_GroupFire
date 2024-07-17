@@ -13,13 +13,15 @@ import { useState } from "react";
 import { Badge, Dropdown, Input } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/features/userAccount";
+import axios from "axios";
 
-function Header() {
+function Header({ setDataSearch, setCheck, setSearch }) {
   const [isShowSearch, setIsShowSearch] = useState(false);
   const value = useSelector((state) => state.fastfoodcard);
   const account = useSelector((store) => store.accountmanage);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleButtonClick = (e) => {
     message.info("Click on left button.");
@@ -76,6 +78,24 @@ function Header() {
     onClick: handleMenuClick,
   };
 
+  const handleSearch = async (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    if (term == "") {
+      setCheck(true);
+      setSearch(false);
+    } else {
+      setSearch(true);
+    }
+    const response = await axios.get(
+      `https://localhost:7173/api/MenuItemFood/SearchFoods/search?searchTerm=${term}`
+    );
+
+    console.log(response.data.data);
+    setDataSearch(response.data.data);
+
+    // setSearchTerm(response.data.data);
+  };
   return (
     <header className="header">
       <div className="header__logo">
@@ -113,11 +133,19 @@ function Header() {
             <SearchOutlined />
           </li> */}
           <div className={`header__search ${isShowSearch ? "active" : ""}`}>
-            <Input type={Text} placeholder="Search a fast food..." />
+            <Input
+              type={Text}
+              placeholder="Search a fast food..."
+              value={searchTerm}
+              onChange={handleSearch}
+            />
             {/* <CloseOutlined onClick={() => setIsShowSearch(false)} /> */}
           </div>
           <div className="search">
-            <SearchOutlined className="search_icon" />
+            <SearchOutlined
+              className="search_icon"
+              onClick={() => handleSearch()}
+            />
           </div>
           <li>
             <Link to="/shoppingcart">

@@ -3,6 +3,7 @@ using Business_Layer.Repositories;
 using Data_Layer.Models;
 using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel;
+using Data_Layer.ResourceModel.ViewModel.Category;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace Business_Layer.Services
             _mapper = mapper;
         }
 
-        public async Task<APIResponseModel> CreateCategoryAsync(CategoryVM category)
+        public async Task<APIResponseModel> CreateCategoryAsync(CategoryCreateVM category)
         {
             APIResponseModel responseModel = new APIResponseModel();
             try
@@ -155,7 +156,7 @@ namespace Business_Layer.Services
             return _response;
         }
 
-        public async Task<APIResponseModel> UpdateCategoryAsync(Guid id, CategoryVM category)
+        public async Task<APIResponseModel> UpdateCategoryAsync(Guid id, CategoryUpdateVM category)
         {
             var reponse = new APIResponseModel();
             try

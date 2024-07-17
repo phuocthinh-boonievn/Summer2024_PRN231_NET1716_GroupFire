@@ -2,6 +2,7 @@
 using Business_Layer.Services;
 using Data_Layer.ResourceModel.Common;
 using Data_Layer.ResourceModel.ViewModel;
+using Data_Layer.ResourceModel.ViewModel.Category;
 using Data_Layer.ResourceModel.ViewModel.MenuFoodItemVMs;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
@@ -69,7 +70,7 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> CreateCategory([FromBody] CategoryVM category)
+        public async Task<IActionResult> CreateCategory([FromBody] CategoryCreateVM category)
         {
             if (category == null)
             {
@@ -101,7 +102,7 @@ namespace API.Controllers
         [HttpPut("{id:Guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] CategoryVM category)
+        public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] CategoryUpdateVM category)
         {
             var c = await _categoryService.UpdateCategoryAsync(id, category);
             if (!c.IsSuccess)

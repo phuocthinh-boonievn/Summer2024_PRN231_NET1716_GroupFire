@@ -282,7 +282,7 @@ namespace Business_Layer.Services
                     }
                     else
                     {
-                        reponse.Data = foodDTOAfterUpdate;
+                     
                         reponse.IsSuccess = false;
                         reponse.message = "Update food fail!";
                     }
