@@ -14,15 +14,18 @@ import Item from "antd/es/list/Item";
 import axios from "axios";
 import { Card } from "antd";
 import { ShoppingCartOutlined } from "@ant-design/icons";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addFood } from "../../redux/features/fastfoodCart";
 import { toast } from "react-toastify";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function HomePage() {
   const [dataCategory, setDataCategory] = useState([]);
   const [dataSearch, setDataSearch] = useState([]);
   const [check, setCheck] = useState(false);
   const [search, setSearch] = useState(false);
+  const user = useSelector((store) => store.accountmanage);
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
@@ -44,18 +47,23 @@ function HomePage() {
 
   function handlegetValue(e) {
     console.log(e);
-    dispatch(
-      addFood({
-        id: e.foodId,
-        name: e.foodName,
-        description: e.description,
-        price: e.unitPrice,
-        quantity: 1,
-        image: e.image,
-      })
-    );
-    console.log("hi");
-    return toast.success("Add Food Successfully");
+    if (user === null) {
+      navigate("/login");
+      toast.error("Please Login");
+    } else {
+      dispatch(
+        addFood({
+          id: e.foodId,
+          name: e.foodName,
+          description: e.description,
+          price: e.unitPrice,
+          quantity: 1,
+          image: e.image,
+        })
+      );
+      console.log("hi");
+      return toast.success("Add Food Successfully");
+    }
   }
 
   return (

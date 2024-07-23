@@ -399,7 +399,7 @@ function FoodItemManagement() {
         onOk={handleEditCource}
         onCancel={() => {
           setVisibleEditModal(false);
-          formUpdate.resetFields();
+          // formUpdate.resetFields();
         }}
         okText={"Save"}
       >

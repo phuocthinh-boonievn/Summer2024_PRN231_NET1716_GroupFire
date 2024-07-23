@@ -631,7 +631,12 @@ namespace Business_Layer.Services
                             reponse.message = "Update status delivery of order fail!";
                         }
                     }
-                    else if (orderChecked.DeliveryStatus == DeliveryStatusEnum.InTransit.ToString())
+                    else
+                    {
+                        reponse.IsSuccess = false;
+                        reponse.message = "Update status delivery of order fail!";
+                    }
+                   /* else if (orderChecked.DeliveryStatus == DeliveryStatusEnum.InTransit.ToString())
                     {
                         orderFofUpdate = _mapper.Map(updatedto, orderChecked);
                         orderChecked.DeliveryStatus = DeliveryStatusEnum.Delivered.ToString();
@@ -648,7 +653,7 @@ namespace Business_Layer.Services
                             reponse.IsSuccess = false;
                             reponse.message = "Update status delivery of order fail!";
                         }
-                    }
+                    } */
                 }
             }
             catch (Exception e)

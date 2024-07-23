@@ -28,6 +28,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { store } from "./redux/store";
 import { toast } from "react-toastify";
 import { logout } from "./redux/features/userAccount";
+import ViewAllFeedback from "./pages/accountuser-management/ViewAllFeedBack";
 
 function App() {
   const AdminRoute = ({ children, role }) => {
@@ -136,6 +137,10 @@ function App() {
         {
           path: "/dashboard/OrderAdmin",
           element: <OrderAdmin />,
+        },
+        {
+          path: "/dashboard/viewallfeedback",
+          element: <ViewAllFeedback />,
         },
         {
           path: "/dashboard/accounts",

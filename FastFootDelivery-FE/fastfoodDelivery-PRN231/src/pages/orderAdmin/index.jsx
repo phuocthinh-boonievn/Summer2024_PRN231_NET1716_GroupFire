@@ -114,7 +114,7 @@ function OrderAdmin() {
       handleHideModal();
       toast.success("Assign to the shipper Successfully");
     } catch (error) {
-      toast.error("Assign to the shipper fail");
+      toast.error("Assign Fail");
       console.log(e);
     }
   }

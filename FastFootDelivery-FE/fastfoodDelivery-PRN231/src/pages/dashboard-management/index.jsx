@@ -8,6 +8,7 @@ import {
   TeamOutlined,
   AppstoreAddOutlined,
   ShopOutlined,
+  MailOutlined,
 } from "@ant-design/icons";
 import { Avatar, Breadcrumb, Layout, Menu, Space, theme } from "antd";
 import { Footer } from "antd/es/layout/layout";
@@ -86,6 +87,7 @@ const Dashboard = () => {
         getItem("MenuFoodItem", "MenuFoodItem", <AppstoreAddOutlined />),
         getItem("Category", "category", <AppstoreAddOutlined />),
         getItem("OrderAdmin", "OrderAdmin", <ShopOutlined />),
+        getItem("ViewAllFeedBack", "viewallfeedback", <MailOutlined />),
         getItem("Accounts", "accounts", <TeamOutlined />, [
           getItem("UserAccount", "accounts"),
           getItem("ShipperAccount", "shipper"),

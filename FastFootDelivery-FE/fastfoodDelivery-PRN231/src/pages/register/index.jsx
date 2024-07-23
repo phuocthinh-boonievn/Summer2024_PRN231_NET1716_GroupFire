@@ -19,6 +19,7 @@ function Register() {
   }
 
   function handleSubmit(values) {
+    console.log(values);
     try {
       if (dataSource.Password !== dataSource.confirmPassword) {
         alert("Passwords do not match");
@@ -30,11 +31,12 @@ function Register() {
       );
 
       setDataSource([...dataSource, values]);
+      alert(response.error);
+      console.log(response.data.error);
       formVariable.resetFields();
       toast.success("Register Successfully");
       navigate("/login");
     } catch (err) {
-      console.log(err);
       toast.error("Please input Correct Information");
     }
   }
@@ -64,11 +66,21 @@ function Register() {
         <form onSubmit={handleSubmit}>
           <div className="register__form">
             <h3>Register Your Acount</h3>
-            <Form form={formVariable} onFinish={handleSubmit}>
+            <Form
+              labelCol={{
+                span: 24,
+              }}
+              form={formVariable}
+              onFinish={handleSubmit}
+            >
               <Form.Item
                 label="Email"
                 name={"email"}
                 rules={[
+                  {
+                    type: "email",
+                    message: "Please enter a valid Email",
+                  },
                   {
                     required: true,
                     message: "Please Input Email",
@@ -121,6 +133,10 @@ function Register() {
                     required: true,
                     message: "Please Input PhoneNumber",
                   },
+                  {
+                    pattern: /^\d{10}$/,
+                    message: "PhoneNumber must be exactly 10 digits",
+                  },
                 ]}
               >
                 <Input type="number" placeholder="PhoneNumber" />
@@ -133,6 +149,10 @@ function Register() {
                     required: true,
                     message: "Please Input Passowrd",
                   },
+                  {
+                    min: 6,
+                    message: "Password must be at least 6 characters",
+                  },
                 ]}
               >
                 <Input type="password" placeholder="Passowrd" />
@@ -144,6 +164,10 @@ function Register() {
                   {
                     required: true,
                     message: "Please Input Confirm Password",
+                  },
+                  {
+                    min: 6,
+                    message: "Password must be at least 6 characters",
                   },
                 ]}
               >

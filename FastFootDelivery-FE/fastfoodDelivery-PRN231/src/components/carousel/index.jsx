@@ -14,9 +14,10 @@ import { Autoplay, Pagination } from "swiper/modules";
 import axios from "axios";
 import { Button, Card } from "antd";
 import Meta from "antd/es/card/Meta";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addFood } from "../../redux/features/fastfoodCart";
-import {toast } from "react-toastify";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 //
 
@@ -28,6 +29,8 @@ export default function Carousel({
   console.log(numberOfSlides);
   const dispatch = useDispatch();
   const [fastfoods, setFastFood] = useState([]);
+  const navigate = useNavigate();
+  const user = useSelector((store) => store.accountmanage);
 
   const handleGetByFastFoodId = async (foodId) => {
     console.log("Get Fast Food by Id", foodId);
@@ -47,18 +50,23 @@ export default function Carousel({
 
   function handlegetValue(e) {
     console.log(e);
-    dispatch(
-      addFood({
-        id: e.foodId,
-        name: e.foodName,
-        description: e.description,
-        price: e.unitPrice,
-        quantity: 1,
-        image: e.image,
-      })
-    );
-    console.log("hi");
-    return toast.success("Add Food Successfully");
+    if (user === null) {
+      navigate("/login");
+      toast.error("Please Login");
+    } else {
+      dispatch(
+        addFood({
+          id: e.foodId,
+          name: e.foodName,
+          description: e.description,
+          price: e.unitPrice,
+          quantity: 1,
+          image: e.image,
+        })
+      );
+      console.log("hi");
+      return toast.success("Add Food Successfully");
+    }
   }
 
   return (

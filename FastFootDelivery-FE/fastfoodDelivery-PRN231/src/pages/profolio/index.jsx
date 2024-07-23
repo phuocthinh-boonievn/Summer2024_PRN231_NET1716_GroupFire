@@ -86,7 +86,9 @@ export default function ProfilePage() {
           <MDBCol lg="8">
             <MDBCard className="mb-4">
               <MDBCardBody>
-                <MDBTypography tag="sm-4">Information</MDBTypography>
+                <MDBTypography tag="col-md-9" className="info">
+                  Information
+                </MDBTypography>
                 <hr />
                 <MDBRow>
                   <MDBCol sm="3">
@@ -135,7 +137,8 @@ export default function ProfilePage() {
             </MDBCard>
             <div>
               <Button
-                className="px-10 bg-orange-300"
+                // className=" px-20 bg-orange-300"
+                className="btn-edit"
                 onClick={() => {
                   setIsOpen(true);
                   formUpdate.setFieldsValue(user);
